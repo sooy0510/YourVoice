@@ -73,17 +73,19 @@
         <TableRow
             android:gravity="center">
             <EditText
+                android:id="@+id/newID"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:ems="10"
                 android:maxLength="20"
-                android:hint="아이디"/>
+                android:hint="아이디" />
         </TableRow>
 
         <TableRow
             android:gravity="center">
             <EditText
+                android:id="@+id/newPW"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
@@ -95,6 +97,7 @@
         <TableRow
             android:gravity="center">
             <EditText
+                android:id="@+id/newName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName"
@@ -106,6 +109,7 @@
         <TableRow
             android:gravity="center">
             <EditText
+                android:id="@+id/newPhone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="number"
@@ -120,7 +124,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/joinOk"
-                android:text="가입하기"/>
+                android:text="가입하기"
+                android:onClick="insert"/>
         </TableRow>
 
     </TableLayout>

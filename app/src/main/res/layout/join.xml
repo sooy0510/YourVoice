@@ -123,6 +123,9 @@
                 android:text="가입하기"/>
         </TableRow>
 
+        <TextView
+            android:text="dfsdfdsfdsfd"/>
+
     </TableLayout>
 
 </android.support.constraint.ConstraintLayout>

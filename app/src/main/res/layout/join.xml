@@ -7,7 +7,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center">
-
         <TableRow
             android:gravity="center">
             <EditText
@@ -18,6 +17,9 @@
                 android:ems="10"
                 android:maxLength="20"
                 android:hint="아이디" />
+            <Button
+                android:text="중복체크"
+                android:onClick="checkID"/>
         </TableRow>
 
         <TableRow
@@ -54,6 +56,9 @@
                 android:ems="10"
                 android:maxLength="20"
                 android:hint="전화번호"/>
+            <Button
+                android:text="중복체크"
+                android:onClick="checkPhone"/>
         </TableRow>
 
         <TableRow

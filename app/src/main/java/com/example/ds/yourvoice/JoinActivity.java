@@ -50,7 +50,7 @@ public class JoinActivity extends AppCompatActivity {
     public void checkID(View v){
         String Id = editTextId.getText().toString();
         if(Id == null || Id.equals("") == true){
-            Toast.makeText(getApplicationContext(),"ID를 입력해주세요",Toast.LENGTH_SHORT)
+            Toast.makeText(getApplicationContext(),"ID를 입력해주세요.",Toast.LENGTH_SHORT)
                     .show();
         }else{
             isExistID(Id);

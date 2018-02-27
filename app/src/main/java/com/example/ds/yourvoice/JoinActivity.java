@@ -107,7 +107,7 @@ public class JoinActivity extends AppCompatActivity {
     public void checkPhone(View v){
         String Phone = editTextPhone.getText().toString();
         if(Phone == null || Phone.equals("") == true){
-            Toast.makeText(getApplicationContext(),"휴대폰 번호를 입력해주세요!",Toast.LENGTH_SHORT)
+            Toast.makeText(getApplicationContext(),"휴대폰 번호를 입력해주세요",Toast.LENGTH_SHORT)
                     .show();
         }else{
             isExistPhone(Phone);

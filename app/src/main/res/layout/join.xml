@@ -43,6 +43,7 @@
                 android:inputType="textPersonName"
                 android:ems="10"
                 android:maxLength="20"
+                android:privateImeOptions="defaultInputmode=korean"
                 android:hint="이름"/>
         </TableRow>
 

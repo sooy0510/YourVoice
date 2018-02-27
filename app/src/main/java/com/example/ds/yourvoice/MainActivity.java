@@ -1,12 +1,18 @@
 package com.example.ds.yourvoice;
 
+import android.app.Activity;
+import android.app.Application;
+import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Debug;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.ActionMenuView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,14 +23,25 @@ import android.widget.EditText;
 import android.widget.TabHost;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+
 public class MainActivity extends AppCompatActivity {
 
     Toolbar myToolbar;
+    EditText addPhone;
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+        intent = getIntent();
 
         // 추가된 소스, Toolbar를 생성한다.
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -64,11 +81,82 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void addFriend(View v){
-        EditText friendId = (EditText)findViewById(R.id.addFriendID);
-        EditText friendPhone = (EditText)findViewById(R.id.addFreindPhone);
-        friendId.setText("");
-        friendPhone.setText("");
-        friendId.requestFocus();
+        addPhone = (EditText)findViewById(R.id.addFriendPhone);
+        String friendPhone = addPhone.getText().toString();
+
+        //LoginActivity loginActivity = (LoginActivity) getApplication();
+
+        String userId = intent.getStringExtra("userId");
+        insertToDatabase(userId, friendPhone);
+
+        //friendPhone.setText("");
+        //friendPhone.requestFocus();
+    }
+
+    private void insertToDatabase(final String userId, String friendPhone) {
+        class InsertData extends AsyncTask<String, Void, String> {
+            ProgressDialog loading;
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                loading = ProgressDialog.show(MainActivity.this, "Please Wait", null, true, true);
+            }
+
+            @Override
+            protected void  onPostExecute(String s) {
+                super.onPostExecute(s);
+                loading.dismiss();
+                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG). show();
+
+                addPhone.setText("");
+                //addPhone.requestFocus();
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+
+                try {
+                    String userId = (String) params[0];
+                    String friendPhone = (String) params[1];
+
+
+                    String link = "http://203.252.219.238/addFriend.php";
+                    String data = URLEncoder.encode("UserId", "UTF-8") + "=" + URLEncoder.encode(userId, "UTF-8");
+                    data += "&" + URLEncoder.encode("FriendPhone", "UTF-8") + "=" + URLEncoder.encode(friendPhone, "UTF-8");
+
+
+                    URL url = new URL(link);
+                    URLConnection conn = url.openConnection();
+
+
+                    conn.setDoOutput(true);
+                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+
+                    wr.write(data);
+                    wr.flush();
+
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+
+                    StringBuilder sb = new StringBuilder();
+                    String line = null;
+
+
+                    // Read Server Response
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line);
+                        break;
+                    }
+                    return sb.toString();
+                } catch (Exception e) {
+                    return new String("Exception: " + e.getMessage());
+                }
+            }
+        }
+        InsertData task = new InsertData();
+        task.execute(userId, friendPhone);
     }
 
     //추가된 소스, ToolBar에 menu.xml을 인플레이트함

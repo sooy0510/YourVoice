@@ -3,6 +3,7 @@ package com.example.ds.yourvoice;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Debug;
 import android.os.StrictMode;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -32,11 +33,21 @@ public class LoginActivity extends AppCompatActivity {
         System.loadLibrary("native-lib");
     }
 
+    //private String userId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
     }
+//
+//    public String getUserId(){
+//        return userId;
+//    }
+//
+//    public void setUserId(String userId) {
+//        this.userId = userId;
+//    }
 
     public void login(View v) {
 
@@ -48,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
         loginCheck(Id, Pw);
     }
 
-    private void loginCheck(String Id, String Pw){
+    private void loginCheck(final String Id, String Pw){
         class InsertData extends AsyncTask<String, Void, String> {
             ProgressDialog loading;
             @Override
@@ -62,8 +73,11 @@ public class LoginActivity extends AppCompatActivity {
                 super.onPostExecute(s);
                 loading.dismiss();
 
-                if(s.toString().equals("User Found"))
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                if(s.toString().equals("User Found")) {
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra("userId", Id);
+                    startActivity(intent);
+                }
 
                 else
                     Toast.makeText(getApplicationContext(), "아이디와 비밀번호를 확인해주세요", Toast.LENGTH_SHORT). show();
@@ -76,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
                     String Id = (String) params[0];
                     String Pw = (String) params[1];
 
-                    String link = "http://172.17.23.45/login.php";
+                    String link = "http://203.252.219.238/login.php";
                     String data = URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(Id, "UTF-8");
                     data += "&" + URLEncoder.encode("Pw", "UTF-8") + "=" + URLEncoder.encode(Pw, "UTF-8");
 

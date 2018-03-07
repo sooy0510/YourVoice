@@ -66,6 +66,7 @@ public class LoginActivity extends AppCompatActivity {
             protected void onPreExecute() {
                 super.onPreExecute();
                 loading = ProgressDialog.show(LoginActivity.this, "login...", null, true, true);
+                //Toast.makeText(getApplicationContext(), "외않되", Toast.LENGTH_SHORT). show();
             }
 
             @Override
@@ -90,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
                     String Id = (String) params[0];
                     String Pw = (String) params[1];
 
-                    String link = "http://172.17.23.45/login.php";
+                    String link = "http://203.252.219.238/login.php";
                     String data = URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(Id, "UTF-8");
                     data += "&" + URLEncoder.encode("Pw", "UTF-8") + "=" + URLEncoder.encode(Pw, "UTF-8");
 

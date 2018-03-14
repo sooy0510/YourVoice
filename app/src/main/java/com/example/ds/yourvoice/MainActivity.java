@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                     String friendPhone = (String) params[1];
 
 
-                    String link = "http://203.252.219.238/addFriend.php";
+                    String link = "http://13.124.94.107/addFriend.php";
                     String data = URLEncoder.encode("UserId", "UTF-8") + "=" + URLEncoder.encode(userId, "UTF-8");
                     data += "&" + URLEncoder.encode("FriendPhone", "UTF-8") + "=" + URLEncoder.encode(friendPhone, "UTF-8");
 

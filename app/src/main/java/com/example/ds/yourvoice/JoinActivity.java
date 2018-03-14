@@ -91,7 +91,7 @@ public class JoinActivity extends AppCompatActivity {
                 try{
                     String Id = (String) params[0];
                     String CheckId = "ID";
-                    String link = "http://203.252.219.238/checkJoinCondition.php";
+                    String link = "http://13.124.94.107/checkJoinCondition.php";
                     String data = URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(Id, "UTF-8");
                     data += "&" + URLEncoder.encode("Check", "UTF-8") + "=" + URLEncoder.encode(CheckId, "UTF-8");
                     data += "&" + URLEncoder.encode("Phone", "UTF-8") + "=" + URLEncoder.encode("", "UTF-8");
@@ -174,7 +174,7 @@ public class JoinActivity extends AppCompatActivity {
                 try{
                     String phone = (String) params[0];
                     String CheckPhone = "PHONE";
-                    String link = "http://203.252.219.238/checkJoinCondition.php";
+                    String link = "http://13.124.94.107/checkJoinCondition.php";
                     String data = URLEncoder.encode("Phone", "UTF-8") + "=" + URLEncoder.encode(phone, "UTF-8");
                     data += "&" + URLEncoder.encode("Check", "UTF-8") + "=" + URLEncoder.encode(CheckPhone, "UTF-8");
                     data += "&" + URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode("", "UTF-8");
@@ -268,7 +268,7 @@ public class JoinActivity extends AppCompatActivity {
                     String Phone = (String) params[3];
 
 
-                    String link = "http://203.252.219.238/join.php";
+                    String link = "http://13.124.94.107/join.php";
                     String data = URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(Id, "UTF-8");
                     data += "&" + URLEncoder.encode("Pw", "UTF-8") + "=" + URLEncoder.encode(Pw, "UTF-8");
                     data += "&" + URLEncoder.encode("Name", "UTF-8") + "=" + URLEncoder.encode(Name, "UTF-8");

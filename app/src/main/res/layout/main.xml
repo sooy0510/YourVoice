@@ -39,7 +39,14 @@
                     android:orientation="vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
                     android:id="@+id/tab_friendList">
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="전화걸기"
+                        android:onClick="call"/>
                 </LinearLayout>
 
                 <LinearLayout

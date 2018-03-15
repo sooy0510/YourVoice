@@ -184,4 +184,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void call (View v) {
+        Intent intent = new Intent(MainActivity.this, CallActivity.class);
+        startActivity(intent);
+    }
+
 }

@@ -15,15 +15,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:layout_marginTop="300sp">
-
-            <TextView
-                android:layout_width="51dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:layout_marginLeft="70dp"
-                android:text="  ID"
-                 android:textSize="30sp" />
+            android:layout_marginTop="300sp"
+            android:gravity="center">
 
             <EditText
                 android:id="@+id/userID"
@@ -31,6 +24,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="text"
+                android:hint="아이디"
                 tools:text="아이디 입력" />
 
         </LinearLayout>
@@ -38,20 +32,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="70dp"
-                android:text=" PW"
-                android:textSize="30sp" />
+            android:orientation="horizontal"
+            android:gravity="center">
 
             <EditText
                 android:id="@+id/userPW"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
+                android:hint="비밀번호"
                 android:inputType="textPassword" />
 
         </LinearLayout>

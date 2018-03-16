@@ -14,6 +14,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,6 +29,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Handler;
+
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -74,9 +79,33 @@ public class LoginActivity extends AppCompatActivity {
                 super.onPostExecute(s);
                 loading.dismiss();
 
-                if(s.toString().equals("User Found")) {
+                String usermsg = "";
+                String userphone = "";
+
+                try {
+                    // PHP에서 받아온 JSON 데이터를 JSON오브젝트로 변환
+                    JSONObject jObject = new JSONObject(s);
+                    // results라는 key는 JSON배열로 되어있다.
+                    JSONArray results = jObject.getJSONArray("result");
+
+
+                    for ( int i = 0; i < results.length(); ++i ) {
+                        JSONObject temp = results.getJSONObject(i);
+                        usermsg =temp.get("usermsg").toString();
+                        userphone = temp.get("userphone").toString();
+
+                    }
+                    //Log.e("ssssssssssssssss",flagId.toString());
+                    Toast.makeText(getApplicationContext(), usermsg, Toast.LENGTH_SHORT). show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+                if(usermsg.equals("User Found")) {
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     intent.putExtra("userId", Id);
+                    intent.putExtra("userPhone", userphone);
                     startActivity(intent);
                 }
 
@@ -111,7 +140,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     // Read Server Response
                     while ((line = reader.readLine()) != null) {
-                        sb.append(line);
+                        sb.append(line + "\n");
                         break;
                     }
                     return sb.toString();

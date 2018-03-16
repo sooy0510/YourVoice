@@ -32,7 +32,6 @@ public class CallActivity extends AppCompatActivity implements Connector.IConnec
     public void Connect(View v) {
         String token = "cHJvdmlzaW9uAHVzZXIxQDQ5M2Y3ZS52aWR5by5pbwA2MzY4ODMxODc1MAAAMGEwMzFlYmY5ZjlkMGQ4ZTJlNjFmNTYyMzM3OGQ3N2JhMjViMjQ5OTUzN2ZiYmM1NDAyYjM2MzM3ZTc0ZDA4NWEzOTJlYzFmNzQ2MDZkMWIwZTBlM2Q5OTU4MWQ3ZDMy";
         vc.connect("prod.vidyo.io", token, "DemoUser", "DemoRoom", this);
-        vc.c
     }
 
     public void Disconnect(View v) {

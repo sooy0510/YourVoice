@@ -1,25 +1,20 @@
 package com.example.ds.yourvoice;
 
-import android.app.Activity;
-import android.app.Application;
 import android.app.ProgressDialog;
-import android.app.TabActivity;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.os.Debug;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.support.v7.widget.ActionMenuView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -32,18 +27,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ListViewAdapter.ListBtnClickListener{
 
     Toolbar myToolbar;
     EditText addPhone;
@@ -54,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<HashMap<String, String>> mArrayList;
     ListView mListView;
     String mJsonString;
+    ListView listview ;
+    ListViewAdapter adapter;
+    ArrayList<ListViewItem> list = new ArrayList<ListViewItem>() ;
 
     private static String TAG = "FRIENDLIST";
 
@@ -69,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         intent = getIntent();
         userPhone = intent.getStringExtra("userPhone");
         userId = intent.getStringExtra("userId");
+
 
         // 추가된 소스, Toolbar를 생성한다.
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -102,13 +98,35 @@ public class MainActivity extends AppCompatActivity {
         tabHost1.setCurrentTab(0);
 
 
-        mListView = (ListView)findViewById(R.id.friendListView);
         mArrayList = new ArrayList<>();
-
         friendData task = new friendData();
         task.execute("http://13.124.94.107/getFriendList.php");
         //Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         //startActivity(intent);
+
+        // 위에서 생성한 listview에 클릭 이벤트 핸들러 정의.
+      /*  listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView parent, View v, int position, long id) {
+                // get item
+                ListViewItem item = (ListViewItem) parent.getItemAtPosition(position) ;
+
+                String titleStr = item.getTitle() ;
+                String descStr = item.getDesc() ;
+                Drawable iconDrawable = item.getIcon() ;
+
+                // TODO : use item data.
+            }
+        }) ;*/
+
+  /*      // 위에서 생성한 listview에 클릭 이벤트 핸들러 정의.
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView parent, View v, int position, long id) {
+                // TODO : item click
+            }
+        }) ;*/
+
 
         tabHost1.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
@@ -123,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
                     //int userPhone = intent.getExtras().getInt("userPhone");
                     //Log.d("ddddddddddddddddddddd", userPhone);
                     /* 아이템 추가 및 어댑터 등록 */
-                    mListView = (ListView)findViewById(R.id.friendListView);
+                    mListView = (ListView)findViewById(R.id.listview1);
                     mArrayList = new ArrayList<>();
 
                     friendData task = new friendData();
@@ -134,6 +152,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onListBtnClick(int position) {
+        Toast.makeText(this, Integer.toString(position+1) + " Item is selected..", Toast.LENGTH_SHORT).show() ;
+    }
 
     private class friendData extends AsyncTask<String, Void, String>{
         ProgressDialog progressDialog;
@@ -226,13 +248,38 @@ public class MainActivity extends AppCompatActivity {
 
             //friendListAdapter mfriendListAdapter = new friendListAdapter();
 
-            ListAdapter adapter = new SimpleAdapter(
-                    MainActivity.this, mArrayList, R.layout.friend_list,
+            //리스트뷰 Adapter 생성
+           // adapter = new ListViewAdapter();
+            ListViewItem item ;
+
+            for(int i=0; i<mArrayList.size(); i++){
+                HashMap<String, String> ritem =  mArrayList.get(i);
+                //adapter.addItem(ContextCompat.getDrawable(MainActivity.this,R.drawable.icon),item.get(TAG_NAME), item.get(TAG_PHONE));
+                item = new ListViewItem();
+                item.setIcon(ContextCompat.getDrawable(this, R.drawable.icon));
+                item.setTitle(ritem.get(TAG_NAME));
+                item.setDesc(ritem.get(TAG_PHONE));
+                list.add(item);
+            }
+
+            // Adapter 생성
+            adapter = new ListViewAdapter(this, R.layout.listview_item, list, this) ;
+
+            // 리스트뷰 참조 및 Adapter달기
+            listview = (ListView) findViewById(R.id.listview1);
+            listview.setAdapter(adapter);
+
+           /* ListAdapter adapter = new SimpleAdapter(
+                    MainActivity.this, mArrayList, R.layout.listview_item,
                     new String[]{TAG_NAME, TAG_PHONE},
                     new int[]{R.id.friendName, R.id.friendPhone}
             );
 
-            mListView.setAdapter(adapter);
+            mListView.setAdapter(adapter);*/
+
+
+
+            //adapter.addItem(ContextCompat.getDrawable(MainActivity.this,R.drawable.icon),mArrayList.get(0).get(), TAG_PHONE);
 
         } catch (JSONException e) {
             Log.d(TAG, "showResult : ", e);

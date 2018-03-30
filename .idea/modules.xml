@@ -2,10 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/YourVoice.iml" filepath="$PROJECT_DIR$/.idea/YourVoice.iml" />
       <module fileurl="file://C:\Users\DS\AndroidStudioProjects\YourVoice_vidyo\YourVoice.iml" filepath="C:\Users\DS\AndroidStudioProjects\YourVoice_vidyo\YourVoice.iml" />
-      <module fileurl="file://$PROJECT_DIR$/YourVoice_vidyo.iml" filepath="$PROJECT_DIR$/YourVoice_vidyo.iml" />
       <module fileurl="file://C:\Users\DS\StudioProjects\YourVoice\YourVoice_vidyo.iml" filepath="C:\Users\DS\StudioProjects\YourVoice\YourVoice_vidyo.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Users\DS\StudioProjects\YourVoice\app\app.iml" filepath="C:\Users\DS\StudioProjects\YourVoice\app\app.iml" />
     </modules>
   </component>
 </project>

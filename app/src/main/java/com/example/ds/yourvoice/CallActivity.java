@@ -1,11 +1,15 @@
 package com.example.ds.yourvoice;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Debug;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.vidyo.VidyoClient.Connector.ConnectorPkg;
 import com.vidyo.VidyoClient.Connector.Connector;
@@ -16,14 +20,29 @@ import com.vidyo.VidyoClient.Device.LocalWindowShare;
 import com.vidyo.VidyoClient.Endpoint.ChatMessage;
 import com.vidyo.VidyoClient.Endpoint.Participant;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
 public class CallActivity extends AppCompatActivity
         implements Connector.IConnect, Connector.IRegisterParticipantEventListener, Connector.IRegisterMessageEventListener {
 
+    private Intent intent;
+
     private Connector vc;
     private String token;
+    private String displayName, resourceId;
+    private String connectUser;
+    private String user;
     private FrameLayout videoFrame;
     private boolean mVidyoClientInitialized = false;
 
@@ -41,41 +60,57 @@ public class CallActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.call);
 
+        intent = getIntent();
+
         ConnectorPkg.setApplicationUIContext(this);
         mVidyoClientInitialized = ConnectorPkg.initialize();
         videoFrame = (FrameLayout)findViewById(R.id.videoFrame);
     }
 
-    public void Start(View v) {
-        vc = new Connector(videoFrame, Connector.ConnectorViewStyle.VIDYO_CONNECTORVIEWSTYLE_Default, 15, "warning info@VidyoClient info@VidyoConnector", "", 0);
-        vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
-
-        vc.selectDefaultCamera();
-        vc.selectDefaultMicrophone();
-        vc.selectDefaultSpeaker();
-        vc.selectDefaultNetworkInterfaceForSignaling();
-        vc.selectDefaultNetworkInterfaceForMedia();
-}
+//    public void Start(View v) {
+//        vc = new Connector(videoFrame, Connector.ConnectorViewStyle.VIDYO_CONNECTORVIEWSTYLE_Default, 15, "warning info@VidyoClient info@VidyoConnector", "", 0);
+//        vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
+//
+//        vc.selectDefaultCamera();
+//        vc.selectDefaultMicrophone();
+//        vc.selectDefaultSpeaker();
+//        vc.selectDefaultNetworkInterfaceForSignaling();
+//        vc.selectDefaultNetworkInterfaceForMedia();
+//}
 
     public void Connect(View v) {
-        token = "cHJvdmlzaW9uAGluc2VvbkA0OTNmN2UudmlkeW8uaW8AMTYzNjg5NjA5MDM5AAAwMjA1NGY0YTIxOTRkYzQ1NTc1ZGM5NGVmZThjMTI3MGI1Yjk2Y2FmN2ZmYzAxYjJiOTZiYTY1ZGJiYjYwYmI2MTBmNGQ1MTcyNWI1NTQxMzY2NWNkZTFhNGViYzY1NWU=";
+            token = "cHJvdmlzaW9uAGluc2VvbkA0OTNmN2UudmlkeW8uaW8AMTYzNjg5NjA5MDM5AAAwMjA1NGY0YTIxOTRkYzQ1NTc1ZGM5NGVmZThjMTI3MGI1Yjk2Y2FmN2ZmYzAxYjJiOTZiYTY1ZGJiYjYwYmI2MTBmNGQ1MTcyNWI1NTQxMzY2NWNkZTFhNGViYzY1NWU=";
 
-        if(mVidyoClientInitialized) {
-            vc = new Connector(videoFrame, Connector.ConnectorViewStyle.VIDYO_CONNECTORVIEWSTYLE_Default, 2, "warning info@VidyoClient info@VidyoConnector", "", 0);
-            vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
+            user = intent.getStringExtra("userId");
+            connectUser = v.getTag().toString();
+            displayName = user + "-" + connectUser;
+            Log.d("user->connectUser", connectUser + "->" + user);
 
-            vc.selectDefaultCamera();
-            vc.selectDefaultMicrophone();
-            vc.selectDefaultSpeaker();
-            vc.selectDefaultNetworkInterfaceForSignaling();
-            vc.selectDefaultNetworkInterfaceForMedia();
+//            try {
+//
+//            }
 
-            //mVidyoConnector.Connect(host, token, displayName, resourceId, this);
-            vc.connect("prod.vidyo.io", token, "DemoUser", "inseon-soov1", this);
+            if(mVidyoClientInitialized) {
+
+//            if(startCall()) {
+                vc = new Connector(videoFrame, Connector.ConnectorViewStyle.VIDYO_CONNECTORVIEWSTYLE_Default, 2, "warning info@VidyoClient info@VidyoConnector", "", 0);
+
+                vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
+
+                vc.selectDefaultCamera();
+                vc.selectDefaultMicrophone();
+                vc.selectDefaultSpeaker();
+                vc.selectDefaultNetworkInterfaceForSignaling();
+                vc.selectDefaultNetworkInterfaceForMedia();
+
+                //mVidyoConnector.Connect(host, token, displayName, resourceId, this);
+                vc.connect("prod.vidyo.io", token, "call", displayName, this);
+//            }
         } else {
             Log.d("Initialize failed", "not constructing VidyoConnector");
         }
     }
+
 
     public void Disconnect(View v) {
         vc.disconnect();
@@ -84,6 +119,9 @@ public class CallActivity extends AppCompatActivity
     public void onSuccess() {
         Log.d("onSuccess", "successfully connected.");
         //connectorStateUpdated(VidyoConnectorState.VidyoConnectorStateConnected, "Connected");
+
+
+
     }
 
     public void onFailure(Connector.ConnectorFailReason reason) {
@@ -95,6 +133,13 @@ public class CallActivity extends AppCompatActivity
 
     public void onDisconnected(Connector.ConnectorDisconnectReason reason) {
         if (reason == Connector.ConnectorDisconnectReason.VIDYO_CONNECTORDISCONNECTREASON_Disconnected) {
+            // Release device resources
+            vc.disable();
+            vc = null;
+
+            // Uninitialize the VidyoClient library
+            ConnectorPkg.uninitialize();
+
             Log.d("onDisconnected", "successfully disconnected, reason = " + reason.toString());
             //connectorStateUpdated(VidyoConnectorState.VidyoConnectorStateDisconnected, "Disconnected");
         } else {
@@ -116,7 +161,9 @@ public class CallActivity extends AppCompatActivity
 //        vc.registerLocalMonitorEventListener(this);
     }
     // Participant Joined
-    public void onParticipantJoined(Participant participant) {}
+    public void onParticipantJoined(Participant participant) {
+        Log.d("ParticipainJoined", "ture");
+    }
     // Participant Left
     public void onParticipantLeft(Participant participant) {}
     // Ordered array of participants according to rank
@@ -143,24 +190,105 @@ public class CallActivity extends AppCompatActivity
 //        vc.registerLocalMonitorEventListener(this);
 //    }
 
+    @Override
+    protected void onDestroy() {
+//        // Release device resources
+//        vc.disable();
+//        vc = null;
+//
+//        // Uninitialize the VidyoClient library
+//        ConnectorPkg.uninitialize();
 
-    /* WindowShare Event Listener */
-//    public void onLocalWindowShareAdded(LocalWindowShare localWindowShare) { /* New window is available for sharing */
-//        if (/* This is the window that should be shared */) {
-//           vc.selectLocalWindowShare(localWindowShare);
+        Log.d("Destroy", "true");
+        super.onDestroy();
+    }
+
+//    private boolean startCall(){
+//        displayName, resourceId
+//        class InsertData extends AsyncTask<String, Void, String> {
+//            ProgressDialog loading;
+//            @Override
+//            protected void onPreExecute() {
+//                super.onPreExecute();
+//                loading = ProgressDialog.show(CallActivity.this, "login...", null, true, true);
+//                //Toast.makeText(getApplicationContext(), "외않되", Toast.LENGTH_SHORT). show();
+//            }
+//
+//            @Override
+//            protected void  onPostExecute(String s) {
+//                super.onPostExecute(s);
+//                loading.dismiss();
+//
+//                String usermsg = "";
+//                String userphone = "";
+//
+//                try {
+//                    // PHP에서 받아온 JSON 데이터를 JSON오브젝트로 변환
+//                    JSONObject jObject = new JSONObject(s);
+//                    // results라는 key는 JSON배열로 되어있다.
+//                    JSONArray results = jObject.getJSONArray("result");
+//
+//
+//                    for ( int i = 0; i < results.length(); ++i ) {
+//                        JSONObject temp = results.getJSONObject(i);
+//                        usermsg =temp.get("usermsg").toString();
+//                        userphone = temp.get("userphone").toString();
+//
+//                    }
+//                    //Log.e("ssssssssssssssss",flagId.toString());
+//                    Toast.makeText(getApplicationContext(), usermsg, Toast.LENGTH_SHORT). show();
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                if(usermsg.equals("User Found")) {
+//                    Intent intent = new Intent(CallActivity.this, MainActivity.class);
+//                    intent.putExtra("userId", Id);
+//                    intent.putExtra("userPhone", userphone);
+//                    startActivity(intent);
+//                }
+//
+//                else
+//                    Toast.makeText(getApplicationContext(), "아이디와 비밀번호를 확인해주세요", Toast.LENGTH_SHORT). show();
+//            }
+//
+//            @Override
+//            protected String doInBackground(String... params) {
+//
+//                try {
+//                    String Id = (String) params[0];
+//                    String Pw = (String) params[1];
+//
+//                    String link = "http://13.124.94.107/login.php";
+//                    String data = URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(Id, "UTF-8");
+//                    data += "&" + URLEncoder.encode("Pw", "UTF-8") + "=" + URLEncoder.encode(Pw, "UTF-8");
+//
+//                    URL url = new URL(link);
+//                    URLConnection conn = url.openConnection();
+//
+//                    conn.setDoOutput(true);
+//                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+//
+//                    wr.write(data);
+//                    wr.flush();
+//
+//                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//
+//                    StringBuilder sb = new StringBuilder();
+//                    String line = null;
+//
+//                    // Read Server Response
+//                    while ((line = reader.readLine()) != null) {
+//                        sb.append(line + "\n");
+//                        break;
+//                    }
+//                    return sb.toString();
+//                } catch (Exception e) {
+//                    return new String("Exception: " + e.getMessage());
+//                }
+//            }
 //        }
+//        InsertData task = new InsertData();
+//        task.execute(Id, Pw);
 //    }
-//    public void onLocalWindowShareRemoved(LocalWindowShare localWindowShare)  { /* Existing window is no longer available for sharing */ }
-//    public void onLocalWindowShareSelected(LocalWindowShare localWindowShare) { /* Window was selected */ }
-//    public void onLocalWindowShareStateUpdated(LocalWindowShare localWindowShare, Device.DeviceState state) {  /* window share state has been updated */ }
-//    /* Monitor Event Listener */
-//    public void onLocalMonitorAdded(LocalMonitor localMonitor)    { /* New monitor is available for sharing*/
-//        if (/* This is the monitor that should be shared */) {
-//            vc.selectLocalMonitor(localMonitor);
-//        }
-//    }
-//    public void onLocalMonitorRemoved(LocalMonitor localMonitor)  { /* Existing monitor is no longer available for sharing */ }
-//    public void onLocalMonitorSelected(LocalMonitor localMonitor) { /* Monitor was selected */ }
-//    public void onLocalMonitorStateUpdated(LocalMonitor localMonitor, Device.DeviceState state) {  /* monitor state has been updated */ }
-// Connector.IRegisterLocalWindowShareEventListener,    Connector.IRegisterLocalMonitorEventListener
 }

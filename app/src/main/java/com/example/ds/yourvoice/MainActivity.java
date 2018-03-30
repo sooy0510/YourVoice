@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     Intent intent;
     //private ListView mListView;
     String userPhone;
+    String userId;
     ArrayList<HashMap<String, String>> mArrayList;
     ListView mListView;
     String mJsonString;
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
         intent = getIntent();
         userPhone = intent.getStringExtra("userPhone");
+        userId = intent.getStringExtra("userId");
 
         // 추가된 소스, Toolbar를 생성한다.
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -349,7 +351,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void call (View v) {
         Intent intent = new Intent(MainActivity.this, CallActivity.class);
+        intent.putExtra("userId", "userId");
         startActivity(intent);
     }
-
 }

@@ -1,7 +1,9 @@
 package com.example.ds.yourvoice;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Debug;
 import android.os.StrictMode;
@@ -40,10 +42,30 @@ public class LoginActivity extends AppCompatActivity {
 
     //private String userId;
 
+    //자동로그인
+    private SharedPreferences loginData;
+    private String autoId, autoPw, autoPhone;
+
+    // 첫로그인
+    private String inputId, inputPw;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
+
+        loginData = getSharedPreferences("auto", Activity.MODE_PRIVATE);
+        autoId = loginData.getString("autoId", null);
+        autoPw = loginData.getString("autoPw", null);
+        autoPhone = loginData.getString("autoPhone", null);
+
+        if(autoId !=null && autoPw != null) {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            intent.putExtra("userId", autoId);
+            intent.putExtra("userPhone", autoPhone);
+            startActivity(intent);
+            finish();
+        }
     }
 //
 //    public String getUserId(){
@@ -58,10 +80,10 @@ public class LoginActivity extends AppCompatActivity {
 
         EditText editTextId = (EditText)findViewById(R.id.userID);
         EditText editTextPw = (EditText)findViewById(R.id.userPW);
-        String Id = editTextId.getText().toString();
-        String Pw = editTextPw.getText().toString();
+        inputId = editTextId.getText().toString();
+        inputPw = editTextPw.getText().toString();
 
-        loginCheck(Id, Pw);
+        loginCheck(inputId, inputPw);
     }
 
     private void loginCheck(final String Id, String Pw){
@@ -103,10 +125,19 @@ public class LoginActivity extends AppCompatActivity {
 
 
                 if(usermsg.equals("User Found")) {
+
+                    SharedPreferences.Editor autoLogin = loginData.edit();
+                    autoLogin.putString("autoId", inputId);
+                    autoLogin.putString("autoPw", inputPw);
+                    autoLogin.putString("autoPhone", userphone);
+                    //commit 으로 값 저장
+                    autoLogin.commit();
+
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     intent.putExtra("userId", Id);
                     intent.putExtra("userPhone", userphone);
                     startActivity(intent);
+                    finish();
                 }
 
                 else

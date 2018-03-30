@@ -11,21 +11,13 @@
     tools:context="com.example.ds.yourvoice.CallActivity">
 
     <Button
-        android:text="Start"
+        android:text="수연에게 전화걸기"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:id="@+id/button"
-        android:onClick="Start" />
-
-    <Button
-        android:text="Connect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
         android:id="@+id/button2"
+        android:tag="soov1"
         android:onClick="Connect" />
 
     <Button
@@ -42,8 +34,6 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_above="@+id/button"
         android:id="@+id/videoFrame">
-
     </FrameLayout>
 </RelativeLayout>

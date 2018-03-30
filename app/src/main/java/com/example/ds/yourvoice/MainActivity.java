@@ -151,8 +151,14 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
     }
 
     @Override
-    public void onListBtnClick(int position) {
-        Toast.makeText(this, Integer.toString(position+1) + " Item is selected..", Toast.LENGTH_SHORT).show() ;
+    public void onListBtnClick(View v, int position) {
+        //전화버튼 눌렀을때
+        if(v.getId() == R.id.button1){
+            ListViewItem s = new ListViewItem();
+            s = (ListViewItem)adapter.getItem(position);
+            String text = s.getDesc();
+            Toast.makeText(this, text, Toast.LENGTH_SHORT).show() ;
+        }
     }
 
     private class friendData extends AsyncTask<String, Void, String>{

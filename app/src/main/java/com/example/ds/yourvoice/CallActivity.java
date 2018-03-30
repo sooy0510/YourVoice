@@ -10,19 +10,31 @@ import android.widget.FrameLayout;
 import com.vidyo.VidyoClient.Connector.ConnectorPkg;
 import com.vidyo.VidyoClient.Connector.Connector;
 import com.vidyo.VidyoClient.Device.Device;
+import com.vidyo.VidyoClient.Device.LocalCamera;
 import com.vidyo.VidyoClient.Device.LocalMonitor;
 import com.vidyo.VidyoClient.Device.LocalWindowShare;
 import com.vidyo.VidyoClient.Endpoint.ChatMessage;
 import com.vidyo.VidyoClient.Endpoint.Participant;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 public class CallActivity extends AppCompatActivity
         implements Connector.IConnect, Connector.IRegisterParticipantEventListener, Connector.IRegisterMessageEventListener {
 
     private Connector vc;
+    private String token;
     private FrameLayout videoFrame;
+    private boolean mVidyoClientInitialized = false;
 
+    enum VidyoConnectorState {
+        VidyoConnectorStateConnected,
+        VidyoConnectorStateDisconnected,
+        VidyoConnectorStateDisconnectedUnexpected,
+        VidyoConnectorStateFailure
+    }
+
+    private VidyoConnectorState mVidyoConnectorState = VidyoConnectorState.VidyoConnectorStateDisconnected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +42,7 @@ public class CallActivity extends AppCompatActivity
         setContentView(R.layout.call);
 
         ConnectorPkg.setApplicationUIContext(this);
-        ConnectorPkg.initialize();
+        mVidyoClientInitialized = ConnectorPkg.initialize();
         videoFrame = (FrameLayout)findViewById(R.id.videoFrame);
     }
 
@@ -46,8 +58,23 @@ public class CallActivity extends AppCompatActivity
 }
 
     public void Connect(View v) {
-        String token = "cHJvdmlzaW9uAHVzZXIxQDQ5M2Y3ZS52aWR5by5pbwA2MzY4ODMxODc1MAAAMGEwMzFlYmY5ZjlkMGQ4ZTJlNjFmNTYyMzM3OGQ3N2JhMjViMjQ5OTUzN2ZiYmM1NDAyYjM2MzM3ZTc0ZDA4NWEzOTJlYzFmNzQ2MDZkMWIwZTBlM2Q5OTU4MWQ3ZDMy";
-        vc.connect("prod.vidyo.io", token, "DemoUser", "inseon", this);
+        token = "cHJvdmlzaW9uAGluc2VvbkA0OTNmN2UudmlkeW8uaW8AMTYzNjg5NjA5MDM5AAAwMjA1NGY0YTIxOTRkYzQ1NTc1ZGM5NGVmZThjMTI3MGI1Yjk2Y2FmN2ZmYzAxYjJiOTZiYTY1ZGJiYjYwYmI2MTBmNGQ1MTcyNWI1NTQxMzY2NWNkZTFhNGViYzY1NWU=";
+
+        if(mVidyoClientInitialized) {
+            vc = new Connector(videoFrame, Connector.ConnectorViewStyle.VIDYO_CONNECTORVIEWSTYLE_Default, 2, "warning info@VidyoClient info@VidyoConnector", "", 0);
+            vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
+
+            vc.selectDefaultCamera();
+            vc.selectDefaultMicrophone();
+            vc.selectDefaultSpeaker();
+            vc.selectDefaultNetworkInterfaceForSignaling();
+            vc.selectDefaultNetworkInterfaceForMedia();
+
+            //mVidyoConnector.Connect(host, token, displayName, resourceId, this);
+            vc.connect("prod.vidyo.io", token, "DemoUser", "inseon-soov1", this);
+        } else {
+            Log.d("Initialize failed", "not constructing VidyoConnector");
+        }
     }
 
     public void Disconnect(View v) {
@@ -55,13 +82,26 @@ public class CallActivity extends AppCompatActivity
     }
 
     public void onSuccess() {
+        Log.d("onSuccess", "successfully connected.");
+        //connectorStateUpdated(VidyoConnectorState.VidyoConnectorStateConnected, "Connected");
     }
 
     public void onFailure(Connector.ConnectorFailReason reason) {
+        Log.d("onFailure", ": connection attempt failed, reason = " + reason.toString());
 
+        // Update UI to reflect connection failed
+        //connectorStateUpdated(VidyoConnectorState.VidyoConnectorStateFailure, "Connection failed");
     }
 
-    public void onDisconnected(Connector.ConnectorDisconnectReason reason) {}
+    public void onDisconnected(Connector.ConnectorDisconnectReason reason) {
+        if (reason == Connector.ConnectorDisconnectReason.VIDYO_CONNECTORDISCONNECTREASON_Disconnected) {
+            Log.d("onDisconnected", "successfully disconnected, reason = " + reason.toString());
+            //connectorStateUpdated(VidyoConnectorState.VidyoConnectorStateDisconnected, "Disconnected");
+        } else {
+            Log.d("onDisconnected", "unexpected disconnection, reason = " + reason.toString());
+            //connectorStateUpdated(VidyoConnectorState.VidyoConnectorStateDisconnectedUnexpected, "Unexpected disconnection");
+        }
+    }
 
     // Register for VidyoConnector event listeners. Note: this is an arbitrary function name.
     public void RegisterForVidyoEvents() {

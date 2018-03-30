@@ -137,11 +137,9 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
                 //Toast.makeText(getApplicationContext(), strMsg, Toast.LENGTH_SHORT). show();
 
                 if(strMsg.equals("Tab1")){
-                    //String userPhone = intent.getStringExtra("userPhone");
-                    //int userPhone = intent.getExtras().getInt("userPhone");
-                    //Log.d("ddddddddddddddddddddd", userPhone);
+                    /* 기존에 있던 어댑터 삭제*/
+                    adapter.clear();
                     /* 아이템 추가 및 어댑터 등록 */
-                    mListView = (ListView)findViewById(R.id.listview1);
                     mArrayList = new ArrayList<>();
 
                     friendData task = new friendData();

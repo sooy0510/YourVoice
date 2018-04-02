@@ -1,6 +1,7 @@
 package com.example.ds.yourvoice;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Debug;
@@ -38,6 +39,8 @@ public class CallActivity extends AppCompatActivity
 
     private Intent intent;
 
+    public static Context context;
+
     private Connector vc;
     private String token;
     private String displayName, resourceId;
@@ -45,6 +48,7 @@ public class CallActivity extends AppCompatActivity
     private String user;
     private FrameLayout videoFrame;
     private boolean mVidyoClientInitialized = false;
+    private boolean tryCall = false;
 
     enum VidyoConnectorState {
         VidyoConnectorStateConnected,
@@ -59,6 +63,8 @@ public class CallActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.call);
+
+        context = this;
 
         intent = getIntent();
 
@@ -84,31 +90,30 @@ public class CallActivity extends AppCompatActivity
             user = intent.getStringExtra("userId");
             connectUser = v.getTag().toString();
             displayName = user + "-" + connectUser;
-            Log.d("user->connectUser", connectUser + "->" + user);
-
-//            try {
-//
-//            }
+            Log.d("user->connectUser", user + "->" + connectUser);
 
             if(mVidyoClientInitialized) {
 
-//            if(startCall()) {
-                vc = new Connector(videoFrame, Connector.ConnectorViewStyle.VIDYO_CONNECTORVIEWSTYLE_Default, 2, "warning info@VidyoClient info@VidyoConnector", "", 0);
+                startCall(connectUser);
+                if(tryCall) {
+                    vc = new Connector(videoFrame, Connector.ConnectorViewStyle.VIDYO_CONNECTORVIEWSTYLE_Default, 2, "warning info@VidyoClient info@VidyoConnector", "", 0);
 
-                vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
+                    vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
 
-                vc.selectDefaultCamera();
-                vc.selectDefaultMicrophone();
-                vc.selectDefaultSpeaker();
-                vc.selectDefaultNetworkInterfaceForSignaling();
-                vc.selectDefaultNetworkInterfaceForMedia();
+                    vc.selectDefaultCamera();
+                    vc.selectDefaultMicrophone();
+                    vc.selectDefaultSpeaker();
+                    vc.selectDefaultNetworkInterfaceForSignaling();
+                    vc.selectDefaultNetworkInterfaceForMedia();
 
-                //mVidyoConnector.Connect(host, token, displayName, resourceId, this);
-                vc.connect("prod.vidyo.io", token, "call", displayName, this);
-//            }
-        } else {
-            Log.d("Initialize failed", "not constructing VidyoConnector");
-        }
+                    //mVidyoConnector.Connect(host, token, displayName, resourceId, this);
+                    vc.connect("prod.vidyo.io", token, "call", displayName, this);
+
+                    sendBroadcast(new Intent("action_call"));
+                }
+            } else {
+                Log.d("Initialize failed", "not constructing VidyoConnector");
+            }
     }
 
 
@@ -203,92 +208,68 @@ public class CallActivity extends AppCompatActivity
         super.onDestroy();
     }
 
-//    private boolean startCall(){
-//        displayName, resourceId
-//        class InsertData extends AsyncTask<String, Void, String> {
-//            ProgressDialog loading;
-//            @Override
-//            protected void onPreExecute() {
-//                super.onPreExecute();
-//                loading = ProgressDialog.show(CallActivity.this, "login...", null, true, true);
-//                //Toast.makeText(getApplicationContext(), "외않되", Toast.LENGTH_SHORT). show();
-//            }
-//
-//            @Override
-//            protected void  onPostExecute(String s) {
-//                super.onPostExecute(s);
-//                loading.dismiss();
-//
-//                String usermsg = "";
-//                String userphone = "";
-//
-//                try {
-//                    // PHP에서 받아온 JSON 데이터를 JSON오브젝트로 변환
-//                    JSONObject jObject = new JSONObject(s);
-//                    // results라는 key는 JSON배열로 되어있다.
-//                    JSONArray results = jObject.getJSONArray("result");
-//
-//
-//                    for ( int i = 0; i < results.length(); ++i ) {
-//                        JSONObject temp = results.getJSONObject(i);
-//                        usermsg =temp.get("usermsg").toString();
-//                        userphone = temp.get("userphone").toString();
-//
-//                    }
-//                    //Log.e("ssssssssssssssss",flagId.toString());
-//                    Toast.makeText(getApplicationContext(), usermsg, Toast.LENGTH_SHORT). show();
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                if(usermsg.equals("User Found")) {
-//                    Intent intent = new Intent(CallActivity.this, MainActivity.class);
-//                    intent.putExtra("userId", Id);
-//                    intent.putExtra("userPhone", userphone);
-//                    startActivity(intent);
-//                }
-//
-//                else
-//                    Toast.makeText(getApplicationContext(), "아이디와 비밀번호를 확인해주세요", Toast.LENGTH_SHORT). show();
-//            }
-//
-//            @Override
-//            protected String doInBackground(String... params) {
-//
-//                try {
-//                    String Id = (String) params[0];
-//                    String Pw = (String) params[1];
-//
-//                    String link = "http://13.124.94.107/login.php";
-//                    String data = URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(Id, "UTF-8");
-//                    data += "&" + URLEncoder.encode("Pw", "UTF-8") + "=" + URLEncoder.encode(Pw, "UTF-8");
-//
-//                    URL url = new URL(link);
-//                    URLConnection conn = url.openConnection();
-//
-//                    conn.setDoOutput(true);
-//                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-//
-//                    wr.write(data);
-//                    wr.flush();
-//
-//                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//
-//                    StringBuilder sb = new StringBuilder();
-//                    String line = null;
-//
-//                    // Read Server Response
-//                    while ((line = reader.readLine()) != null) {
-//                        sb.append(line + "\n");
-//                        break;
-//                    }
-//                    return sb.toString();
-//                } catch (Exception e) {
-//                    return new String("Exception: " + e.getMessage());
-//                }
-//            }
-//        }
-//        InsertData task = new InsertData();
-//        task.execute(Id, Pw);
-//    }
+    private void startCall(final String Id) {
+
+        class InsertData extends AsyncTask<String, Void, String> {
+            ProgressDialog loading;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                loading = ProgressDialog.show(CallActivity.this, "caling...", null, true, true);
+                //Toast.makeText(getApplicationContext(), "외않되", Toast.LENGTH_SHORT). show();
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                loading.dismiss();
+
+                if (s.toString().equals("Try"))
+                    tryCall = true;
+                else
+                    tryCall = false;
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+
+                try {
+                    String connectId = (String) params[0];
+
+                    String link = "http://13.124.94.107/callStateCheck.php";
+                    String data = URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(connectId, "UTF-8");
+
+                    URL url = new URL(link);
+                    URLConnection conn = url.openConnection();
+
+                    conn.setDoOutput(true);
+                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+                    wr.write(data);
+                    wr.flush();
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+                    StringBuilder sb = new StringBuilder();
+                    String line = null;
+
+                    // Read Server Response
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line);
+                        break;
+                    }
+                    return sb.toString();
+                } catch (Exception e) {
+                    return new String("Exception: " + e.getMessage());
+                }
+            }
+        }
+        InsertData task = new InsertData();
+        task.execute(Id);
+    }
+
+    public String getConnectUser(){
+        return connectUser;
+    }
 }

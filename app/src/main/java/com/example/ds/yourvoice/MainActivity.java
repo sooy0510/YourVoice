@@ -3,6 +3,7 @@ package com.example.ds.yourvoice;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -54,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
     ListViewAdapter adapter;
     ArrayList<ListViewItem> list = new ArrayList<ListViewItem>() ; //실질적인 listview
 
+    public static Context context;
+
     private static String TAG = "FRIENDLIST";
 
     private static final String TAG_JSON="friendList";
@@ -64,6 +67,8 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+        context = this;
 
         intent = getIntent();
         userPhone = intent.getStringExtra("userPhone");
@@ -509,4 +514,8 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
     }
 
     /* ---------------------------------------------- 전화걸기 끝 ----------------------------------------------------------- */
+
+    public String getUserId() {
+        return userId;
+    }
 }

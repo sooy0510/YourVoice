@@ -25,6 +25,12 @@
         <activity android:name=".MainActivity"></activity>
         <activity android:name=".JoinActivity"></activity>
         <activity android:name=".CallActivity"></activity>
+
+        <receiver android:name=".MyBroadCastReceiver">
+            <intent-filter>
+                <action android:name="action_call"></action>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

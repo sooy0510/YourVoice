@@ -3,10 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
     <!-- Settings, should always be in the overflow -->
-    <item android:id="@+id/action_settings2"
+    <item android:id="@+id/action_settings1"
         android:title="항목1"
         app:showAsAction="never"/>
-    <item android:id="@+id/action_settings3"
+    <item android:id="@+id/action_settings2"
         android:title="항목2"
+        app:showAsAction="never"/>
+    <item android:id="@+id/logout"
+        android:title="로그아웃"
         app:showAsAction="never"/>
 </menu>

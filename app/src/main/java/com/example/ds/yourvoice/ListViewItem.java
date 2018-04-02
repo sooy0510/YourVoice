@@ -8,18 +8,18 @@ import android.graphics.drawable.Drawable;
 
 public class ListViewItem {
     private Drawable iconDrawable ;
-    private String titleStr ;
-    private String descStr ;
+    private String nameStr ;
+    private String phoneStr ;
     private String textStr ;
 
     public void setIcon(Drawable icon) {
         iconDrawable = icon ;
     }
-    public void setTitle(String title) {
-        titleStr = title ;
+    public void setName(String name) {
+        nameStr = name ;
     }
-    public void setDesc(String desc) {
-        descStr = desc ;
+    public void setPhone(String phone) {
+        phoneStr = phone ;
     }
     public void setText(String text) {
         textStr = text ;
@@ -28,11 +28,9 @@ public class ListViewItem {
     public Drawable getIcon() {
         return this.iconDrawable ;
     }
-    public String getTitle() {
-        return this.titleStr ;
-    }
-    public String getDesc() {
-        return this.descStr ;
+    public String getName() { return this.nameStr ; }
+    public String getPhone() {
+        return this.phoneStr ;
     }
     public String getText() {
         return this.textStr ;

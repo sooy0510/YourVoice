@@ -1,5 +1,8 @@
 package com.example.ds.yourvoice;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -20,8 +23,10 @@ public class MyBroadCastReceiver extends BroadcastReceiver{
         receiveUser = ((CallActivity)CallActivity.context).getConnectUser();
         id = ((MainActivity)MainActivity.context).getUserId();
 
+        Log.d("receiveUser,id", receiveUser + "and" + id);
+
         if(receiveUser.equals(id)) {
-            Toast.makeText(context, "전화왔따", Toast.LENGTH_LONG).show();
+
         }
     }
 }

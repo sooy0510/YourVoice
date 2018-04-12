@@ -3,17 +3,24 @@ package com.example.ds.yourvoice;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.telecom.Call;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,10 +41,15 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity implements ListViewAdapter.ListBtnClickListener{
@@ -63,17 +75,34 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
     private static final String TAG_NAME = "friendname";
     private static final String TAG_PHONE ="friendphone";
 
+    public static final String CALL_RECEIVER = "receiver";
+    private IntentFilter mIntentFilter;
+
+    enum CallStatus {
+        Default,
+        Caller,
+        Receiver
+    }
+
+    public CallStatus callStatus = CallStatus.Default;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+        //서비스시작
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(CALL_RECEIVER);
+        Intent intent = new Intent(this, CallService.class);
+        startService(intent);
 
         context = this;
 
         intent = getIntent();
         userPhone = intent.getStringExtra("userPhone");
         userId = intent.getStringExtra("userId");
-
 
         // 추가된 소스, Toolbar를 생성한다.
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -134,6 +163,34 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
 
     }
 
+     /* ---------------------------------------------- 서비스와 브로드캐스트리시버 ---------------------------------------------------------- */
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        registerReceiver(mReceiver, mIntentFilter);
+    }
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(CALL_RECEIVER)) {
+                call(intent.getStringExtra("callerID"), intent.getStringExtra("receiverID"));
+                Intent stopIntent = new Intent(MainActivity.this, CallService.class);
+                stopService(stopIntent);
+            }
+//                Intent stopIntent = new Intent(MainActivity.this, BroadcastService.class);
+//                stopService(stopIntent);
+        }
+    };
+
+    @Override
+    protected void onPause() {
+        unregisterReceiver(mReceiver);
+        super.onPause();
+    }
+
+     /* ---------------------------------------------- 서비스와 브로드캐스트리시버 끝 ---------------------------------------------------------- */
 
     /* ---------------------------------------------- 설정 버튼 ----------------------------------------------------------- */
     //추가된 소스, ToolBar에 menu.xml을 인플레이트함
@@ -509,7 +566,15 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
     /* ---------------------------------------------- 전화걸기 ----------------------------------------------------------- */
     public void call (View v) {
         Intent intent = new Intent(MainActivity.this, CallActivity.class);
-        intent.putExtra("userId", "userId");
+        //intent.putExtra("Tag", v.getTag().toString());
+        intent.putExtra("Tag", "sooy1");
+        startActivity(intent);
+    }
+
+    public void call (String caller, String receiver){
+        Intent intent = new Intent(MainActivity.this, CallActivity.class);
+        intent.putExtra("Caller", caller);
+        intent.putExtra("Receiver", receiver);
         startActivity(intent);
     }
 

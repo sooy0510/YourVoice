@@ -10,15 +10,15 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.ds.yourvoice.CallActivity">
 
-    <Button
-        android:text="수연에게 전화걸기"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:id="@+id/button2"
-        android:tag="sooy1"
-        android:onClick="Connect" />
+    <!--<Button-->
+        <!--android:text="수연에게 전화걸기"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:id="@+id/button2"-->
+        <!--android:tag="sooy1"-->
+        <!--android:onClick="Connect" />-->
 
     <Button
         android:text="Disconnect"

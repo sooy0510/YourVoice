@@ -10,15 +10,26 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.ds.yourvoice.CallActivity">
 
-    <!--<Button-->
-        <!--android:text="수연에게 전화걸기"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_alignParentLeft="true"-->
-        <!--android:id="@+id/button2"-->
-        <!--android:tag="sooy1"-->
-        <!--android:onClick="Connect" />-->
+   <!-- <Button
+        android:id="@+id/btn_start"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignBaseline="@+id/button2"
+        android:layout_alignBottom="@+id/button2"
+        android:layout_toEndOf="@+id/button2"
+        android:layout_toRightOf="@+id/button2"
+        android:onClick="StartChat"
+        android:text="채팅시작" />-->
+
+    <Button
+        android:text="수연에게 전화걸기"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/button2"
+        android:tag="sooy1"
+        android:onClick="Connect" />
 
     <Button
         android:text="Disconnect"
@@ -29,11 +40,76 @@
         android:id="@+id/button3"
         android:onClick="Disconnect" />
 
+<!--   <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_start"
+        android:layout_marginTop="500dp"
+        android:layout_marginLeft="150dp"
+        android:text="채팅 시작"/>-->
+
     <FrameLayout
+        android:id="@+id/videoFrame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
+        android:layout_height="300dp"
         android:layout_alignParentLeft="true"
-        android:id="@+id/videoFrame">
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
     </FrameLayout>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:layout_width="fill_parent"
+        android:id="@+id/im1"
+        android:layout_height="150dp"
+        android:layout_weight="1"
+        android:layout_marginTop="300dp">
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+            <ListView
+                android:id="@+id/listView1"
+                android:listSelector="#00000000"
+                android:cacheColorHint="#00000000"
+                android:divider="#000000"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:transcriptMode="alwaysScroll"/>
+        </FrameLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/send_edit"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="#2F4F4F"
+        android:layout_below="@id/im1"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="20dp"
+            android:layout_height="wrap_content" />
+        <EditText
+            android:hint="메세지를 입력하세요"
+            android:id="@+id/editText1"
+            android:inputType="textMultiLine"
+            android:maxLines="4"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="전 송" />
+
+    </LinearLayout>
+<!--    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginTop="380dp">
+        <TextView
+            android:id="@+id/txt_result"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </ScrollView>-->
 </RelativeLayout>
+

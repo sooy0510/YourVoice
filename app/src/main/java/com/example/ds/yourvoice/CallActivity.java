@@ -28,6 +28,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ds.yourvoice.utils.AudioWriterPCM;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.naver.speech.clientapi.SpeechRecognitionResult;
@@ -35,6 +38,8 @@ import com.vidyo.VidyoClient.Connector.ConnectorPkg;
 import com.vidyo.VidyoClient.Connector.Connector;
 import com.vidyo.VidyoClient.Endpoint.ChatMessage;
 import com.vidyo.VidyoClient.Endpoint.Participant;
+
+import org.w3c.dom.Comment;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -46,6 +51,7 @@ import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
@@ -69,6 +75,8 @@ public class CallActivity extends AppCompatActivity
     private LinearLayout sendEdit;
     private boolean mVidyoClientInitialized = false;
     private boolean tryCall;
+    private String userPhone;
+    private String friendPhone;
 
     enum CallStatus {
         Default,
@@ -96,6 +104,9 @@ public class CallActivity extends AppCompatActivity
     ListView m_ListView;
     MessageAdapter m_Adapter;
 
+    //firebase
+    FirebaseDatabase database;
+
 
     enum VidyoConnectorState {
         VidyoConnectorStateConnected,
@@ -118,11 +129,17 @@ public class CallActivity extends AppCompatActivity
         mVidyoClientInitialized = ConnectorPkg.initialize();
         videoFrame = (FrameLayout)findViewById(R.id.videoFrame);
 
+        //firebase
+        database = FirebaseDatabase.getInstance();
 
         intent = getIntent();
         //clova
         //txtResult = (TextView) findViewById(R.id.txt_result);
         //btnStart = (Button) findViewById(R.id.btn_start);
+
+        //userphone, friendphone 받기
+        userPhone = intent.getStringExtra("userPhone");
+        friendPhone = intent.getStringExtra("friendPhone");
 
         handler = new RecognitionHandler(this);
         naverRecognizer = new NaverRecognizer(this, handler, CLIENT_ID);
@@ -192,16 +209,16 @@ public class CallActivity extends AppCompatActivity
         m_Adapter.add("재미있게",1);*/
 
         findViewById(R.id.button1).setOnClickListener(new Button.OnClickListener()
-              {
-                  @Override
-                  public void onClick(View v) {
-                      //Toast.makeText(getApplicationContext(), "외않되", Toast.LENGTH_SHORT). show();
-                      EditText editText = (EditText) findViewById(R.id.editText1) ;
-                      String inputValue = editText.getText().toString() ;
-                      editText.setText("");
-                      refresh(inputValue,0);
-                  }
-              }
+                                                      {
+                                                          @Override
+                                                          public void onClick(View v) {
+                                                              //Toast.makeText(getApplicationContext(), "외않되", Toast.LENGTH_SHORT). show();
+                                                              EditText editText = (EditText) findViewById(R.id.editText1) ;
+                                                              String inputValue = editText.getText().toString() ;
+                                                              editText.setText("");
+                                                              refresh(inputValue,0);
+                                                          }
+                                                      }
         );
     }
 
@@ -236,7 +253,7 @@ public class CallActivity extends AppCompatActivity
                 mResult = (String) (msg.obj);
                 //txtResult.setText(mResult);
                 //txtResult.append(mResult);
-                //m_Adapter.add("mResult",1);
+                //m_Adapter.add(mResult,1);
                 break;
 
             case R.id.finalResult:
@@ -254,9 +271,12 @@ public class CallActivity extends AppCompatActivity
 
                 //strBuf.append("\n");
                 mResult = strBuf.toString();
-                addUserChat(mResult);
-                m_Adapter.add(mResult,1);
-                m_Adapter.notifyDataSetChanged();
+                if(!mResult.equals("")){
+                    addUserChat(mResult);
+                    m_Adapter.add(mResult,1);
+                    m_Adapter.notifyDataSetChanged();
+                }
+                //addUserChat(mResult);
                 break;
 
             case R.id.recognitionError:
@@ -265,7 +285,7 @@ public class CallActivity extends AppCompatActivity
                 }
 
                 mResult = "Error code : " + msg.obj.toString();
-                addUserChat(mResult);
+                //addUserChat(mResult);
                 //txtResult.setText(mResult);
                 m_Adapter.add("error code:"+mResult,2);
                 //btnStart.setText(R.string.str_start);
@@ -281,7 +301,7 @@ public class CallActivity extends AppCompatActivity
                 }
 
                 //btnStart.setText(R.string.str_start);
-               // btnStart.setEnabled(true);
+                // btnStart.setEnabled(true);
                 break;
         }
     }
@@ -332,14 +352,21 @@ public class CallActivity extends AppCompatActivity
     /* ---------------------------------------------- CLOVA 끝 ----------------------------------------------------------- */
     public void addUserChat(String chat){
         //String userChat = chat;
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("chats");
+
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String formattedDate = df.format(c.getTime());
+
+        //DatabaseReference myRef = database.getReference("chats").child(formattedDate);
+        String charRoom = userPhone+friendPhone;
+        DatabaseReference myRef = database.getReference("chats").child(charRoom).child(formattedDate);
 
 
         Hashtable<String,String> chatText = new Hashtable<String,String>();
-        user = intent.getStringExtra("userId");
-        chatText.put("user",user);
-        chatText.put("friend",connectUser);
+        //user = intent.getStringExtra("userId");
+        chatText.put("text", chat);
+        chatText.put("friend",friendPhone);
+        chatText.put("user",userPhone);
         myRef.setValue(chatText);
 
         /*addPhone = (EditText)findViewById(R.id.addFriendPhone);
@@ -354,6 +381,37 @@ public class CallActivity extends AppCompatActivity
 
         //friendPhone.setText("");
         //friendPhone.requestFocus();
+
+        DatabaseReference showchat = database.getReference("chats");
+        /*myRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Chat chat = dataSnapshot.getValue(Chat.class);
+
+                mChat.add(chat);
+                m_Adapter.notifyItemInserted(mChat.size() - 1);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });*/
     }
 
 
@@ -393,6 +451,34 @@ public class CallActivity extends AppCompatActivity
 
             vc = new Connector(videoFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 2, "warning info@VidyoClient info@VidyoConnector", "", 0);
 
+            //채팅창 보이도록
+            if(chatFrame.getVisibility() == View.GONE){
+                chatFrame.setVisibility(View.VISIBLE);
+            }else{
+                chatFrame.setVisibility(View.GONE);
+            }
+
+            if(sendEdit.getVisibility() == View.GONE){
+                sendEdit.setVisibility(View.VISIBLE);
+            }else{
+                sendEdit.setVisibility(View.GONE);
+            }
+
+            //clova 음성인식 시작
+            if(!naverRecognizer.getSpeechRecognizer().isRunning()) {
+                // Start button is pushed when SpeechRecognizer's state is inactive.
+                // Run SpeechRecongizer by calling recognize().
+                mResult = "";
+                if(chatFrame.getVisibility() == View.VISIBLE){
+                    m_Adapter.add("Connecting...",2);
+                }
+                naverRecognizer.recognize();
+            } else {
+                Log.d(TAG, "stop and wait Final Result");
+                //btnStart.setEnabled(false);
+                naverRecognizer.getSpeechRecognizer().stop();
+            }
+
             vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
 
             vc.selectDefaultCamera();
@@ -409,8 +495,8 @@ public class CallActivity extends AppCompatActivity
             displayName = user + "-" + connectUser;
             Log.d("전화발신", user + "->" + connectUser);
 
-            //startCall(connectUser, user);
-            if (true) {
+            startCall(connectUser, user);
+            if (tryCall) {
                 Log.d("connecttt", "함수트루");
 
                 callStatus = CallStatus.Caller;
@@ -488,15 +574,17 @@ public class CallActivity extends AppCompatActivity
 
 
     public void Disconnect(View v) {
-        vc.disconnect();
-        finish();
+        if(vc!=null)
+            vc.disconnect();
+
         //clova
         callStatus = CallStatus.Default;
         Log.d("disconnect", "연결종료");
         naverRecognizer.getSpeechRecognizer().stop();
         Log.d(TAG, "clova finish");
 
-
+        this.setResult(0);
+        finish();
     }
 
     public void onSuccess() {

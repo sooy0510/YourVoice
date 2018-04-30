@@ -22,11 +22,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TabHost;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -84,12 +87,12 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
         //서비스시작
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(CALL_RECEIVER);
-        Intent intent = new Intent(this, CallService.class);
-        startService(intent);
+        Intent cIntent = new Intent(this, CallService.class);
+        startService(cIntent);
 
         context = this;
 
-        intent = getIntent();
+        Intent intent = getIntent();
         userPhone = intent.getStringExtra("userPhone");
         userId = intent.getStringExtra("userId");
 
@@ -163,11 +166,25 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(CALL_RECEIVER)) {
-                call(intent.getStringExtra("callerID"), intent.getStringExtra("receiverID"));
-                Intent stopIntent = new Intent(MainActivity.this, CallService.class);
-                stopService(stopIntent);
+        public void onReceive(Context context, final Intent mintent) {
+            if (mintent.getAction().equals(CALL_RECEIVER)) {
+
+                RelativeLayout r = (RelativeLayout)findViewById(R.id.callReceiveLayout);
+                r.setVisibility(View.VISIBLE);
+                Button b = (Button)findViewById(R.id.callReceive);
+                b.setEnabled(true);
+
+                b.setOnClickListener(
+                        new Button.OnClickListener() {
+                            public void onClick(View v) {
+                                call(mintent.getStringExtra("callerID"), mintent.getStringExtra("receiverID"));
+                            }
+                        }
+                );
+
+                //call(intent.getStringExtra("callerID"), intent.getStringExtra("receiverID"));
+                //Intent stopIntent = new Intent(MainActivity.this, CallService.class);
+                //stopService(stopIntent);
             }
 //                Intent stopIntent = new Intent(MainActivity.this, BroadcastService.class);
 //                stopService(stopIntent);
@@ -240,7 +257,10 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
     public void onListBtnClick(View v, final int position) {
         //전화버튼 눌렀을때
         if (v.getId() == R.id.button1) {
-            call(v);
+            ListViewItem friend = new ListViewItem();
+            friend = (ListViewItem) adapter.getItem(position);
+            String phone = friend.getPhone();
+            call(phone, v);
         } else {
             new AlertDialog.Builder(this)
                     .setTitle("친구 삭제")
@@ -559,9 +579,12 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
 
 
     /* ---------------------------------------------- 전화걸기 ----------------------------------------------------------- */
-    public void call(View v) {
+    public void call(String friendPhone, View v) {
+        //String friendPhone = friendphone;
         Intent intent = new Intent(MainActivity.this, CallActivity.class);
         //intent.putExtra("Tag", v.getTag().toString());
+        intent.putExtra("userPhone", userPhone);
+        intent.putExtra("friendPhone", friendPhone);
         intent.putExtra("Tag", "sooy1");
         startActivity(intent);
     }
@@ -574,6 +597,17 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
     }
 
     /* ---------------------------------------------- 전화걸기 끝 ----------------------------------------------------------- */
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == 0) {
+            RelativeLayout r = (RelativeLayout)findViewById(R.id.callReceiveLayout);
+            r.setVisibility(View.INVISIBLE);
+
+            //Intent cIntent = new Intent(this, CallService.class);
+            //startService(cIntent);
+        }
+    }
 
     public String getUserId() {
         return userId;

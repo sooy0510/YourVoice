@@ -585,7 +585,7 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
         //intent.putExtra("Tag", v.getTag().toString());
         intent.putExtra("userPhone", userPhone);
         intent.putExtra("friendPhone", friendPhone);
-        intent.putExtra("Tag", "sooy1");
+        intent.putExtra("Tag", "inseon");
         startActivity(intent);
     }
 

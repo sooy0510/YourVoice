@@ -106,6 +106,7 @@ public class CallActivity extends AppCompatActivity
 
     //firebase
     FirebaseDatabase database;
+    private List<Chat> mChat;
 
 
     enum VidyoConnectorState {
@@ -131,6 +132,7 @@ public class CallActivity extends AppCompatActivity
 
         //firebase
         database = FirebaseDatabase.getInstance();
+        mChat = new ArrayList<>();
 
         intent = getIntent();
         //clova
@@ -209,16 +211,16 @@ public class CallActivity extends AppCompatActivity
         m_Adapter.add("재미있게",1);*/
 
         findViewById(R.id.button1).setOnClickListener(new Button.OnClickListener()
-                                                      {
-                                                          @Override
-                                                          public void onClick(View v) {
-                                                              //Toast.makeText(getApplicationContext(), "외않되", Toast.LENGTH_SHORT). show();
-                                                              EditText editText = (EditText) findViewById(R.id.editText1) ;
-                                                              String inputValue = editText.getText().toString() ;
-                                                              editText.setText("");
-                                                              refresh(inputValue,0);
-                                                          }
-                                                      }
+              {
+                  @Override
+                  public void onClick(View v) {
+                      //Toast.makeText(getApplicationContext(), "외않되", Toast.LENGTH_SHORT). show();
+                      EditText editText = (EditText) findViewById(R.id.editText1) ;
+                      String inputValue = editText.getText().toString() ;
+                      editText.setText("");
+                      refresh(inputValue,0);
+                  }
+              }
         );
     }
 
@@ -262,11 +264,6 @@ public class CallActivity extends AppCompatActivity
                 SpeechRecognitionResult speechRecognitionResult = (SpeechRecognitionResult) msg.obj;
                 List<String> results = speechRecognitionResult.getResults();
                 StringBuilder strBuf = new StringBuilder();
-                /*for(String result : results) {
-                    strBuf.append(result);
-                    strBuf.append("\n");
-                }*/
-                //첫번째 항목 출력
                 strBuf.append(results.get(0));
 
                 //strBuf.append("\n");
@@ -301,7 +298,7 @@ public class CallActivity extends AppCompatActivity
                 }
 
                 //btnStart.setText(R.string.str_start);
-                // btnStart.setEnabled(true);
+               // btnStart.setEnabled(true);
                 break;
         }
     }

@@ -673,7 +673,11 @@ public class CallActivity extends AppCompatActivity
 
 
     public void Disconnect(View v) {
-        stopCall(user);
+
+        if(callStatus.name().equals("Caller"))
+            stopCall(user);
+        else
+            stopCall(connectUser);
 
         if(vc!=null)
             vc.disconnect();

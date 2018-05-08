@@ -33,12 +33,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.naver.speech.clientapi.SpeechRecognitionResult;
 import com.vidyo.VidyoClient.Connector.ConnectorPkg;
 import com.vidyo.VidyoClient.Connector.Connector;
 import com.vidyo.VidyoClient.Endpoint.ChatMessage;
 import com.vidyo.VidyoClient.Endpoint.Participant;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.w3c.dom.Comment;
 
 import java.io.BufferedReader;
@@ -53,6 +56,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -75,8 +79,14 @@ public class CallActivity extends AppCompatActivity
     private LinearLayout sendEdit;
     private boolean mVidyoClientInitialized = false;
     private boolean tryCall;
-    private String userPhone;
-    private String friendPhone;
+    private String userId;
+    private String friendId;
+    private int chatnum; //채팅방 번호
+    private int chatCnt; //해당 친구와 몇번째 채팅인지
+    private String chatCntStr; //채팅방 디렉토리 이름
+
+    //firebase 데이터 가져오기
+    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
     enum CallStatus {
         Default,
@@ -139,9 +149,9 @@ public class CallActivity extends AppCompatActivity
         //txtResult = (TextView) findViewById(R.id.txt_result);
         //btnStart = (Button) findViewById(R.id.btn_start);
 
-        //userphone, friendphone 받기
-        userPhone = intent.getStringExtra("userPhone");
-        friendPhone = intent.getStringExtra("friendPhone");
+        //userid, friendid 받기
+        userId = intent.getStringExtra("userId");
+        friendId = intent.getStringExtra("friendId");
 
         handler = new RecognitionHandler(this);
         naverRecognizer = new NaverRecognizer(this, handler, CLIENT_ID);
@@ -158,6 +168,8 @@ public class CallActivity extends AppCompatActivity
 
         // ListView에 어댑터 연결
         m_ListView.setAdapter(m_Adapter);
+
+        mChat = new ArrayList<>();
 
         if(intent.getStringExtra("Caller") != null && intent.getStringExtra("Receiver") != null) {
             user = intent.getStringExtra("Caller");
@@ -211,16 +223,16 @@ public class CallActivity extends AppCompatActivity
         m_Adapter.add("재미있게",1);*/
 
         findViewById(R.id.button1).setOnClickListener(new Button.OnClickListener()
-              {
-                  @Override
-                  public void onClick(View v) {
-                      //Toast.makeText(getApplicationContext(), "외않되", Toast.LENGTH_SHORT). show();
-                      EditText editText = (EditText) findViewById(R.id.editText1) ;
-                      String inputValue = editText.getText().toString() ;
-                      editText.setText("");
-                      refresh(inputValue,0);
-                  }
-              }
+                                                      {
+                                                          @Override
+                                                          public void onClick(View v) {
+                                                              //Toast.makeText(getApplicationContext(), "외않되", Toast.LENGTH_SHORT). show();
+                                                              EditText editText = (EditText) findViewById(R.id.editText1) ;
+                                                              String inputValue = editText.getText().toString() ;
+                                                              editText.setText("");
+                                                              refresh(inputValue,0);
+                                                          }
+                                                      }
         );
     }
 
@@ -270,8 +282,8 @@ public class CallActivity extends AppCompatActivity
                 mResult = strBuf.toString();
                 if(!mResult.equals("")){
                     addUserChat(mResult);
-                    m_Adapter.add(mResult,1);
-                    m_Adapter.notifyDataSetChanged();
+                    //m_Adapter.add(mResult,1);
+                    //m_Adapter.notifyDataSetChanged();
                 }
                 //addUserChat(mResult);
                 break;
@@ -298,7 +310,7 @@ public class CallActivity extends AppCompatActivity
                 }
 
                 //btnStart.setText(R.string.str_start);
-               // btnStart.setEnabled(true);
+                // btnStart.setEnabled(true);
                 break;
         }
     }
@@ -347,46 +359,142 @@ public class CallActivity extends AppCompatActivity
     }
 
     /* ---------------------------------------------- CLOVA 끝 ----------------------------------------------------------- */
+
+    /* ---------------------------------------------- 채팅방 번호 구하기 ----------------------------------------------------------- */
+    private void getChatCnt(final String userId, String friendId) {
+        class getChatRoomNum extends AsyncTask<String, Void, String> {
+            ProgressDialog loading;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                loading = ProgressDialog.show(CallActivity.this, "Please Wait", null, true, true);
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                loading.dismiss();
+                chatnum = Integer.parseInt(s);
+                //Toast.makeText(getApplicationContext(), chatnum+"IN DB", Toast.LENGTH_SHORT). show();
+                chatCnt = chatnum + 1;
+                //Toast.makeText(getApplicationContext(), chatCnt+"SS", Toast.LENGTH_SHORT).show();
+                chatCntStr = Integer.toString(chatCnt);
+                //Toast.makeText(getApplicationContext(), chatCntStr, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+
+                try {
+                    String userId = (String) params[0];
+                    String friendId = (String) params[1];
+
+
+                    String link = "http://13.124.94.107/getChatCnt.php";
+                    String data = URLEncoder.encode("UserId", "UTF-8") + "=" + URLEncoder.encode(userId, "UTF-8");
+                    data += "&" + URLEncoder.encode("FriendId", "UTF-8") + "=" + URLEncoder.encode(friendId, "UTF-8");
+
+
+                    URL url = new URL(link);
+                    URLConnection conn = url.openConnection();
+
+
+                    conn.setDoOutput(true);
+                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+
+                    wr.write(data);
+                    wr.flush();
+
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+
+                    StringBuilder sb = new StringBuilder();
+                    String line = null;
+
+
+                    // Read Server Response
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line);
+                        break;
+                    }
+                    return sb.toString();
+                } catch (Exception e) {
+                    return new String("Exception: " + e.getMessage());
+                }
+            }
+        }
+        getChatRoomNum task = new getChatRoomNum();
+        task.execute(userId, friendId);
+    }
+
+    /* ---------------------------------------------- 채팅방 번호 구하기 끝 ----------------------------------------------------------- */
+
+
+    /* ---------------------------------------------- 사용자 채팅 DB에 추가 ----------------------------------------------------------- */
     public void addUserChat(String chat){
-        //String userChat = chat;
 
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String formattedDate = df.format(c.getTime());
 
+        //Toast.makeText(getApplicationContext(), chatCntStr, Toast.LENGTH_SHORT).show();
+
         //DatabaseReference myRef = database.getReference("chats").child(formattedDate);
-        String charRoom = userPhone+friendPhone;
-        DatabaseReference myRef = database.getReference("chats").child(charRoom).child(formattedDate);
+        String chatRoom = userId+friendId;
+        DatabaseReference myRef = database.getReference("chats").child(chatRoom).child(chatCntStr).child(formattedDate);
 
 
         Hashtable<String,String> chatText = new Hashtable<String,String>();
         //user = intent.getStringExtra("userId");
         chatText.put("text", chat);
-        chatText.put("friend",friendPhone);
-        chatText.put("user",userPhone);
+        chatText.put("friend",userId);
+        chatText.put("user",friendId);
         myRef.setValue(chatText);
 
-        /*addPhone = (EditText)findViewById(R.id.addFriendPhone);
-        String friendPhone = addPhone.getText().toString();
 
-        //LoginActivity loginActivity = (LoginActivity) getApplication();
+        m_Adapter.add(mResult,1);
+        m_Adapter.notifyDataSetChanged();
 
-        String userId = intent.getStringExtra("userId");
-        //Log.e("aaaaaaaaaaaaaaaaaaaa",userId);
 
-        insertToDatabase(userId, friendPhone);*/
+        //채팅내용 가져오기
+        DatabaseReference databaseReference = firebaseDatabase.getReference("chats");
 
-        //friendPhone.setText("");
-        //friendPhone.requestFocus();
 
-        DatabaseReference showchat = database.getReference("chats");
-        /*myRef.addChildEventListener(new ChildEventListener() {
+        databaseReference.addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // 데이터를 읽어올 때 모든 데이터를 읽어오기때문에 List 를 초기화해주는 작업이 필요하다.
+                //m_Adapter.clear();
+                for (DataSnapshot messageData : dataSnapshot.getChildren()) {
+                    String msg = messageData.getValue().toString();
+                    m_Adapter.add(msg,0);
+                }
+                // notifyDataSetChanged를 안해주면 ListView 갱신이 안됨
+                m_Adapter.notifyDataSetChanged();
+                // ListView 의 위치를 마지막으로 보내주기 위함
+                m_ListView.setSelection(m_Adapter.getCount() - 1);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+/*
+        // 데이터 받아오기 및 어댑터 데이터 추가 및 삭제 등..리스너 관리
+        databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Chat chat = dataSnapshot.getValue(Chat.class);
-
                 mChat.add(chat);
-                m_Adapter.notifyItemInserted(mChat.size() - 1);
+                //refresh(mChat.,0);(mChat.size()-1);
+
+
+
             }
 
             @Override
@@ -413,21 +521,7 @@ public class CallActivity extends AppCompatActivity
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    /* ---------------------------------------------- 사용자 채팅 DB에 추가 끝 ----------------------------------------------------------- */
 
     /* ---------------------------------------------- VIDYO ----------------------------------------------------------- */
     public void Connect(View v) {
@@ -442,11 +536,12 @@ public class CallActivity extends AppCompatActivity
 
         // Log.d("전화를", conn);
 
-        if (callStatus.name().equals("Receiver")) {
+        if (callStatus.name().equals("Receiver")) { //전화 받을때
             displayName = user + "-" + connectUser;
             Log.d("전화수신", user + "->" + connectUser);
 
             vc = new Connector(videoFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 2, "warning info@VidyoClient info@VidyoConnector", "", 0);
+            RegisterForVidyoEvents();
 
             //채팅창 보이도록
             if(chatFrame.getVisibility() == View.GONE){
@@ -485,7 +580,7 @@ public class CallActivity extends AppCompatActivity
             vc.selectDefaultNetworkInterfaceForMedia();
 
             vc.connect("prod.vidyo.io", token, "call", displayName, this);
-        } else {
+        } else { //전화 걸때
             callStatus = CallStatus.Caller;
             user = ((MainActivity) MainActivity.context).getUserId();
             connectUser = intent.getStringExtra("Tag");
@@ -494,11 +589,13 @@ public class CallActivity extends AppCompatActivity
 
             startCall(connectUser, user);
             if (tryCall) {
+                tryCall = false;
                 Log.d("connecttt", "함수트루");
 
                 callStatus = CallStatus.Caller;
 
                 vc = new Connector(videoFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 2, "warning info@VidyoClient info@VidyoConnector", "", 0);
+                RegisterForVidyoEvents();
 
                 //채팅창 보이도록
                 if(chatFrame.getVisibility() == View.GONE){
@@ -527,6 +624,11 @@ public class CallActivity extends AppCompatActivity
                     //btnStart.setEnabled(false);
                     naverRecognizer.getSpeechRecognizer().stop();
                 }
+
+                //발신자만 채팅방 번호 추가
+                getChatCnt(userId, friendId);
+
+
                 vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
 
                 vc.selectDefaultCamera();
@@ -571,6 +673,8 @@ public class CallActivity extends AppCompatActivity
 
 
     public void Disconnect(View v) {
+        stopCall(user);
+
         if(vc!=null)
             vc.disconnect();
 
@@ -587,9 +691,6 @@ public class CallActivity extends AppCompatActivity
     public void onSuccess() {
         Log.d("onSuccess", "successfully connected.");
         //connectorStateUpdated(VidyoConnectorState.VidyoConnectorStateConnected, "Connected");
-
-
-
     }
 
     public void onFailure(Connector.ConnectorFailReason reason) {
@@ -632,8 +733,11 @@ public class CallActivity extends AppCompatActivity
     public void onParticipantJoined(Participant participant) {
         Log.d("ParticipainJoined", "ture");
     }
+
     // Participant Left
-    public void onParticipantLeft(Participant participant) {}
+    public void onParticipantLeft(Participant participant) {
+        Disconnect(findViewById(R.id.disconnect));
+    }
     // Ordered array of participants according to rank
     public void onDynamicParticipantChanged(ArrayList participants, ArrayList cameras) {}
     // Current loudest speaker
@@ -677,7 +781,7 @@ public class CallActivity extends AppCompatActivity
             ProgressDialog loading;
 
             protected void onCancelled() {
-                super.onCancelled();
+                stopCall(user);
             }
 
             @Override
@@ -745,6 +849,77 @@ public class CallActivity extends AppCompatActivity
         }
         InsertData task = new InsertData();
         task.execute(connectId, Id);
+    }
+
+    private void stopCall(final String Id) {
+
+        class InsertData extends AsyncTask<String, Void, String> {
+            //ProgressDialog loading;
+
+            protected void onCancelled() {
+                super.onCancelled();
+            }
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                //loading = ProgressDialog.show(CallActivity.this, "caling...", null, true, true);
+                //Toast.makeText(getApplicationContext(), "외않되", Toast.LENGTH_SHORT). show();
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                //loading.dismiss();
+
+                if (s.toString().equals("Disconnect")) {
+                    Log.d("Disconnect", "DB초기화");
+                    tryCall = false;
+                }
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+
+                if (this.isCancelled()) {
+                    // 비동기작업을 cancel해도 자동으로 취소해주지 않으므로,
+                    // 작업중에 이런식으로 취소 체크를 해야 한다.
+                    return null;
+                }
+
+                try {
+                    String Id = (String) params[0];
+
+                    String link = "http://13.124.94.107/stopCall.php";
+                    String data = URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(Id, "UTF-8");
+
+                    URL url = new URL(link);
+                    URLConnection conn = url.openConnection();
+
+                    conn.setDoOutput(true);
+                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+                    wr.write(data);
+                    wr.flush();
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+                    StringBuilder sb = new StringBuilder();
+                    String line = null;
+
+                    // Read Server Response
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line);
+                        break;
+                    }
+                    return sb.toString();
+                } catch (Exception e) {
+                    return new String("Exception: " + e.getMessage());
+                }
+            }
+        }
+        InsertData task = new InsertData();
+        task.execute(Id);
     }
 
     public String getConnectUser(){

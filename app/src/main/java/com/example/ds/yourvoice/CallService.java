@@ -52,9 +52,9 @@ public class CallService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        //user = "inseon";
+        user = "sooy1";
         //getUserId();
-        user = ((MainActivity)MainActivity.context).getUserId();
+        //user = ((MainActivity)MainActivity.context).getUserId();
     }
 
     //    @Override

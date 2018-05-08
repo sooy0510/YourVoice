@@ -14,9 +14,9 @@ public class Chat {
         // Default constructor required for calls to DataSnapshot.getValue(Comment.class)
     }
 
-    public Chat(String uid, String author, String text) {
-        this.user = uid;
-        this.friend = author;
+    public Chat(String user, String friend, String text) {
+        this.user = user;
+        this.friend = friend;
         this.text = text;
     }
 }

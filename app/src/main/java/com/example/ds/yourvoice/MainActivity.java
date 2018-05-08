@@ -48,7 +48,7 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity implements ListViewAdapter.ListBtnClickListener {
 
     Toolbar myToolbar;
-    EditText addPhone;
+    EditText addId;
     Intent intent;
     String userPhone;
     String userId;
@@ -61,12 +61,13 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
     ArrayList<ListViewItem> list = new ArrayList<ListViewItem>(); //실질적인 listview
 
     public static Context context;
+    public Intent cIntent;
 
     private static String TAG = "FRIENDLIST";
 
     private static final String TAG_JSON = "friendList";
     private static final String TAG_NAME = "friendname";
-    private static final String TAG_PHONE = "friendphone";
+    private static final String TAG_ID = "friendid";
 
     public static final String CALL_RECEIVER = "receiver";
     private IntentFilter mIntentFilter;
@@ -87,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
         //서비스시작
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(CALL_RECEIVER);
-        Intent cIntent = new Intent(this, CallService.class);
+        cIntent = new Intent(this, CallService.class);
         startService(cIntent);
 
         context = this;
@@ -167,17 +168,36 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, final Intent mintent) {
+            //전화받기화면
             if (mintent.getAction().equals(CALL_RECEIVER)) {
 
-                RelativeLayout r = (RelativeLayout)findViewById(R.id.callReceiveLayout);
+                Log.d("전화받기화면", "전화받기화면");
+
+                //stopService(cIntent);
+
+                final RelativeLayout r = (RelativeLayout)findViewById(R.id.callReceiveLayout);
                 r.setVisibility(View.VISIBLE);
                 Button b = (Button)findViewById(R.id.callReceive);
-                b.setEnabled(true);
+                Button bt = (Button)findViewById(R.id.callDenial);
+                //b.setEnabled(true);
+                //bt.setEnabled(true);
 
+                //전화받기버튼 누르기
                 b.setOnClickListener(
                         new Button.OnClickListener() {
                             public void onClick(View v) {
                                 call(mintent.getStringExtra("callerID"), mintent.getStringExtra("receiverID"));
+                                //stopService(cIntent);
+                            }
+                        }
+                );
+
+                //전화끊기버튼 누르기
+                bt.setOnClickListener(
+                        new Button.OnClickListener() {
+                            public void onClick(View v) {
+                                r.setVisibility(View.INVISIBLE);
+                                //startService(cIntent);
                             }
                         }
                 );
@@ -259,8 +279,8 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
         if (v.getId() == R.id.button1) {
             ListViewItem friend = new ListViewItem();
             friend = (ListViewItem) adapter.getItem(position);
-            String phone = friend.getPhone();
-            call(phone, v);
+            String id = friend.getId();
+            call(id, v);
         } else {
             new AlertDialog.Builder(this)
                     .setTitle("친구 삭제")
@@ -271,9 +291,9 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
                             // 확인시 처리 로직
                             ListViewItem s = new ListViewItem();
                             s = (ListViewItem) adapter.getItem(position);
-                            String phone = s.getPhone();
+                            String id = s.getId();
 
-                            deleteFriend(position, phone);
+                            deleteFriend(position, id);
                         }
                     })
                     .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -321,7 +341,7 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
 
             try {
                 //String link = "http://13.124.94.107/addFriend.php";
-                String data = URLEncoder.encode("userPhone", "UTF-8") + "=" + URLEncoder.encode(userPhone, "UTF-8");
+                String data = URLEncoder.encode("userId", "UTF-8") + "=" + URLEncoder.encode(userId, "UTF-8");
 
                 URL url = new URL(serverURL);
                 URLConnection conn = url.openConnection();
@@ -368,12 +388,12 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
                 JSONObject item = jsonArray.getJSONObject(i);
 
                 String friendname = item.getString(TAG_NAME);
-                String friendphone = item.getString(TAG_PHONE);
+                String friendid = item.getString(TAG_ID);
 
                 HashMap<String, String> hashMap = new HashMap<>();
 
                 hashMap.put(TAG_NAME, friendname);
-                hashMap.put(TAG_PHONE, friendphone);
+                hashMap.put(TAG_ID, friendid);
 
                 mArrayList.add(hashMap);
             }
@@ -387,7 +407,7 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
                 item = new ListViewItem();
                 item.setIcon(ContextCompat.getDrawable(this, R.drawable.icon));
                 item.setName(ritem.get(TAG_NAME));
-                item.setPhone(ritem.get(TAG_PHONE));
+                item.setId(ritem.get(TAG_ID));
                 list.add(item);
             }
 
@@ -409,15 +429,15 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
 
     /* ---------------------------------------------- 친구 추가 ----------------------------------------------------------- */
     public void addFriend(View v) {
-        addPhone = (EditText) findViewById(R.id.addFriendPhone);
-        String friendPhone = addPhone.getText().toString();
+        addId = (EditText) findViewById(R.id.addFriendId);
+        String friendId = addId.getText().toString();
 
         //LoginActivity loginActivity = (LoginActivity) getApplication();
 
-        String userId = intent.getStringExtra("userId");
+        //String userId = intent.getStringExtra("userId");
         //Log.e("aaaaaaaaaaaaaaaaaaaa",userId);
 
-        insertToDatabase(userId, friendPhone);
+        insertToDatabase(userId, friendId);
 
         //friendPhone.setText("");
         //friendPhone.requestFocus();
@@ -427,16 +447,16 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
 
 
     /* ---------------------------------------------- 친구 삭제 ----------------------------------------------------------- */
-    public void deleteFriend(int pos, String num) {
+    public void deleteFriend(int pos, String id) {
         //String userPhone = intent.getStringExtra("userId");
-        deleteFromDatabase(pos, userPhone, num);
+        deleteFromDatabase(pos, userId, id);
     }
 
     /* ---------------------------------------------- 친구 삭제 끝 ----------------------------------------------------------- */
 
 
     /* ---------------------------------------------- DB에 친구 번호 추가 ----------------------------------------------------------- */
-    private void insertToDatabase(final String userId, String friendPhone) {
+    private void insertToDatabase(final String userId, String friendId) {
         class InsertData extends AsyncTask<String, Void, String> {
             ProgressDialog loading;
 
@@ -452,7 +472,7 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
                 loading.dismiss();
                 Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
 
-                addPhone.setText("");
+                addId.setText("");
                 //addPhone.requestFocus();
             }
 
@@ -461,12 +481,12 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
 
                 try {
                     String userId = (String) params[0];
-                    String friendPhone = (String) params[1];
+                    String friendId = (String) params[1];
 
 
                     String link = "http://13.124.94.107/addFriend.php";
                     String data = URLEncoder.encode("UserId", "UTF-8") + "=" + URLEncoder.encode(userId, "UTF-8");
-                    data += "&" + URLEncoder.encode("FriendPhone", "UTF-8") + "=" + URLEncoder.encode(friendPhone, "UTF-8");
+                    data += "&" + URLEncoder.encode("FriendId", "UTF-8") + "=" + URLEncoder.encode(friendId, "UTF-8");
 
 
                     URL url = new URL(link);
@@ -500,14 +520,14 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
             }
         }
         InsertData task = new InsertData();
-        task.execute(userId, friendPhone);
+        task.execute(userId, friendId);
     }
 
     /* ---------------------------------------------- DB에 친구 번호 추가 끝 ----------------------------------------------------------- */
 
 
     /* ---------------------------------------------- DB에 친구 번호 삭제 ----------------------------------------------------------- */
-    private void deleteFromDatabase(final int pos, String userPhone, String friendPhone) {
+    private void deleteFromDatabase(final int pos, String userId, String friendId) {
         class DeleteData extends AsyncTask<String, Void, String> {
             ProgressDialog loading;
 
@@ -531,13 +551,13 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
             protected String doInBackground(String... params) {
 
                 try {
-                    String userPhone = (String) params[0];
-                    String friendPhone = (String) params[1];
+                    String userId = (String) params[0];
+                    String friendId = (String) params[1];
 
 
                     String link = "http://13.124.94.107/deleteFriend.php";
-                    String data = URLEncoder.encode("UserPhone", "UTF-8") + "=" + URLEncoder.encode(userPhone, "UTF-8");
-                    data += "&" + URLEncoder.encode("FriendPhone", "UTF-8") + "=" + URLEncoder.encode(friendPhone, "UTF-8");
+                    String data = URLEncoder.encode("UserId", "UTF-8") + "=" + URLEncoder.encode(userId, "UTF-8");
+                    data += "&" + URLEncoder.encode("FriendId", "UTF-8") + "=" + URLEncoder.encode(friendId, "UTF-8");
 
 
                     URL url = new URL(link);
@@ -571,7 +591,7 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
             }
         }
         DeleteData task = new DeleteData();
-        task.execute(userPhone, friendPhone);
+        task.execute(userId, friendId);
     }
 
 
@@ -579,12 +599,12 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
 
 
     /* ---------------------------------------------- 전화걸기 ----------------------------------------------------------- */
-    public void call(String friendPhone, View v) {
+    public void call(String friendId, View v) {
         //String friendPhone = friendphone;
         Intent intent = new Intent(MainActivity.this, CallActivity.class);
         //intent.putExtra("Tag", v.getTag().toString());
-        intent.putExtra("userPhone", userPhone);
-        intent.putExtra("friendPhone", friendPhone);
+        intent.putExtra("userId", userId);
+        intent.putExtra("friendId", friendId);
         intent.putExtra("Tag", "inseon");
         startActivity(intent);
     }
@@ -601,6 +621,9 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == 0) {
+
+            //startService(cIntent);
+
             RelativeLayout r = (RelativeLayout)findViewById(R.id.callReceiveLayout);
             r.setVisibility(View.INVISIBLE);
 

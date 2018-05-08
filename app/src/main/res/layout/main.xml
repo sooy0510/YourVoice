@@ -74,9 +74,9 @@
                         <EditText
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/addFriendPhone"
-                            android:hint="추가할 전화번호"
-                            android:inputType="number"
+                            android:id="@+id/addFriendId"
+                            android:hint="추가할 아이디"
+                            android:inputType="text"
                             android:ems="10"
                             android:maxLength="11"/>
 
@@ -89,7 +89,7 @@
                         android:text="추가"
                         android:onClick="addFriend"/>
 
-               </LinearLayout>
+                </LinearLayout>
 
             </FrameLayout>
         </TabHost>
@@ -109,27 +109,17 @@
             android:layout_centerInParent="true"
             android:layout_marginBottom="100dp"
             android:text="전화받기"
-            android:enabled="false"/>
-
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:id="@+id/callReceiveLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#000000"
-        android:visibility="invisible">
+            android:enabled="true"/>
 
         <Button
-            android:id="@+id/callReceive"
+            android:id="@+id/callDenial"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_centerInParent="true"
             android:layout_marginBottom="100dp"
-            android:text="전화받기"
-            android:enabled="false"/>
+            android:layout_toRightOf="@+id/callReceive"
+            android:text="전화끊기"
+            android:enabled="true"/>
 
     </RelativeLayout>
 

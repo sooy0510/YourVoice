@@ -59,7 +59,7 @@ public class ListViewAdapter extends ArrayAdapter implements View.OnClickListene
         // 아이템 내 각 위젯에 데이터 반영
         iconImageView.setImageDrawable(listViewItem.getIcon());
         textTextView1.setText(listViewItem.getName());
-        textTextView2.setText(listViewItem.getPhone());
+        textTextView2.setText(listViewItem.getId());
 
         // button1의 TAG에 position값 지정. Adapter를 click listener로 지정.
         Button button1 = (Button) convertView.findViewById(R.id.button1);

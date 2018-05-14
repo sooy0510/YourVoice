@@ -62,7 +62,7 @@ public class CallService extends Service {
         super.onCreate();
 
         //user = MainActivity.userId;
-        user = "inseon";
+        user = "sooy1";
         //getUserId();
 
         // 등록된 알람은 제거

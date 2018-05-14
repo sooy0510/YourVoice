@@ -42,6 +42,12 @@ public class MessageAdapter extends BaseAdapter {
         m_List.add(new ListContents(_msg,_type));
     }
 
+    // 외부에서 리스트 삭제 요청 시 사용
+    public void clean() {
+
+        m_List.clear();
+    }
+
     // 외부에서 아이템 삭제 요청 시 사용
     public void remove(int _position) {
         m_List.remove(_position);

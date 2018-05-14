@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/callReceiveLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000">
+
+        <TextView
+            android:id="@+id/caller"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#ffffff"
+            android:text=""
+            android:textSize="50dp"
+            android:layout_marginTop="100dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerInParent="true"/>
+
+        <Button
+            android:id="@+id/callReceive"
+            android:onClick="receive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="100dp"
+            android:text="전화받기"/>
+
+        <Button
+            android:id="@+id/callDenial"
+            android:onClick="denial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="100dp"
+            android:layout_toRightOf="@+id/callReceive"
+            android:text="전화끊기"/>
+
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>

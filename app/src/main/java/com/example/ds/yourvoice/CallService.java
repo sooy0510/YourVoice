@@ -1,11 +1,13 @@
 package com.example.ds.yourvoice;
 
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -27,6 +29,8 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by DS on 2018-04-06.
@@ -62,7 +66,7 @@ public class CallService extends Service {
         super.onCreate();
 
         //user = MainActivity.userId;
-        user = "sooy1";
+        user = "inseon";
         //getUserId();
 
         // 등록된 알람은 제거
@@ -120,6 +124,7 @@ public class CallService extends Service {
             @Override
             public void run() {
 
+                Log.d(connectUser, callStatus);
                 while (connectUser == null && callStatus.equals("Default")) {
                     //callStatus = mCallback.getCallStatus();
                     Log.d("상태", callStatus);
@@ -158,7 +163,9 @@ public class CallService extends Service {
                             callStatus = "Receiver";
 
                             Intent broadcastIntent = new Intent();
-                            broadcastIntent.setAction(MainActivity.CALL_RECEIVER);
+                            broadcastIntent.setAction("ACTION.CallReceive");
+                            broadcastIntent.setFlags(Intent.FLAG_RECEIVER_REPLACE_PENDING); //중복된 브로드캐스트를 하나로
+                            broadcastIntent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES); //프로세스가 존재하지 않아도 리시버에게 전달
                             broadcastIntent.putExtra("callerID", connectUser);
                             broadcastIntent.putExtra("receiverID", user);
                             sendBroadcast(broadcastIntent);
@@ -168,6 +175,7 @@ public class CallService extends Service {
                             //((CallActivity)CallActivity.context).setConnectUser(connectUser);
                             //((CallActivity)CallActivity.context).Connect();
                             Log.d("전화왔다", result);
+                            //stopSelf();
                             break;
                         }
                     } catch (Exception e) {
@@ -178,7 +186,21 @@ public class CallService extends Service {
         };
         thread.start();
         return super.onStartCommand(intent, flags, startId);
-       // return START_STICKY;
+        //return START_STICKY;
     }
+
+//    // 콜액티비티 실행중인지 확인하고 실행중이면 서비스 중지
+    public static boolean isForegroundActivity(Context context, Class<?> cls) {
+        if(cls == null)
+            return false;
+
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> info = activityManager.getRunningTasks(1);
+        ActivityManager.RunningTaskInfo running = info.get(0);
+        ComponentName componentName = running.topActivity;
+
+        return cls.getName().equals(componentName.getClassName());
+    }
+
 }
 

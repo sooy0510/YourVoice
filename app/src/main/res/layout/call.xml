@@ -10,16 +10,16 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.ds.yourvoice.CallActivity">
 
-   <!-- <Button
-        android:id="@+id/btn_start"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_alignBaseline="@+id/button2"
-        android:layout_alignBottom="@+id/button2"
-        android:layout_toEndOf="@+id/button2"
-        android:layout_toRightOf="@+id/button2"
-        android:onClick="StartChat"
-        android:text="채팅시작" />-->
+    <!-- <Button
+         android:id="@+id/btn_start"
+         android:layout_width="100dp"
+         android:layout_height="100dp"
+         android:layout_alignBaseline="@+id/button2"
+         android:layout_alignBottom="@+id/button2"
+         android:layout_toEndOf="@+id/button2"
+         android:layout_toRightOf="@+id/button2"
+         android:onClick="StartChat"
+         android:text="채팅시작" />-->
 
     <Button
         android:text="수연에게 전화걸기"
@@ -39,13 +39,13 @@
         android:id="@+id/disconnect"
         android:onClick="Disconnect" />
 
-<!--   <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/btn_start"
-        android:layout_marginTop="500dp"
-        android:layout_marginLeft="150dp"
-        android:text="채팅 시작"/>-->
+    <!--   <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_start"
+            android:layout_marginTop="500dp"
+            android:layout_marginLeft="150dp"
+            android:text="채팅 시작"/>-->
 
     <FrameLayout
         android:id="@+id/videoFrame"
@@ -102,17 +102,43 @@
             android:text="전 송" />
 
     </LinearLayout>
-<!--    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_marginTop="380dp">
-        <TextView
-            android:id="@+id/txt_result"
+    <!--    <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </ScrollView>-->
+            android:layout_height="150dp"
+            android:layout_marginTop="380dp">
+            <TextView
+                android:id="@+id/txt_result"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </ScrollView>-->
 
+    <RelativeLayout
+        android:id="@+id/callReceiveLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000"
+        android:visibility="invisible">
 
+        <Button
+            android:id="@+id/callReceive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="100dp"
+            android:text="전화받기"
+            android:enabled="true"/>
+
+        <Button
+            android:id="@+id/callDenial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="100dp"
+            android:layout_toRightOf="@+id/callReceive"
+            android:text="전화끊기"
+            android:enabled="true"/>
+
+    </RelativeLayout>
 
 </RelativeLayout>
-

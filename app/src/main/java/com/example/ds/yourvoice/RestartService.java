@@ -35,5 +35,13 @@ public class RestartService extends BroadcastReceiver {
             Intent i = new Intent(context, CallService.class);
             context.startService(i);
         }
+
+        if(intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
+
+            Log.d("RestartService", "ACTION_SCREEN_ON");
+
+            Intent i = new Intent(context, CallService.class);
+            context.startService(i);
+        }
     }
 }

@@ -139,7 +139,7 @@ public class CallActivity extends AppCompatActivity
 
         ConnectorPkg.setApplicationUIContext(this);
         mVidyoClientInitialized = ConnectorPkg.initialize();
-        videoFrame = (FrameLayout)findViewById(R.id.videoFrame);
+        videoFrame = (FrameLayout) findViewById(R.id.videoFrame);
 
         //firebase
         database = FirebaseDatabase.getInstance();
@@ -171,7 +171,7 @@ public class CallActivity extends AppCompatActivity
         m_ListView.setAdapter(m_Adapter);
 
 
-        if(intent.getStringExtra("Caller") != null && intent.getStringExtra("Receiver") != null) {
+        if (intent.getStringExtra("Caller") != null && intent.getStringExtra("Receiver") != null) {
             user = intent.getStringExtra("Caller");
             connectUser = intent.getStringExtra("Receiver");
             //Connect 함수 매개변수값 오또카지;;
@@ -222,15 +222,14 @@ public class CallActivity extends AppCompatActivity
         m_Adapter.add("재미있게",1);
         m_Adapter.add("재미있게",1);*/
 
-        findViewById(R.id.button1).setOnClickListener(new Button.OnClickListener()
-                                                      {
+        findViewById(R.id.button1).setOnClickListener(new Button.OnClickListener() {
                                                           @Override
                                                           public void onClick(View v) {
                                                               //Toast.makeText(getApplicationContext(), "외않되", Toast.LENGTH_SHORT). show();
-                                                              EditText editText = (EditText) findViewById(R.id.editText1) ;
-                                                              String inputValue = editText.getText().toString() ;
+                                                              EditText editText = (EditText) findViewById(R.id.editText1);
+                                                              String inputValue = editText.getText().toString();
                                                               editText.setText("");
-                                                              refresh(inputValue,0);
+                                                              refresh(inputValue, 0);
                                                           }
                                                       }
         );
@@ -238,10 +237,9 @@ public class CallActivity extends AppCompatActivity
 
 
     private void refresh(String inputValue, int _str) {
-        m_Adapter.add(inputValue,_str) ;
+        m_Adapter.add(inputValue, _str);
         m_Adapter.notifyDataSetChanged();
     }
-
 
 
     /* ---------------------------------------------- CLOVA ----------------------------------------------------------- */
@@ -252,7 +250,7 @@ public class CallActivity extends AppCompatActivity
                 // Now an user can speak.
 
                 //txtResult.append("\n Connected");
-                m_Adapter.add("Connected",2);
+                m_Adapter.add("Connected", 2);
                 writer = new AudioWriterPCM(
                         Environment.getExternalStorageDirectory().getAbsolutePath() + "/NaverSpeechTest");
                 writer.open("Test");
@@ -281,7 +279,7 @@ public class CallActivity extends AppCompatActivity
 
                 //strBuf.append("\n");
                 mResult = strBuf.toString();
-                if(!mResult.equals("")){
+                if (!mResult.equals("")) {
                     addUserChat(mResult);
                     //m_Adapter.add(mResult,1);
                     //m_Adapter.notifyDataSetChanged();
@@ -297,7 +295,7 @@ public class CallActivity extends AppCompatActivity
                 mResult = "Error code : " + msg.obj.toString();
                 //addUserChat(mResult);
                 //txtResult.setText(mResult);
-                m_Adapter.add("error code:"+mResult,2);
+                m_Adapter.add("error code:" + mResult, 2);
                 //btnStart.setText(R.string.str_start);
                 //btnStart.setEnabled(true);
                 break;
@@ -330,7 +328,7 @@ public class CallActivity extends AppCompatActivity
 
         mResult = "";
         //txtResult.setText("");
-        m_Adapter.add(mResult,2);
+        m_Adapter.add(mResult, 2);
         //btnStart.setText(R.string.str_start);
         //btnStart.setEnabled(true);
     }
@@ -504,7 +502,7 @@ public class CallActivity extends AppCompatActivity
 
 
     /* ---------------------------------------------- 사용자 채팅 DB에 추가 ----------------------------------------------------------- */
-    public void addUserChat(String chat){
+    public void addUserChat(String chat) {
 
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -513,35 +511,35 @@ public class CallActivity extends AppCompatActivity
         //Toast.makeText(getApplicationContext(), chatCntStr, Toast.LENGTH_SHORT).show();
 
         //DatabaseReference myRef = database.getReference("chats").child(formattedDate);
-        String chatRoom = user+connectUser;
-        Log.d("ddddddddddd",userId);//sooy1
-        Log.d("ddddddddddd",user); //inseon
-        Log.d("ddddddddddd",friendId); //inseon
-        Log.d("ddddddddddd",connectUser); //sooy1
-        if(userId.equals(user)){ //실사용자 = 발신자
-            getChatCnt1(user,connectUser);
-            Log.d("ddddddddddd",chatRoom);
-            Log.d("ddddddddddd",chatCntStr);
-        }else{ //실사용자 = 수신자
+        String chatRoom = user + connectUser;
+        Log.d("ddddddddddd", userId);//sooy1
+        Log.d("ddddddddddd", user); //inseon
+        Log.d("ddddddddddd", friendId); //inseon
+        Log.d("ddddddddddd", connectUser); //sooy1
+        if (userId.equals(user)) { //실사용자 = 발신자
+            getChatCnt1(user, connectUser);
+            Log.d("ddddddddddd", chatRoom);
+            Log.d("ddddddddddd", chatCntStr);
+        } else { //실사용자 = 수신자
             getChatCnt(user, connectUser);
-            Log.d("ddddddddddd",chatRoom);
-            Log.d("ddddddddddd",chatCntStr);
+            Log.d("ddddddddddd", chatRoom);
+            Log.d("ddddddddddd", chatCntStr);
         }
 
 
         DatabaseReference myRef = database.getReference("chats").child(chatRoom).child(chatCntStr).child(formattedDate);
 
 
-        Hashtable<String,String> chatText = new Hashtable<String,String>();
+        Hashtable<String, String> chatText = new Hashtable<String, String>();
         //user = intent.getStringExtra("userId");
         chatText.put("text", chat);
 
-        if(userId.equals(user)){ //실사용자 = 발신자
-            chatText.put("user",userId);
-            chatText.put("friend",friendId);
-        }else{ //실사용자 = 수신자
-            chatText.put("user",connectUser);
-            chatText.put("friend",user);
+        if (userId.equals(user)) { //실사용자 = 발신자
+            chatText.put("user", userId);
+            chatText.put("friend", friendId);
+        } else { //실사용자 = 수신자
+            chatText.put("user", connectUser);
+            chatText.put("friend", user);
         }
         myRef.setValue(chatText);
 
@@ -564,16 +562,16 @@ public class CallActivity extends AppCompatActivity
                     //String msg = messageData.getValue().toString();
                     Chat chat = messageData.getValue(Chat.class);
 
-                    if(user.equals(userId)){ //사용자 = 발신자
-                        if(user.equals(chat.user)) { //사용자 = 채팅의 user
+                    if (user.equals(userId)) { //사용자 = 발신자
+                        if (user.equals(chat.user)) { //사용자 = 채팅의 user
                             m_Adapter.add(chat.text, 1);
-                        }else{
+                        } else {
                             m_Adapter.add(chat.text, 2);
                         }
-                    }else{ //사용자 = 수신자
-                        if(connectUser.equals(chat.user)) { //사용자 = 채팅의 user
+                    } else { //사용자 = 수신자
+                        if (connectUser.equals(chat.user)) { //사용자 = 채팅의 user
                             m_Adapter.add(chat.text, 1);
-                        }else{
+                        } else {
                             m_Adapter.add(chat.text, 2);
                         }
                     }
@@ -653,25 +651,25 @@ public class CallActivity extends AppCompatActivity
             getChatCnt(user, connectUser);
 
             //채팅창 보이도록
-            if(chatFrame.getVisibility() == View.GONE){
+            if (chatFrame.getVisibility() == View.GONE) {
                 chatFrame.setVisibility(View.VISIBLE);
-            }else{
+            } else {
                 chatFrame.setVisibility(View.GONE);
             }
 
-            if(sendEdit.getVisibility() == View.GONE){
+            if (sendEdit.getVisibility() == View.GONE) {
                 sendEdit.setVisibility(View.VISIBLE);
-            }else{
+            } else {
                 sendEdit.setVisibility(View.GONE);
             }
 
             //clova 음성인식 시작
-            if(!naverRecognizer.getSpeechRecognizer().isRunning()) {
+            if (!naverRecognizer.getSpeechRecognizer().isRunning()) {
                 // Start button is pushed when SpeechRecognizer's state is inactive.
                 // Run SpeechRecongizer by calling recognize().
                 mResult = "";
-                if(chatFrame.getVisibility() == View.VISIBLE){
-                    m_Adapter.add("Connecting...",2);
+                if (chatFrame.getVisibility() == View.VISIBLE) {
+                    m_Adapter.add("Connecting...", 2);
                 }
                 naverRecognizer.recognize();
             } else {
@@ -711,25 +709,25 @@ public class CallActivity extends AppCompatActivity
 
 
                 //채팅창 보이도록
-                if(chatFrame.getVisibility() == View.GONE){
+                if (chatFrame.getVisibility() == View.GONE) {
                     chatFrame.setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     chatFrame.setVisibility(View.GONE);
                 }
 
-                if(sendEdit.getVisibility() == View.GONE){
+                if (sendEdit.getVisibility() == View.GONE) {
                     sendEdit.setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     sendEdit.setVisibility(View.GONE);
                 }
 
                 //clova 음성인식 시작
-                if(!naverRecognizer.getSpeechRecognizer().isRunning()) {
+                if (!naverRecognizer.getSpeechRecognizer().isRunning()) {
                     // Start button is pushed when SpeechRecognizer's state is inactive.
                     // Run SpeechRecongizer by calling recognize().
                     mResult = "";
-                    if(chatFrame.getVisibility() == View.VISIBLE){
-                        m_Adapter.add("Connecting...",2);
+                    if (chatFrame.getVisibility() == View.VISIBLE) {
+                        m_Adapter.add("Connecting...", 2);
                     }
                     naverRecognizer.recognize();
                 } else {
@@ -784,12 +782,12 @@ public class CallActivity extends AppCompatActivity
 
     public void Disconnect(View v) {
 
-        if(callStatus.name().equals("Caller"))
+        if (callStatus.name().equals("Caller"))
             stopCall(user);
         else
             stopCall(connectUser);
 
-        if(vc!=null)
+        if (vc != null)
             vc.disconnect();
 
         //clova
@@ -843,6 +841,7 @@ public class CallActivity extends AppCompatActivity
 //        vc.registerLocalWindowShareEventListener(this);
 //        vc.registerLocalMonitorEventListener(this);
     }
+
     // Participant Joined
     public void onParticipantJoined(Participant participant) {
         Log.d("ParticipainJoined", "ture");
@@ -852,10 +851,14 @@ public class CallActivity extends AppCompatActivity
     public void onParticipantLeft(Participant participant) {
         Disconnect(findViewById(R.id.disconnect));
     }
+
     // Ordered array of participants according to rank
-    public void onDynamicParticipantChanged(ArrayList participants, ArrayList cameras) {}
+    public void onDynamicParticipantChanged(ArrayList participants, ArrayList cameras) {
+    }
+
     // Current loudest speaker
-    public void onLoudestParticipantChanged(Participant participant, boolean audioOnly) {}
+    public void onLoudestParticipantChanged(Participant participant, boolean audioOnly) {
+    }
 
     // Register for VidyoConnector event listeners. Note: this is an arbitrary function name.
 //    public void RegisterForVidyoEvents() {
@@ -866,8 +869,10 @@ public class CallActivity extends AppCompatActivity
     private void SendChatMessage(String message) {
         vc.sendChatMessage(message);
     }
+
     // Message received from other participants
-    public void onChatMessageReceived(Participant participant, ChatMessage chatMessage) {}
+    public void onChatMessageReceived(Participant participant, ChatMessage chatMessage) {
+    }
 
 //    /* Register for VidyoConnector event listeners. Note: this is an arbitrary function name. */
 //    public void RegisterForVidyoEvents() {
@@ -914,10 +919,10 @@ public class CallActivity extends AppCompatActivity
                 if (s.toString().equals("Try")) {
                     Log.d("connecttt", "트라이");
                     tryCall = true;
-                } else if(s.toString().equals("Calling")) {
-                    Toast.makeText(getApplicationContext(), "상대방이 이미 통화중입니다", Toast.LENGTH_SHORT). show();
+                } else if (s.toString().equals("Calling")) {
+                    Toast.makeText(getApplicationContext(), "상대방이 이미 통화중입니다", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getApplicationContext(), "로그인된 사용자가 아닙니다", Toast.LENGTH_SHORT). show();
+                    Toast.makeText(getApplicationContext(), "로그인된 사용자가 아닙니다", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -1039,7 +1044,7 @@ public class CallActivity extends AppCompatActivity
         task.execute(Id);
     }
 
-    public String getConnectUser(){
+    public String getConnectUser() {
         return connectUser;
     }
 }

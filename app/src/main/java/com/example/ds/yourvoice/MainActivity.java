@@ -69,8 +69,6 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
     private static final String TAG_NAME = "friendname";
     private static final String TAG_ID = "friendid";
 
-    public static final String CALL_RECEIVER = "receiver";
-    private IntentFilter mIntentFilter;
     private RestartService restartService;
 
     private static PowerManager.WakeLock sCpuWakeLock;
@@ -94,9 +92,6 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
         registerReceiver(restartService, intentFilter);
 
         cIntent = new Intent(this, CallService.class);
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(CALL_RECEIVER);
-        registerReceiver(mReceiver, mIntentFilter);
 
         startService(cIntent);
 
@@ -164,97 +159,6 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
         });
 
     }
-
-    /* ---------------------------------------------- 서비스와 브로드캐스트리시버 ---------------------------------------------------------- */
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        //registerReceiver(mReceiver, mIntentFilter);
-    }
-
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(final Context context, final Intent mintent) {
-            //전화받기화면
-            if (mintent.getAction().equals(CALL_RECEIVER) && callStatus==CallStatus.Default) {
-
-                stopService(cIntent);
-
-                //액티비티 깨우기
-                /*if (sCpuWakeLock != null) {
-                    return;
-                }
-                PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-                sCpuWakeLock = pm.newWakeLock(
-                        PowerManager.SCREEN_BRIGHT_WAKE_LOCK |
-                                PowerManager.ACQUIRE_CAUSES_WAKEUP |
-                                PowerManager.ON_AFTER_RELEASE, "hi");
-
-                sCpuWakeLock.acquire();
-
-
-                if (sCpuWakeLock != null) {
-                    sCpuWakeLock.release();
-                    sCpuWakeLock = null;
-                }*/
-
-
-                //출처: http://cofs.tistory.com/173 [CofS]
-
-                Log.d("전화받기화면", "전화받기화면");
-
-                callStatus = CallStatus.Receiver;
-                //stopService(cIntent);
-
-                final RelativeLayout r = (RelativeLayout)findViewById(R.id.callReceiveLayout);
-                r.setVisibility(View.VISIBLE);
-                Button b = (Button)findViewById(R.id.callReceive);
-                Button bt = (Button)findViewById(R.id.callDenial);
-                //b.setEnabled(true);
-                //bt.setEnabled(true);
-
-                //전화받기버튼 누르기
-                b.setOnClickListener(
-                        new Button.OnClickListener() {
-                            public void onClick(View v) {
-                                r.setVisibility(View.INVISIBLE);
-                                callingUpdate(mintent.getStringExtra("receiverID"), "1");
-                                call(mintent.getStringExtra("callerID"), mintent.getStringExtra("receiverID"));
-                                //stopService(cIntent);
-                            }
-                        }
-                );
-
-                //전화끊기버튼 누르기
-                bt.setOnClickListener(
-                        new Button.OnClickListener() {
-                            public void onClick(View v) {
-                                r.setVisibility(View.INVISIBLE);
-                                callingUpdate(mintent.getStringExtra("callerID"), "0");
-                                recreate();
-                                //stopService(cIntent);
-                            }
-                        }
-                );
-
-                //call(intent.getStringExtra("callerID"), intent.getStringExtra("receiverID"));
-                //Intent stopIntent = new Intent(MainActivity.this, CallService.class);
-                //stopService(stopIntent);
-            }
-            //                Intent stopIntent = new Intent(MainActivity.this, BroadcastService.class);
-            //                stopService(stopIntent);
-        }
-    };
-
-    @Override
-    protected void onPause() {
-        //unregisterReceiver(mReceiver);
-        super.onPause();
-    }
-
-     /* ---------------------------------------------- 서비스와 브로드캐스트리시버 끝 ---------------------------------------------------------- */
-
 
     /* ---------------------------------------------- 설정 버튼 ----------------------------------------------------------- */
     //추가된 소스, ToolBar에 menu.xml을 인플레이트함
@@ -635,80 +539,6 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
     /* ---------------------------------------------- DB에 친구 번호 삭제 끝 ----------------------------------------------------------- */
 
 
-    /* ---------------------------------------------- 전화 받기/끊기 ----------------------------------------------------------- */
-    private void callingUpdate(final String Id, String num) {
-        class InsertData extends AsyncTask<String, Void, String> {
-
-            protected void onCancelled() {
-                this.onCancelled();
-            }
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
-            protected void onPostExecute(String s) {
-                super.onPostExecute(s);
-
-                if (s.toString().equals("success")) {
-                    Log.d("callingUpdate success", "DB 업데이트 성공");
-                } else
-                    Log.d("callingUpdate error", "DB 업데이트 에러");
-
-            }
-
-            @Override
-            protected String doInBackground(String... params) {
-
-                if (this.isCancelled()) {
-                    // 비동기작업을 cancel해도 자동으로 취소해주지 않으므로,
-                    // 작업중에 이런식으로 취소 체크를 해야 한다.
-                    return null;
-                }
-
-                try {
-                    String Id = (String) params[0];
-                    String num = (String) params[1];
-
-                    String link = "http://13.124.94.107/callingUpdate.php";
-                    String data = URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(Id, "UTF-8");
-                    data += "&" + URLEncoder.encode("num", "UTF-8") + "=" + URLEncoder.encode(num, "UTF-8");
-
-                    URL url = new URL(link);
-                    URLConnection conn = url.openConnection();
-
-                    conn.setDoOutput(true);
-                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-
-                    wr.write(data);
-                    wr.flush();
-
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-                    StringBuilder sb = new StringBuilder();
-                    String line = null;
-
-                    // Read Server Response
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line);
-                        break;
-                    }
-                    return sb.toString();
-                } catch (Exception e) {
-                    return new String("Exception: " + e.getMessage());
-                }
-            }
-        }
-        InsertData task = new InsertData();
-        task.execute(Id, num);
-    }
-
-
-    /* ---------------------------------------------- 전화 받기/끊기 끝 ----------------------------------------------------------- */
-
-
     /* ---------------------------------------------- 전화걸기 ----------------------------------------------------------- */
     public void call(String friendId, View v) {
         //String friendPhone = friendphone;
@@ -718,23 +548,8 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
         intent.putExtra("friendId", friendId);
 
         //startActivity(intent);
-        startActivityForResult(intent, 0);
         stopService(cIntent);
-
-        RelativeLayout r = (RelativeLayout)findViewById(R.id.callReceiveLayout);
-        r.setVisibility(View.INVISIBLE);
-    }
-
-    public void call(String caller, String receiver) {
-        Intent intent = new Intent(MainActivity.this, CallActivity.class);
-        intent.putExtra("Caller", caller);
-        intent.putExtra("Receiver", receiver);
-        //startActivity(intent);
         startActivityForResult(intent, 0);
-        stopService(cIntent);
-
-        RelativeLayout r = (RelativeLayout)findViewById(R.id.callReceiveLayout);
-        r.setVisibility(View.INVISIBLE);
     }
 
     /* ---------------------------------------------- 전화걸기 끝 ----------------------------------------------------------- */

@@ -92,16 +92,16 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
         userId = intent.getStringExtra("userId");
 
         //서비스시작
-        restartService = new RestartService();
-        IntentFilter intentFilter = new IntentFilter(".CallService");
-        registerReceiver(restartService, intentFilter);
+//        restartService = new RestartService();
+//        IntentFilter intentFilter = new IntentFilter(".CallService");
+//        registerReceiver(restartService, intentFilter);
 
         cIntent = new Intent(this, CallService.class);
         startService(cIntent);
 
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction("USER_ID");
-        //broadcastIntent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+        Intent broadcastIntent = new Intent("USER_ID");
+       // broadcastIntent.setAction("USER_ID");
+        broadcastIntent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
         broadcastIntent.putExtra("userID", userId);
         sendBroadcast(broadcastIntent);
 

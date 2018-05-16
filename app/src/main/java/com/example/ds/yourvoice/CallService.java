@@ -109,7 +109,6 @@ public class CallService extends Service {
         Intent intent = new Intent(CallService.this, RestartService.class);
         intent.setAction("ACTION.RESTART.CallService");
         PendingIntent sender = PendingIntent.getBroadcast(CallService.this, 0, intent, 0);
-
         long firstTime = SystemClock.elapsedRealtime();
         firstTime += REBOOT_DELAY_TIMER; // 1초 후에 알람이벤트 발생
 
@@ -144,17 +143,18 @@ public class CallService extends Service {
                 @Override
                 public void run() {
 
-                    try {
-                        thread.sleep(1000*2);
-                    } catch (Exception e){
-                        Log.d("서비스스레드 Exception", e.toString());
-                    }
-
-                    while(user==null) {
+                    if(user==null) {
                         Log.d("서비스", "유저아이디 못받음");
+                        stopSelf();
                     }
 
                     while (connectUser == null && user!=null) {
+
+                        try {
+                            thread.sleep(1000*2);
+                        } catch (Exception e){
+                            Log.d("서비스스레드 Exception", e.toString());
+                        }
 
                         try {
                             Log.d("전화", "서비스스레드 While");

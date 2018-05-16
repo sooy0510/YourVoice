@@ -86,20 +86,24 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
+        context = this;
+
+        Intent intent = getIntent();
+        userId = intent.getStringExtra("userId");
+
         //서비스시작
         restartService = new RestartService();
         IntentFilter intentFilter = new IntentFilter(".CallService");
         registerReceiver(restartService, intentFilter);
 
         cIntent = new Intent(this, CallService.class);
-
         startService(cIntent);
 
-        context = this;
-
-        Intent intent = getIntent();
-        userId = intent.getStringExtra("userId");
-
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction("USER_ID");
+        //broadcastIntent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+        broadcastIntent.putExtra("userID", userId);
+        sendBroadcast(broadcastIntent);
 
         // 추가된 소스, Toolbar를 생성한다.
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -548,7 +552,8 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
         intent.putExtra("friendId", friendId);
 
         //startActivity(intent);
-        stopService(cIntent);
+        //stopService(cIntent);
+        //unregisterReceiver(restartService);
         startActivityForResult(intent, 0);
     }
 

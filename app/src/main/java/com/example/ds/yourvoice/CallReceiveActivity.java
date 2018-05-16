@@ -30,6 +30,7 @@ import static com.example.ds.yourvoice.CallActivity.context;
 public class CallReceiveActivity extends AppCompatActivity {
 
     private static PowerManager.WakeLock sCpuWakeLock;
+    private Intent cIntent;
     public String callerId;
     public String receiverId;
 
@@ -38,8 +39,11 @@ public class CallReceiveActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.call_receive);
 
-        //wakeLock();
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+
+        cIntent = new Intent(this, CallService.class);
+        //stopService(cIntent);
 
         Intent intent = getIntent();
         callerId = intent.getStringExtra("callerID");
@@ -47,29 +51,6 @@ public class CallReceiveActivity extends AppCompatActivity {
 
         TextView tv = (TextView)findViewById(R.id.caller);
         tv.setText(callerId);
-    }
-
-    public void wakeLock() {
-        //액티비티 깨우기
-        if (sCpuWakeLock != null) {
-            return;
-        }
-
-        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        sCpuWakeLock = pm.newWakeLock(
-                PowerManager.SCREEN_BRIGHT_WAKE_LOCK |
-                        PowerManager.ACQUIRE_CAUSES_WAKEUP |
-                        PowerManager.ON_AFTER_RELEASE, "hi");
-
-        sCpuWakeLock.acquire();
-
-
-        if (sCpuWakeLock != null) {
-            sCpuWakeLock.release();
-            sCpuWakeLock = null;
-        }
-
-        //출처: http://cofs.tistory.com/173 [CofS]
     }
 
     public void receive(View v){
@@ -80,13 +61,11 @@ public class CallReceiveActivity extends AppCompatActivity {
 
     public void denial(View v) {
         Log.d("전화끊기", "denial");
-        Intent cIntent = new Intent(this, CallService.class);
-        stopService(cIntent);
         callingUpdate(callerId, "0");
     }
 
     /* ---------------------------------------------- 전화 받기/끊기 ----------------------------------------------------------- */
-    private void callingUpdate(final String Id, String num) {
+    private void callingUpdate(final String Id, final String num) {
         class InsertData extends AsyncTask<String, Void, String> {
 
             protected void onCancelled() {
@@ -110,12 +89,15 @@ public class CallReceiveActivity extends AppCompatActivity {
                     Log.d(s.toString(), "DB 업데이트");
                 }
 
-                Intent broadcastIntent = new Intent();
-                broadcastIntent.setAction("ACTION.RESTART.CallService");
-                broadcastIntent.setFlags(Intent.FLAG_RECEIVER_REPLACE_PENDING);
-                broadcastIntent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-                sendBroadcast(broadcastIntent);
-                finish();
+                if(num.equals("0")) { Log.d("DBDBDB", "전화");
+//                    Intent broadcastIntent = new Intent();
+//                    broadcastIntent.setAction("ACTION.RESTART.CallService");
+//                    broadcastIntent.setFlags(Intent.FLAG_RECEIVER_REPLACE_PENDING);
+//                    broadcastIntent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+//                    sendBroadcast(broadcastIntent);
+                    startService(cIntent);
+                    finish();
+                }
             }
 
             @Override
@@ -175,7 +157,17 @@ public class CallReceiveActivity extends AppCompatActivity {
         intent.putExtra("Caller", caller);
         intent.putExtra("Receiver", receiver);
         startActivityForResult(intent, 0);
-//        stopService(cIntent);
+        //stopService(cIntent);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("callactivitt","finish");
+        if (resultCode == 0) {
+            Log.d("CallActivitt Finish", "receive finish call");
+            startService(cIntent);
+            finish();
+        }
     }
 
     /* ---------------------------------------------- 전화걸기 끝 ----------------------------------------------------------- */

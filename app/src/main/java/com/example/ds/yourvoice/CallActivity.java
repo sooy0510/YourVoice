@@ -1,8 +1,10 @@
 package com.example.ds.yourvoice;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.DataSetObserver;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -66,7 +68,7 @@ public class CallActivity extends AppCompatActivity
         implements Connector.IConnect, Connector.IRegisterParticipantEventListener, Connector.IRegisterMessageEventListener {
 
     private Intent intent;
-
+    private IntentFilter mIntentFilter;
     public static Context context;
 
     private Connector vc;
@@ -136,6 +138,11 @@ public class CallActivity extends AppCompatActivity
         Log.d("콜액티비티실행", "실행");
 
         context = this;
+
+        //수신자가 전화거부하면 브로드캐스트 받음
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction("CALL_DENIAL");
+        registerReceiver(mReceiver, mIntentFilter);
 
         ConnectorPkg.setApplicationUIContext(this);
         mVidyoClientInitialized = ConnectorPkg.initialize();
@@ -263,6 +270,12 @@ public class CallActivity extends AppCompatActivity
             case R.id.partialResult:
                 // Extract obj property typed with String.
                 mResult = (String) (msg.obj);
+                /*if(mResult.length() > 10){
+                    Message msg1 = Message.obtain(handler, R.id.finalResult, mResult);
+                    //msg1.sendToTarget();
+                    handleMessage(msg1);
+                    //naverRecognizer.onResult((SpeechRecognitionResult)msg.obj);
+                }*/
                 //txtResult.setText(mResult);
                 //txtResult.append(mResult);
                 //m_Adapter.add(mResult,1);
@@ -376,8 +389,9 @@ public class CallActivity extends AppCompatActivity
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 loading.dismiss();
-                int chatnum = Integer.parseInt(s);
-                chatCntStr = Integer.toString(chatnum);
+                //int chatnum = Integer.parseInt(s);
+                //chatCntStr = Integer.toString(chatnum);
+                chatCntStr = s;
             }
 
             @Override
@@ -517,13 +531,13 @@ public class CallActivity extends AppCompatActivity
         Log.d("ddddddddddd", friendId); //inseon
         Log.d("ddddddddddd", connectUser); //sooy1
         if (userId.equals(user)) { //실사용자 = 발신자
-            getChatCnt1(user, connectUser);
-            Log.d("ddddddddddd", chatRoom);
-            Log.d("ddddddddddd", chatCntStr);
+            //getChatCnt(user, connectUser);
+            Log.d("aaaaaaaaa", chatRoom);
+            Log.d("aaaaaaaaa", chatCntStr);
         } else { //실사용자 = 수신자
-            getChatCnt(user, connectUser);
-            Log.d("ddddddddddd", chatRoom);
-            Log.d("ddddddddddd", chatCntStr);
+            //getChatCnt(user, connectUser);
+            Log.d("aaaaaaaaa", chatRoom);
+            Log.d("aaaaaaaaa", chatCntStr);
         }
 
 
@@ -566,13 +580,13 @@ public class CallActivity extends AppCompatActivity
                         if (user.equals(chat.user)) { //사용자 = 채팅의 user
                             m_Adapter.add(chat.text, 1);
                         } else {
-                            m_Adapter.add(chat.text, 2);
+                            m_Adapter.add(chat.text, 0);
                         }
                     } else { //사용자 = 수신자
                         if (connectUser.equals(chat.user)) { //사용자 = 채팅의 user
                             m_Adapter.add(chat.text, 1);
                         } else {
-                            m_Adapter.add(chat.text, 2);
+                            m_Adapter.add(chat.text, 0);
                         }
                     }
                 }
@@ -891,6 +905,7 @@ public class CallActivity extends AppCompatActivity
 //        ConnectorPkg.uninitialize();
 
         Log.d("Destroy", "true");
+        unregisterReceiver(mReceiver);
         Disconnect(findViewById(R.id.disconnect));
         super.onDestroy();
     }
@@ -1043,6 +1058,15 @@ public class CallActivity extends AppCompatActivity
         InsertData task = new InsertData();
         task.execute(Id);
     }
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(final Context context, final Intent mintent) {
+            if (mintent.getAction().equals("CALL_DENIAL")) {
+                Disconnect(findViewById(R.id.disconnect));
+            }
+        }
+    };
 
     public String getConnectUser() {
         return connectUser;

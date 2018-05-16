@@ -573,7 +573,6 @@ public class CallActivity extends AppCompatActivity
                 // 데이터를 읽어올 때 모든 데이터를 읽어오기때문에 List 를 초기화해주는 작업이 필요하다.
                 m_Adapter.clean();
                 for (DataSnapshot messageData : dataSnapshot.getChildren()) {
-                    //String msg = messageData.getValue().toString();
                     Chat chat = messageData.getValue(Chat.class);
 
                     if (user.equals(userId)) { //사용자 = 발신자

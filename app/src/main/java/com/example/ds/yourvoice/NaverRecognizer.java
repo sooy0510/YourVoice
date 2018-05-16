@@ -85,19 +85,34 @@ class NaverRecognizer implements SpeechRecognitionListener {
     @Override
     @WorkerThread
     public void onPartialResult(String result) {
-        Log.d(TAG, "Partial Result!! (" + result + ")");
+        Log.d(TAG, "sssssssssPartial Result!! (" + result + ")");
         Message msg = Message.obtain(mHandler, R.id.partialResult, result);
         msg.sendToTarget();
+        //Log.d(TAG, "sssssssssPartial Result!! (" + result + ")");
+        /*if(result.length() > 10){
+            Message msg = Message.obtain(mHandler, R.id.finalResult, result);
+            Object[] results = new Object[5];
+            results[0] = result;
+            results[1] = "";
+            results[2] = "";
+            results[3] = "";
+            results[4] = "";
+            onResult(SpeechRecognitionResult results);
+            //msg.sendToTarget();
+        }else{
+            Message msg = Message.obtain(mHandler, R.id.partialResult, result);
+            msg.sendToTarget();
+        }*/
     }
 
     @Override
     @WorkerThread
-    public void onEndPointDetected() { Log.d(TAG, "Event occurred : EndPointDetected");}
+    public void onEndPointDetected() { Log.d(TAG, "ssssssssssEvent occurred : EndPointDetected");}
 
     @Override
     @WorkerThread
     public void onResult(SpeechRecognitionResult result) {
-        Log.d(TAG, "Final Result!! (" + result.getResults().get(0) + ")");
+        Log.d(TAG, "ssssssssssFinal Result!! (" + result.getResults().get(0) + ")");
         Message msg = Message.obtain(mHandler, R.id.finalResult, result);
         msg.sendToTarget();
     }

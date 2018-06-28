@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-feature android:name="android.hardware.camera"/>
+    <uses-feature android:name="android.hardware.camera2"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
     <!-- 서비스 관련 퍼미션 -->
@@ -31,7 +33,7 @@
 
         <activity android:name=".MainActivity"></activity>
         <activity android:name=".JoinActivity"></activity>
-        <activity android:name=".CallActivity"></activity>
+        <activity android:name=".CallActivity"  android:theme="@style/Transparent"></activity>
         <activity android:name=".CallReceiveActivity">
             <!--<intent-filter>-->
                 <!--<category android:name="android.intent.category.DEFAULT"/>-->

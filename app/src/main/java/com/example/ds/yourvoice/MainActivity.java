@@ -1,6 +1,7 @@
 package com.example.ds.yourvoice;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -97,13 +98,8 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
 //        registerReceiver(restartService, intentFilter);
 
         cIntent = new Intent(this, CallService.class);
+        cIntent.putExtra("user", userId);
         startService(cIntent);
-
-        Intent broadcastIntent = new Intent("USER_ID");
-       // broadcastIntent.setAction("USER_ID");
-        broadcastIntent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-        broadcastIntent.putExtra("userID", userId);
-        sendBroadcast(broadcastIntent);
 
         // 추가된 소스, Toolbar를 생성한다.
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -162,6 +158,12 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
             }
         });
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        startService(cIntent);
     }
 
     /* ---------------------------------------------- 설정 버튼 ----------------------------------------------------------- */
@@ -225,7 +227,8 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
             friend = (ListViewItem) adapter.getItem(position);
             String id = friend.getId();
             //Toast.makeText(getApplicationContext(), id, Toast.LENGTH_LONG).show();
-            call(id, v);
+            //call(id, v);
+            startCall(id, userId);
         } else {
             new AlertDialog.Builder(this)
                     .setTitle("친구 삭제")
@@ -544,7 +547,7 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
 
 
     /* ---------------------------------------------- 전화걸기 ----------------------------------------------------------- */
-    public void call(String friendId, View v) {
+    public void call(String friendId) {
         //String friendPhone = friendphone;
         Intent intent = new Intent(MainActivity.this, CallActivity.class);
         //intent.putExtra("Tag", v.getTag().toString());
@@ -564,9 +567,9 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
         if (resultCode == 0) {
 
             Log.d("CallActivitt Finish", "finish call");
-            recreate();
+            //recreate();
 
-            //startService(cIntent);
+            startService(cIntent);
 
             //RelativeLayout r = (RelativeLayout)findViewById(R.id.callReceiveLayout);
             //r.setVisibility(View.INVISIBLE);
@@ -576,7 +579,77 @@ public class MainActivity extends AppCompatActivity implements ListViewAdapter.L
         }
     }
 
+    private void startCall(final String connectId, String Id) {
+
+        class InsertData extends AsyncTask<String, Void, String> {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+
+                if (s.toString().equals("Try")) {
+                    call(connectId);
+                } else if (s.toString().equals("Calling")) {
+                    Toast.makeText(getApplicationContext(), "상대방이 이미 통화중입니다", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "로그인된 사용자가 아닙니다", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+
+                if (this.isCancelled()) {
+                    // 비동기작업을 cancel해도 자동으로 취소해주지 않으므로,
+                    // 작업중에 이런식으로 취소 체크를 해야 한다.
+                    return null;
+                }
+
+                try {
+                    String connectId = (String) params[0];
+                    String Id = (String) params[1];
+                    Log.d("connecttt", connectId + Id);
+
+                    String link = "http://13.124.94.107/callStateCheck.php";
+                    String data = URLEncoder.encode("connectId", "UTF-8") + "=" + URLEncoder.encode(connectId, "UTF-8");
+                    data += "&" + URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(Id, "UTF-8");
+
+                    URL url = new URL(link);
+                    URLConnection conn = url.openConnection();
+
+                    conn.setDoOutput(true);
+                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+                    wr.write(data);
+                    wr.flush();
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+                    StringBuilder sb = new StringBuilder();
+                    String line = null;
+
+                    // Read Server Response
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line);
+                        break;
+                    }
+                    return sb.toString();
+                } catch (Exception e) {
+                    return new String("Exception: " + e.getMessage());
+                }
+            }
+        }
+        InsertData task = new InsertData();
+        task.execute(connectId, Id);
+    }
+
     public String getUserId() {
         return userId;
     }
+
 }

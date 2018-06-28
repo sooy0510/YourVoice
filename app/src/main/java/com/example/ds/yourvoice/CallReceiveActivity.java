@@ -1,7 +1,9 @@
 package com.example.ds.yourvoice;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -33,6 +35,7 @@ public class CallReceiveActivity extends AppCompatActivity {
     private Intent cIntent;
     public String callerId;
     public String receiverId;
+    private IntentFilter mIntentFilter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +44,10 @@ public class CallReceiveActivity extends AppCompatActivity {
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction("CALL_DENIAL");
+        registerReceiver(mReceiver, mIntentFilter);
 
         cIntent = new Intent(this, CallService.class);
         //stopService(cIntent);
@@ -53,6 +60,15 @@ public class CallReceiveActivity extends AppCompatActivity {
         tv.setText(callerId);
     }
 
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(final Context context, final Intent mintent) {
+            if (mintent.getAction().equals("CALL_DENIAL")) {
+                callingUpdate(callerId, "0");
+            }
+        }
+    };
+
     public void receive(View v){
         Log.d("전화받기", "receive");
         callingUpdate(receiverId, "1");
@@ -62,6 +78,12 @@ public class CallReceiveActivity extends AppCompatActivity {
     public void denial(View v) {
         Log.d("전화끊기", "denial");
         callingUpdate(callerId, "0");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mReceiver);
     }
 
     /* ---------------------------------------------- 전화 받기/끊기 ----------------------------------------------------------- */
@@ -89,7 +111,7 @@ public class CallReceiveActivity extends AppCompatActivity {
                     Log.d(s.toString(), "DB 업데이트");
                 }
 
-                if(num.equals("0")) { Log.d("DBDBDB", "전화");
+                if(num.equals("0")) { Log.d("callReceiverActivity", "전화 종료");
 //                    Intent broadcastIntent = new Intent();
 //                    broadcastIntent.setAction("ACTION.RESTART.CallService");
 //                    broadcastIntent.setFlags(Intent.FLAG_RECEIVER_REPLACE_PENDING);
@@ -165,7 +187,7 @@ public class CallReceiveActivity extends AppCompatActivity {
         Log.d("callactivitt","finish");
         if (resultCode == 0) {
             Log.d("CallActivitt Finish", "receive finish call");
-            startService(cIntent);
+            //startService(cIntent);
             finish();
         }
     }

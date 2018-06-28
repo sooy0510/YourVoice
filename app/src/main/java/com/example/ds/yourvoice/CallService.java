@@ -46,10 +46,8 @@ public class CallService extends Service {
     // 서비스 종료시 재부팅 딜레이 시간, activity의 활성 시간을 벌어야 한다.
     private static final int REBOOT_DELAY_TIMER = 2 * 1000;
 
-    private IntentFilter mIntentFilter;
-
-    private String user;
-    private String connectUser;
+    private static String user;
+    private String connectUser = null;
 
     private Thread thread;
     private Thread callerThread;
@@ -68,19 +66,11 @@ public class CallService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        //사용자 아이디 받음
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction("USER_ID");
-        registerReceiver(mReceiver, mIntentFilter);
-
-        //user = MainActivity.userId;
-        //user = "inseon";
-        //getUserId();
-
         // 등록된 알람은 제거
         Log.d("PersistentService", "onCreate()");
         unregisterRestartAlarm();
     }
+
 
     @Override
     public void onDestroy() {
@@ -88,19 +78,9 @@ public class CallService extends Service {
 
         // 서비스가 죽었을때 알람 등록
         Log.d("서비스종료", "onDestroy()");
+        //stopSelf();
         registerRestartAlarm();
-        unregisterReceiver(mReceiver);
     }
-
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(final Context context, final Intent mintent) {
-            Log.d("전화", "아이디브로드캐스트받음");
-            if (mintent.getAction().equals("USER_ID")) {
-                user = mintent.getStringExtra("userID");
-            }
-        }
-    };
 
     private void registerRestartAlarm() {
 
@@ -134,25 +114,33 @@ public class CallService extends Service {
     @Override
     public int onStartCommand(final Intent intent, int flags, final int startId) {
 
-        Log.d("서비스실행", "서비스실행");
         startForeground(1, new Notification());
 
-        connectUser = null;
+        Log.d("서비스실행", "" + startId);
 
+        //connectUser = null;
+
+        if(thread==null || !thread.isAlive()) {
+            Log.d("서비스", "새로운스레드");
             thread = new Thread("Service Thread") {
+
                 @Override
                 public void run() {
 
-                    if(user==null) {
-                        Log.d("서비스", "유저아이디 못받음");
-                        stopSelf();
+                    if (user == null) {
+                        //stopSelf();
+                        user = intent.getStringExtra("user");
+                        Log.d("서비스 유저아이디", user);
                     }
 
-                    while (connectUser == null && user!=null) {
+                    if (connectUser != null)
+                        connectUser = null;
+
+                    while (connectUser == null && user != null) {
 
                         try {
-                            thread.sleep(1000*2);
-                        } catch (Exception e){
+                            thread.sleep(1000 * 2);
+                        } catch (Exception e) {
                             Log.d("서비스스레드 Exception", e.toString());
                         }
 
@@ -192,7 +180,7 @@ public class CallService extends Service {
                                 Log.d("전화", "caller");
                                 callerThread = new callerCheck();
                                 callerThread.start();
-                                thread.interrupt();
+                                Thread.currentThread().interrupt();
                                 //stopSelf();
                                 break;
                             } else {
@@ -211,7 +199,9 @@ public class CallService extends Service {
                                 //((CallActivity)CallActivity.context).setConnectUser(connectUser);
                                 //((CallActivity)CallActivity.context).Connect();
                                 Log.d("전화왔다", result);
-                                thread.interrupt();
+                                callerThread = new callerCheck();
+                                callerThread.start();
+                                Thread.currentThread().interrupt();
                                 //stopSelf();
                                 break;
                             }
@@ -221,71 +211,90 @@ public class CallService extends Service {
                     }
                 }
             };
-        thread.start();
-        //return super.onStartCommand(intent, flags, startId);
+            thread.start();
+        } else {
+            thread.interrupt();
+            Log.d("서비스", "스레드 이미 있음");
+        }
+        //return super.onStartCommand(intent, flags, 1);
         return START_STICKY;
+
     }
 
-     private class callerCheck extends Thread {
-         @Override
-         public void run() {
-             //super.run();
-             Log.d("전화", "타이머태스크");
-             long now = System.currentTimeMillis();
+    private class callerCheck extends Thread {
 
-             //60초동안 수신을 기다림
-             while (System.currentTimeMillis() - now < 1000 * 60) {
-                 try {
-                     String Id = user;
-                     String num = "1";
+        private boolean denial = false;
 
-                     String link = "http://13.124.94.107/callingUpdate.php";
-                     String data = URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(Id, "UTF-8");
-                     data += "&" + URLEncoder.encode("num", "UTF-8") + "=" + URLEncoder.encode(num, "UTF-8");
+        @Override
+        public void run() {
+            //super.run();
+            Log.d("전화", "타이머태스크");
+            long now = System.currentTimeMillis();
 
-                     URL url = new URL(link);
-                     URLConnection conn = url.openConnection();
+            //60초동안 수신을 기다림
+            while (System.currentTimeMillis() - now < 1000 * 60) {
+                try {
+                    String Id;
+                    String num = "2";
 
-                     conn.setDoOutput(true);
-                     OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+                    if(connectUser!=null)
+                        Id = connectUser;
+                    else
+                        Id = user;
 
-                     wr.write(data);
-                     wr.flush();
+                    String link = "http://13.124.94.107/callingUpdate.php";
+                    String data = URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(Id, "UTF-8");
+                    data += "&" + URLEncoder.encode("num", "UTF-8") + "=" + URLEncoder.encode(num, "UTF-8");
 
-                     BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    URL url = new URL(link);
+                    URLConnection conn = url.openConnection();
 
-                     StringBuilder sb = new StringBuilder();
-                     String line;
+                    conn.setDoOutput(true);
+                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
 
-                     // Read Server Response
-                     while ((line = reader.readLine()) != null) {
-                         sb.append(line);
-                         result = sb.toString();
-                         //Log.d("서비스스레드결과", result);
-                         break;
-                     }
+                    wr.write(data);
+                    wr.flush();
 
-                     if (result.equals("wait")) {
-                         Log.d("전화", "전화수신대기중..");
-                         thread.sleep(1 * 1000);
-                     } else if (result.equals("denial")) {
-                         Log.d("전화", "전화수신거부");
-                         Intent broadcastIntent = new Intent();
-                         broadcastIntent.setAction("CALL_DENIAL");
-                         sendBroadcast(broadcastIntent);
-                         thread.interrupt();
-                     }
-                 } catch (Exception e) {
-                     Log.d("발신자전화서비스스레드 Exception", e.toString());
-                     break;
-                 }
-             }
-             Intent broadcastIntent = new Intent();
-             broadcastIntent.setAction("CALL_DENIAL");
-             sendBroadcast(broadcastIntent);
-             thread.interrupt();
-         }
-     }
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+
+                    // Read Server Response
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line);
+                        result = sb.toString();
+                        //Log.d("서비스스레드결과", result);
+                        break;
+                    }
+
+                    if (result.equals("wait")) {
+                        Log.d("전화", "전화수신대기중..");
+                        thread.sleep(1 * 1000);
+                    } else if (result.equals("denial")) {
+                        Log.d("전화", "전화수신거부");
+                        Intent broadcastIntent = new Intent();
+                        broadcastIntent.setAction("CALL_DENIAL");
+                        sendBroadcast(broadcastIntent);
+                        connectUser = null;
+                        denial = true;
+                        //this.interrupt();
+                        break;
+                    }
+                } catch (Exception e) {
+                    Log.d("발신자전화서비스스레드 Exception", e.toString());
+                    break;
+                }
+            }
+            if(!denial) {
+                Intent broadcastIntent = new Intent();
+                broadcastIntent.setAction("CALL_DENIAL");
+                sendBroadcast(broadcastIntent);
+                connectUser = null;
+                //this.interrupt();
+            }
+        }
+    }
 
 
     //서비스가 실행중인지 확인
@@ -299,4 +308,3 @@ public class CallService extends Service {
         return false;
     }
 }
-

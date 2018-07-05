@@ -12,6 +12,7 @@
             android:layout_weight="1" />
 
         <LinearLayout
+            android:id="@+id/ritem"
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -36,6 +37,15 @@
                     android:textSize="16dp"
                     android:textColor="#666666"
                     android:layout_weight="3" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="New Text"
+                    android:id="@+id/callDate"
+                    android:textSize="16dp"
+                    android:textColor="#666666"
+                    android:layout_weight="3" />
         </LinearLayout>
 
         <LinearLayout
@@ -45,19 +55,26 @@
             android:layout_weight="2"
             android:layout_marginLeft="20dp">
                 <Button
-                    android:id="@+id/button1"
+                    android:id="@+id/rphone"
                     android:layout_width="45dp"
                     android:layout_height="50dp"
                     android:layout_weight="1"
                     android:background="@drawable/phone"/>
-
                 <Button
-                    android:id="@+id/button2"
+                    android:id="@+id/textbutton"
+                    android:layout_width="45dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/text"
+                    android:visibility="invisible"/>
+
+                <!--<Button
+                    android:id="@+id/button4"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_weight="1"
                     android:background="@drawable/trashcan"
-                    android:layout_marginLeft="10dp"/>
+                    android:layout_marginLeft="10dp"/>-->
         </LinearLayout>
 
 </LinearLayout>

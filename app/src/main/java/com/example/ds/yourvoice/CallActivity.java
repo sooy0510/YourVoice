@@ -43,6 +43,7 @@ import com.vidyo.VidyoClient.Connector.ConnectorPkg;
 import com.vidyo.VidyoClient.Connector.Connector;
 import com.vidyo.VidyoClient.Device.Device;
 import com.vidyo.VidyoClient.Device.LocalCamera;
+import com.vidyo.VidyoClient.Device.RemoteCamera;
 import com.vidyo.VidyoClient.Endpoint.ChatMessage;
 import com.vidyo.VidyoClient.Endpoint.Participant;
 
@@ -67,24 +68,27 @@ import java.util.Hashtable;
 import java.util.List;
 
 import static com.vidyo.VidyoClient.Connector.Connector.ConnectorViewStyle.VIDYO_CONNECTORVIEWSTYLE_Default;
+import static com.vidyo.VidyoClient.Connector.Connector.ConnectorViewStyle.VIDYO_CONNECTORVIEWSTYLE_Tiles;
 
 public class CallActivity extends AppCompatActivity
-        implements Connector.IConnect, Connector.IRegisterParticipantEventListener, Connector.IRegisterMessageEventListener {
+        implements Connector.IConnect, Connector.IRegisterParticipantEventListener, Connector.IRegisterMessageEventListener, Connector.IRegisterLocalCameraEventListener,
+        Connector.IRegisterRemoteCameraEventListener {
 
     private Intent intent;
     private IntentFilter mIntentFilter;
     public static Context context;
 
     private Connector vc;
+    private Connector vc_preview;
     private String token;
     private String displayName, resourceId;
     private String connectUser;
     private String user;
-    private FrameLayout videoFrame;
+    private LinearLayout videoFrame;
+    private LinearLayout localFrame;
     private LinearLayout chatFrame;
-    private LinearLayout sendEdit;
+    //private LinearLayout sendEdit;
     private boolean mVidyoClientInitialized = false;
-    private boolean tryCall;
     private String userId;
     private String friendId;
     private int chatnum; //채팅방 번호
@@ -106,7 +110,7 @@ public class CallActivity extends AppCompatActivity
 
     //clova
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final String CLIENT_ID = "PGBXBwUedxYBZ2tHbjB6";
+    private static String CLIENT_ID;
 
     private RecognitionHandler handler;
     private NaverRecognizer naverRecognizer;
@@ -150,7 +154,8 @@ public class CallActivity extends AppCompatActivity
 
         ConnectorPkg.setApplicationUIContext(this);
         mVidyoClientInitialized = ConnectorPkg.initialize();
-        videoFrame = (FrameLayout) findViewById(R.id.videoFrame);
+        localFrame = findViewById(R.id.localFrame);
+        videoFrame = findViewById(R.id.videoFrame);
 
         //firebase
         database = FirebaseDatabase.getInstance();
@@ -163,11 +168,11 @@ public class CallActivity extends AppCompatActivity
         friendId = intent.getStringExtra("friendId");
 
         handler = new RecognitionHandler(this);
-        naverRecognizer = new NaverRecognizer(this, handler, CLIENT_ID);
+        //naverRecognizer = new NaverRecognizer(this, handler, CLIENT_ID);
 
         //chat
         chatFrame = (LinearLayout) findViewById(R.id.im1);
-        sendEdit = (LinearLayout) findViewById(R.id.send_edit);
+        //sendEdit = (LinearLayout) findViewById(R.id.send_edit);
 
         // 커스텀 어댑터 생성
         m_Adapter = new MessageAdapter();
@@ -180,40 +185,55 @@ public class CallActivity extends AppCompatActivity
 
 
         if (intent.getStringExtra("Caller") != null && intent.getStringExtra("Receiver") != null) {
-            //CLIENT_ID = "Us8JNMyTCu8dGWq1HCqh";
+            CLIENT_ID = "Us8JNMyTCu8dGWq1HCqh";
+            naverRecognizer = new NaverRecognizer(this, handler, CLIENT_ID);
             user = intent.getStringExtra("Caller");
             connectUser = intent.getStringExtra("Receiver");
             //Connect 함수 매개변수값 오또카지;;
             callStatus = CallStatus.Receiver;
             //Connect();
+
+            new AsyncTask<Void, Void, Void>(){
+                @Override
+                protected void onPostExecute(Void result) {
+                    Connect();
+                }
+
+                @Override
+                protected Void doInBackground(Void... params) {
+                    return null;
+                }
+            }.execute();
+
             Log.d("콜액티비티실행", "수신자");
         } else {
-            //CLIENT_ID = "PGBXBwUedxYBZ2tHbjB6";
+            CLIENT_ID = "PGBXBwUedxYBZ2tHbjB6";
+            naverRecognizer = new NaverRecognizer(this, handler, CLIENT_ID);
             callStatus = CallStatus.Caller;
 
-            startCall(userId, user);
+            startCall(friendId, userId);
             //Connect();
             Log.d("콜액티비티실행", "발신자");
         }
-
-        findViewById(R.id.button1).setOnClickListener(new Button.OnClickListener() {
-                                                          @Override
-                                                          public void onClick(View v) {
-                                                              //Toast.makeText(getApplicationContext(), "외않되", Toast.LENGTH_SHORT). show();
-                                                              EditText editText = (EditText) findViewById(R.id.editText1);
-                                                              String inputValue = editText.getText().toString();
-                                                              editText.setText("");
-                                                              refresh(inputValue, 0);
-                                                          }
-                                                      }
-        );
+//
+//        findViewById(R.id.button1).setOnClickListener(new Button.OnClickListener() {
+//                                                          @Override
+//                                                          public void onClick(View v) {
+//                                                              //Toast.makeText(getApplicationContext(), "외않되", Toast.LENGTH_SHORT). show();
+//                                                              EditText editText = (EditText) findViewById(R.id.editText1);
+//                                                              String inputValue = editText.getText().toString();
+//                                                              editText.setText("");
+//                                                              refresh(inputValue, 0);
+//                                                          }
+//                                                      }
+//        );
     }
 
-
-    private void refresh(String inputValue, int _str) {
-        m_Adapter.add(inputValue, _str);
-        m_Adapter.notifyDataSetChanged();
-    }
+//
+//    private void refresh(String inputValue, int _str) {
+//        m_Adapter.add(inputValue, _str);
+//        m_Adapter.notifyDataSetChanged();
+//    }
 
     /* ---------------------------------------------- CLOVA ----------------------------------------------------------- */
     // Handle speech recognition Messages.
@@ -546,6 +566,7 @@ public class CallActivity extends AppCompatActivity
                 // 데이터를 읽어올 때 모든 데이터를 읽어오기때문에 List 를 초기화해주는 작업이 필요하다.
                 m_Adapter.clean();
                 for (DataSnapshot messageData : dataSnapshot.getChildren()) {
+                    //String msg = messageData.getValue().toString();
                     Chat chat = messageData.getValue(Chat.class);
 
                     if (user.equals(userId)) { //사용자 = 발신자
@@ -618,13 +639,19 @@ public class CallActivity extends AppCompatActivity
         Log.d("connecttt", "연결");
         token = "cHJvdmlzaW9uAGluc2VvbkA0OTNmN2UudmlkeW8uaW8AMTYzNjg5NjA5MDM5AAAwMjA1NGY0YTIxOTRkYzQ1NTc1ZGM5NGVmZThjMTI3MGI1Yjk2Y2FmN2ZmYzAxYjJiOTZiYTY1ZGJiYjYwYmI2MTBmNGQ1MTcyNWI1NTQxMzY2NWNkZTFhNGViYzY1NWU=";
 
-        if (callStatus.name().equals("Receiver")) { //전화 받을때
+        // 전화 받을 떄
+        if (callStatus.name().equals("Receiver")) {
             displayName = user + "-" + connectUser;
             userId = connectUser;
             friendId = user;
             Log.d("전화수신", user + "->" + connectUser);
 
-            vc = new Connector(videoFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 2, "warning info@VidyoClient info@VidyoConnector", "", 0);
+            //Connector(Object viewId, ConnectorViewStyle viewStyle, int remoteParticipants, String logFileFilter, String logFileName, long userData)
+            vc = new Connector(videoFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 1, "warning info@VidyoClient info@VidyoConnector", "", 0);
+            vc.showPreview(false);
+            vc.showViewLabel(videoFrame, false);
+            vc_preview = new Connector(localFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 0, "warning info@VidyoClient info@VidyoConnector", "", 0);
+            vc_preview.showViewLabel(localFrame, false);
             RegisterForVidyoEvents();
 
             getChatCnt(user, connectUser);
@@ -636,11 +663,11 @@ public class CallActivity extends AppCompatActivity
                 chatFrame.setVisibility(View.GONE);
             }
 
-            if (sendEdit.getVisibility() == View.GONE) {
+            /*if (sendEdit.getVisibility() == View.GONE) {
                 sendEdit.setVisibility(View.VISIBLE);
             } else {
                 sendEdit.setVisibility(View.GONE);
-            }
+            }*/
 
             //clova 음성인식 시작
             if (!naverRecognizer.getSpeechRecognizer().isRunning()) {
@@ -657,24 +684,28 @@ public class CallActivity extends AppCompatActivity
                 naverRecognizer.getSpeechRecognizer().stop();
             }
 
-            vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
-
+            vc_preview.selectDefaultCamera();
+            vc_preview.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
             vc.connect("prod.vidyo.io", token, "call", displayName, this);
-        } else { //전화 걸때
+        }
+        // 전화 걸때
+        else {
             callStatus = CallStatus.Caller;
-            user = ((MainActivity) MainActivity.context).getUserId();
+            //user = ((MainActivity) MainActivity.context).getUserId();
+            user = userId;
             connectUser = friendId;
             displayName = user + "-" + connectUser;
             Log.d("전화발신", user + "->" + connectUser);
 
-            Log.d("connecttt", "startCall 끝");
-
-
-            Log.d("connecttt", "함수트루");
-
             callStatus = CallStatus.Caller;
 
-            vc = new Connector(videoFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 2, "warning info@VidyoClient info@VidyoConnector", "", 0);
+            //RegisterForVidyoEvents();
+            vc = new Connector(videoFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 1, "warning info@VidyoClient info@VidyoConnector", "", 0);
+            vc.showPreview(false);
+            vc.showViewLabel(videoFrame, false);
+            vc_preview = new Connector(localFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 0, "warning info@VidyoClient info@VidyoConnector", "", 0);
+            //vc_preview.showPreview(true);
+            vc_preview.showViewLabel(localFrame, false);
             RegisterForVidyoEvents();
 
             Log.d("connecttt", "vidyo 연결");
@@ -690,11 +721,11 @@ public class CallActivity extends AppCompatActivity
                 chatFrame.setVisibility(View.GONE);
             }
 
-            if (sendEdit.getVisibility() == View.GONE) {
+            /*if (sendEdit.getVisibility() == View.GONE) {
                 sendEdit.setVisibility(View.VISIBLE);
             } else {
                 sendEdit.setVisibility(View.GONE);
-            }
+            }*/
 
             //clova 음성인식 시작
             if (!naverRecognizer.getSpeechRecognizer().isRunning()) {
@@ -710,12 +741,16 @@ public class CallActivity extends AppCompatActivity
                 //btnStart.setEnabled(false);
                 naverRecognizer.getSpeechRecognizer().stop();
             }
-            vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
+            vc_preview.selectDefaultCamera();
+            vc_preview.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
             vc.connect("prod.vidyo.io", token, "call", displayName, this);
         }
     }
 
     public void Disconnect(View v) {
+
+        Log.d("connecttt", "연결종료");
+        vc.disconnect();
 
         if (callStatus.name().equals("Caller"))
             stopCall(user);
@@ -724,12 +759,10 @@ public class CallActivity extends AppCompatActivity
 
         //clova
         callStatus = CallStatus.Default;
-        Log.d("disconnect", "연결종료");
         naverRecognizer.getSpeechRecognizer().stop();
         Log.d(TAG, "clova finish");
 
         this.setResult(0);
-
         finish();
     }
 
@@ -751,13 +784,16 @@ public class CallActivity extends AppCompatActivity
             vc.disable();
             vc = null;
 
+            vc_preview.disable();
+            vc_preview = null;
+
             // Uninitialize the VidyoClient library
             ConnectorPkg.uninitialize();
 
-            Log.d("onDisconnected", "successfully disconnected, reason = " + reason.toString());
+            Log.d("connecttt", "successfully disconnected, reason = " + reason.toString());
             //connectorStateUpdated(VidyoConnectorState.VidyoConnectorStateDisconnected, "Disconnected");
         } else {
-            Log.d("onDisconnected", "unexpected disconnection, reason = " + reason.toString());
+            Log.d("connecttt", "unexpected disconnection, reason = " + reason.toString());
             //connectorStateUpdated(VidyoConnectorState.VidyoConnectorStateDisconnectedUnexpected, "Unexpected disconnection");
         }
     }
@@ -771,40 +807,84 @@ public class CallActivity extends AppCompatActivity
         vc.registerMessageEventListener(this);
 
         //vc.registerLocalCameraEventListener(this);
+        vc.registerRemoteCameraEventListener(this);
 
        /* Register for local window share and local monitor events */
-//        vc.registerLocalWindowShareEventListener(this);
-//        vc.registerLocalMonitorEventListener(this);
+        //vc.registerLocalMonitorEventListener(this);
     }
 
-//    /* custom local preview */
-//    public void onLocalCameraAdded(LocalCamera localCamera)    { /* New camera is available */ }
-//    public void onLocalCameraRemoved(LocalCamera localCamera)  { /* Existing camera became unavailable */ }
-//
-//    public void onLocalCameraSelected(final LocalCamera localCamera) { /* Camera was selected by user or automatically */
-////        Log.d("전화", "onLocalCameraSelectd");
-////        runOnUiThread(new Runnable() {
-////            @Override
-////            public void run() {
-////                if (localCamera != null) { Log.d("전화", "로컬카메라없음");
-////                    vc.assignViewToLocalCamera(videoFrame, localCamera, false, false);
-////                    vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
-////                } else {
-////                    vc.hideView(videoFrame);
-////                }
-////            }
-////        });
-//    }
-//    public void onLocalCameraStateUpdated(LocalCamera localCamera, Device.DeviceState state) { /* Camera state is updated */ }
-//    /* Local camera change initiated by user. Note: this is an arbitrary function name. */
+    /* custom local preview */
+    public void onLocalCameraAdded(LocalCamera localCamera)    {
+        Log.d("connecttt", "onLocalCameraAdded");
+        //vc.assignViewToLocalCamera(videoFrame, localCamera, false, false);
+    }
+
+    public void onLocalCameraRemoved(LocalCamera localCamera)  {
+        Log.d("connecttt", "onLocalCameraRemoved");
+    }
+
+    public void onLocalCameraSelected(final LocalCamera localCamera) { /* Camera was selected by user or automatically */
+        Log.d("connecttt", "onLocalCameraSelected");
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (localCamera != null) {
+                    Log.d("connecttt", "localcamera");
+                    //vc_preview.assignViewToCompositeRenderer(localFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 0);
+                    vc_preview.assignViewToLocalCamera(localFrame, localCamera, false, false);
+                    vc_preview.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
+                } else {
+                    vc.hideView(localFrame);
+                }
+            }
+        });
+    }
+    public void onLocalCameraStateUpdated(LocalCamera localCamera, Device.DeviceState state) {
+        Log.d("connecttt", "onLocalCameraStateUpdated");
+        Log.d("connecttt", state.toString());
+    }
+    /* Local camera change initiated by user. Note: this is an arbitrary function name. */
+
+
+    /******************************************************************************/
+    /* custom participant's source view */
+    public void onRemoteCameraAdded(final RemoteCamera remoteCamera, final Participant participant) {
+        Log.d("connecttt", "onRemoteCameraAdded");
+        Log.d("connecttt", participant.getId().toString());
+
+        if (remoteCamera!=null) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d("connecttt", "remotecamera");
+                    vc.assignViewToRemoteCamera(videoFrame, remoteCamera, false, false);
+                    vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
+                }
+            });
+        }
+    }
+
+    public void onRemoteCameraRemoved(RemoteCamera remoteCamera, Participant participant) {
+        Log.d("connecttt", "onRemoteCameraRemoved");
+        /* Existing camera became unavailable */
+        vc.hideView(R.id.videoFrame);
+    }
+
+    public void onRemoteCameraStateUpdated(RemoteCamera remoteCamera, Participant participant, Device.DeviceState state) {
+        Log.d("connecttt", "onRemoteCameraStateUpdated");
+    }
+
+    /******************************************************************************/
+
 
     // Participant Joined
     public void onParticipantJoined(Participant participant) {
-        Log.d("ParticipainJoined", "ture");
+        Log.d("connecttt", "ParticipainJoined");
     }
 
     // Participant Left
     public void onParticipantLeft(Participant participant) {
+        Log.d("connecttt", "ParticipantLeft");
         Disconnect(findViewById(R.id.disconnect));
     }
 
@@ -816,12 +896,6 @@ public class CallActivity extends AppCompatActivity
     public void onLoudestParticipantChanged(Participant participant, boolean audioOnly) {
     }
 
-    // Register for VidyoConnector event listeners. Note: this is an arbitrary function name.
-//    public void RegisterForVidyoEvents() {
-//        // Register to receive chat messages
-//        vc.registerMessageEventListener(this);
-//    }
-
     private void SendChatMessage(String message) {
         vc.sendChatMessage(message);
     }
@@ -830,24 +904,26 @@ public class CallActivity extends AppCompatActivity
     public void onChatMessageReceived(Participant participant, ChatMessage chatMessage) {
     }
 
-//    /* Register for VidyoConnector event listeners. Note: this is an arbitrary function name. */
-//    public void RegisterForVidyoEvents() {
-//        /* Register for local window share and local monitor events */
-//        vc.registerLocalWindowShareEventListener(this);
-//        vc.registerLocalMonitorEventListener(this);
-//    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        // Release device resources
-//        vc.disable();
-//        vc = null;
-//
-//        // Uninitialize the VidyoClient library
-//        ConnectorPkg.uninitialize();
+        // Release device resources
 
         Log.d("Destroy", "true");
+
+        if(vc!=null) {
+            vc.disable();
+            vc = null;
+        }
+
+        if(vc_preview!=null){
+            vc_preview.disable();
+            vc_preview = null;
+        }
+
+        if(mVidyoClientInitialized)
+            ConnectorPkg.uninitialize();
+
         try {
             unregisterReceiver(mReceiver);
         } catch (Exception e) {
@@ -857,44 +933,6 @@ public class CallActivity extends AppCompatActivity
         if(callStatus != CallStatus.Default)
             Disconnect(findViewById(R.id.disconnect));
     }
-//
-//    private class startCall extends Thread {
-//        @Override
-//        public void run() {
-//            try {
-//                Log.d("connecttt 스레드", userId + "->" + friendId);
-//
-//                String link = "http://13.124.94.107/startCall.php";
-//                String data = URLEncoder.encode("connectId", "UTF-8") + "=" + URLEncoder.encode(friendId, "UTF-8");
-//                data += "&" + URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(userId, "UTF-8");
-//
-//                URL url = new URL(link);
-//                URLConnection conn = url.openConnection();
-//
-//                conn.setDoOutput(true);
-//                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-//
-//                wr.write(data);
-//                wr.flush();
-//
-//                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//
-//                StringBuilder sb = new StringBuilder();
-//                String line = null;
-//
-//                // Read Server Response
-//                while ((line = reader.readLine()) != null) {
-//                    sb.append(line);
-//                    break;
-//                }
-//
-//                //Connect();
-//
-//            } catch (Exception e) {
-//                Log.d("콜액티비티 Exception: ", e.toString());
-//            }
-//        }
-//    }
 
     private void startCall(final String connectId, String Id) {
 
@@ -985,7 +1023,6 @@ public class CallActivity extends AppCompatActivity
 
                 if (s.toString().equals("Disconnect")) {
                     Log.d("Disconnect", "DB초기화");
-                    tryCall = false;
                 }
             }
 

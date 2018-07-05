@@ -45,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
 
     //자동로그인
     private SharedPreferences loginData;
-    private String autoId, autoPw, autoPhone;
+    private String autoId, autoPw, autoPhone, autoName;
 
     // 첫로그인
     private String inputId, inputPw;
@@ -59,11 +59,13 @@ public class LoginActivity extends AppCompatActivity {
         autoId = loginData.getString("autoId", null);
         autoPw = loginData.getString("autoPw", null);
         autoPhone = loginData.getString("autoPhone", null);
+        autoName = loginData.getString("autoName", null);
 
         if(autoId !=null && autoPw != null) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             intent.putExtra("userId", autoId);
             intent.putExtra("userPhone", autoPhone);
+            intent.putExtra("userName", autoName);
             startActivity(intent);
             finish();
         }
@@ -104,6 +106,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 String usermsg = "";
                 String userphone = "";
+                String username = "";
 
                 try {
                     // PHP에서 받아온 JSON 데이터를 JSON오브젝트로 변환
@@ -116,6 +119,7 @@ public class LoginActivity extends AppCompatActivity {
                         JSONObject temp = results.getJSONObject(i);
                         usermsg =temp.get("usermsg").toString();
                         userphone = temp.get("userphone").toString();
+                        username = temp.get("username").toString();
 
                     }
                     //Log.e("ssssssssssssssss",flagId.toString());
@@ -131,12 +135,14 @@ public class LoginActivity extends AppCompatActivity {
                     autoLogin.putString("autoId", inputId);
                     autoLogin.putString("autoPw", inputPw);
                     autoLogin.putString("autoPhone", userphone);
+                    autoLogin.putString("autoName", username);
                     //commit 으로 값 저장
                     autoLogin.commit();
 
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     intent.putExtra("userId", Id);
                     intent.putExtra("userPhone", userphone);
+                    intent.putExtra("userName", username);
                     startActivity(intent);
                     finish();
                 }

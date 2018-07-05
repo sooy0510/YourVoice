@@ -6,7 +6,7 @@ import android.graphics.drawable.Drawable;
  * Created by DS on 2018-03-15.
  */
 
-public class ListViewItem {
+public class FListViewItem {
     private Drawable iconDrawable ;
     private String nameStr ;
     private String idStr ;

@@ -15,13 +15,13 @@ public class RestartService extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        Log.d("서비스재시작", "서비스재시작브로드캐스트받음");
+        Log.d("RestartService", "RestartService called!!!!!!!!!!!!!!!!!!!!!!!");
 
 
         /* 서비스 죽일때 알람으로 다시 서비스 등록 */
         if (intent.getAction().equals("ACTION.RESTART.CallService")) {
 
-            Log.d("서비스재시작", "서비스");
+            Log.d("RestartService", "Service dead, but resurrection");
 
             Intent i = new Intent(context, CallService.class);
             context.startService(i);
@@ -30,7 +30,7 @@ public class RestartService extends BroadcastReceiver {
         /* 폰 재부팅할때 서비스 등록 */
         if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
 
-            Log.d("서비스재시작", "ACTION_BOOT_COMPLETED");
+            Log.d("RestartService", "ACTION_BOOT_COMPLETED");
 
             Intent i = new Intent(context, CallService.class);
             context.startService(i);
@@ -38,7 +38,7 @@ public class RestartService extends BroadcastReceiver {
 
         if(intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
 
-            Log.d("서비스재시작", "ACTION_SCREEN_ON");
+            Log.d("RestartService", "ACTION_SCREEN_ON");
 
             Intent i = new Intent(context, CallService.class);
             context.startService(i);

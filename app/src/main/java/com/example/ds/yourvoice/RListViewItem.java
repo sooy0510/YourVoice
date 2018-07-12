@@ -38,7 +38,6 @@ public class RListViewItem {
         callerStr = caller ;
     }
     public void setReceiver(String receiver) { receiverStr = receiver ; }
-    public void setTextVisibility(String visibility) { checkVisibility = visibility ; }
 
     public Drawable getIcon() {
         return this.iconDrawable ;
@@ -56,6 +55,5 @@ public class RListViewItem {
     }
     public String getCaller() { return this.callerStr ; }
     public String getReceiver() { return this.receiverStr ;}
-    public String getTextVisibility() { return this.checkVisibility ;}
 
 }

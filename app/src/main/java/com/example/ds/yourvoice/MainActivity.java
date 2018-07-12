@@ -7,7 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Icon;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.PowerManager;
 import android.support.v4.content.ContextCompat;
@@ -15,7 +15,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,7 +23,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -79,10 +77,6 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
 
     public static Context context;
     public Intent cIntent;
-
-    /* 최근통화목록 삭제 변수 */
-    String rUserId;
-    String rFriendId;
 
     //친구목록
     private static String FTAG = "FRIENDLIST";
@@ -211,6 +205,8 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
                 //Toast.makeText(getApplicationContext(), strMsg, Toast.LENGTH_SHORT). show();
 
                 if (strMsg.equals("Tab1")) {
+                    //tabHost.getTabWidget().getChildAt(0).setBackgroundColor(Color.parseColor("#7392B5")); //배경
+                    //tabHost.getTabWidget().getChildAt(0).setin
                     /* 기존에 있던 어댑터 삭제*/
                     f_adapter.clear();
                     /* 아이템 추가 및 어댑터 등록 */
@@ -284,9 +280,6 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
                         .show();
                 return true;
             default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                //Toast.makeText(getApplicationContext(), "나머지 버튼 클릭됨", Toast.LENGTH_LONG).show();
                 return super.onOptionsItemSelected(item);
         }
     }
@@ -370,7 +363,22 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
             startCall(id, userId, fname);
         } else {
             Intent intent = new Intent(this, TextPopupActivity.class);
-            intent.putExtra("data", "Test Popup");
+
+            RListViewItem friend = new RListViewItem();
+            friend = (RListViewItem) r_adapter.getItem(position);
+            String caller = friend.getCaller();
+            String receiver = friend.getReceiver();
+            String chatcnt = friend.getChatCnt();
+            String chatRoom = caller+receiver;
+            String date = friend.getDate();
+
+            intent.putExtra("chatcnt", chatcnt);
+            intent.putExtra("chatRoom", chatRoom);
+            intent.putExtra("caller", caller);
+            intent.putExtra("receiver", receiver);
+            intent.putExtra("userId", userId);
+            intent.putExtra("date", date);
+
             startActivityForResult(intent, 1);
 
         }
@@ -599,7 +607,6 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
             String friendname;
             String friendid;
 
-
             String caller, receiver;
 
             JSONObject jsonObject = new JSONObject(rJsonString);
@@ -613,7 +620,8 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
                 final HashMap<String, String> hashMap = new HashMap<>();
 
                 if(item.getString(RTAG_ID).equals(userId)){  //사용자가 수신자
-                    friendname = userName;
+                    //friendname = userName;
+                    friendname = item.getString(RTAG_NAME);
                     friendid = item.getString(RTAG_USERID);
 
                     hashMap.put(RTAG_CALLER, friendid);
@@ -634,39 +642,6 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
 
                 String calldate = item.getString(RTAG_DATE);
                 final String chatcnt = item.getString(RTAG_CHATCNT);
-
-                String chatroom = caller+receiver;
-                DatabaseReference checkRef = database.getReference("chats").child(chatroom).child(chatcnt);
-
-
-/*                checkRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        long ss = dataSnapshot.getChildrenCount();
-                        int vv = (int)ss;
-                        //Log.d("zzzzzzzz",vv+"");
-                        if(vv == 0){
-                            //hashMap.put(RTAG_VISIBLE, "N");
-                            //Log.d("zzzzzzzz",vv+"N");
-                            //checkvis = "N";
-                            changeVisibility("N");
-                            //Log.d("gggggggg",checkvis);
-                        }else{
-                            //hashMap.put(RTAG_VISIBLE, "Y");
-                            //Log.d("zzzzzzzz",vv+"Y");
-                            //checkvis = "Y";
-                            //Log.d("gggggggg",checkvis);
-                            changeVisibility("Y");
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });*/
-
-                //Log.d("gggggggg",checkvis);
 
                 hashMap.put(RTAG_NAME, friendname);
                 hashMap.put(RTAG_ID, friendid);
@@ -708,7 +683,6 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
         } catch (JSONException e) {
             Log.d(RTAG, "rShowResult : ", e);
         }
-
     }
 
     /* ---------------------------------------------- 최근통화목록결과 LISTVIEW로 생성해서 보여주기 끝 ----------------------------------------------------------- */
@@ -1060,6 +1034,7 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
         InsertData task = new InsertData();
         task.execute(connectId, Id);
     }
+
 
     private void logout(final String Id) {
 

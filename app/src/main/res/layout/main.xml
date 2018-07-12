@@ -110,31 +110,31 @@
     </LinearLayout>
 
     <!--<RelativeLayout-->
-        <!--android:id="@+id/callReceiveLayout"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:background="#000000"-->
-        <!--android:visibility="invisible">-->
+    <!--android:id="@+id/callReceiveLayout"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:background="#000000"-->
+    <!--android:visibility="invisible">-->
 
-        <!--<Button-->
-            <!--android:id="@+id/callReceive"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentBottom="true"-->
-            <!--android:layout_centerInParent="true"-->
-            <!--android:layout_marginBottom="100dp"-->
-            <!--android:text="전화받기"-->
-            <!--android:enabled="true"/>-->
+    <!--<Button-->
+    <!--android:id="@+id/callReceive"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:layout_centerInParent="true"-->
+    <!--android:layout_marginBottom="100dp"-->
+    <!--android:text="전화받기"-->
+    <!--android:enabled="true"/>-->
 
-        <!--<Button-->
-            <!--android:id="@+id/callDenial"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentBottom="true"-->
-            <!--android:layout_marginBottom="100dp"-->
-            <!--android:layout_toRightOf="@+id/callReceive"-->
-            <!--android:text="전화끊기"-->
-            <!--android:enabled="true"/>-->
+    <!--<Button-->
+    <!--android:id="@+id/callDenial"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:layout_marginBottom="100dp"-->
+    <!--android:layout_toRightOf="@+id/callReceive"-->
+    <!--android:text="전화끊기"-->
+    <!--android:enabled="true"/>-->
 
     <!--</RelativeLayout>-->
 

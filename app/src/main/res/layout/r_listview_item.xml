@@ -65,8 +65,7 @@
                     android:layout_width="45dp"
                     android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:background="@drawable/text"
-                    android:visibility="invisible"/>
+                    android:background="@drawable/text"/>
 
                 <!--<Button
                     android:id="@+id/button4"

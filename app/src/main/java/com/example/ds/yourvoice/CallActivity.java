@@ -94,7 +94,7 @@ public class CallActivity extends AppCompatActivity
     private int chatnum; //채팅방 번호
     private int chatCnt; //해당 친구와 몇번째 채팅인지
     private String chatCntStr; //채팅방 디렉토리 이름
-    private String chatCntStr1 = "";
+    private String cflag = "N";
 
     //firebase 데이터 가져오기
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -654,21 +654,6 @@ public class CallActivity extends AppCompatActivity
             vc_preview.showViewLabel(localFrame, false);
             RegisterForVidyoEvents();
 
-            getChatCnt(user, connectUser);
-
-            //채팅창 보이도록
-            if (chatFrame.getVisibility() == View.GONE) {
-                chatFrame.setVisibility(View.VISIBLE);
-            } else {
-                chatFrame.setVisibility(View.GONE);
-            }
-
-            /*if (sendEdit.getVisibility() == View.GONE) {
-                sendEdit.setVisibility(View.VISIBLE);
-            } else {
-                sendEdit.setVisibility(View.GONE);
-            }*/
-
             //clova 음성인식 시작
             if (!naverRecognizer.getSpeechRecognizer().isRunning()) {
                 // Start button is pushed when SpeechRecognizer's state is inactive.
@@ -687,6 +672,25 @@ public class CallActivity extends AppCompatActivity
             vc_preview.selectDefaultCamera();
             vc_preview.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
             vc.connect("prod.vidyo.io", token, "call", displayName, this);
+
+            while(!cflag.equals("Y")){ }
+
+            if(cflag.equals("Y")){
+                getChatCnt(user, connectUser);
+
+                //채팅창 보이도록
+                if (chatFrame.getVisibility() == View.GONE) {
+                    chatFrame.setVisibility(View.VISIBLE);
+                } else {
+                    chatFrame.setVisibility(View.GONE);
+                }
+
+            /*if (sendEdit.getVisibility() == View.GONE) {
+                sendEdit.setVisibility(View.VISIBLE);
+            } else {
+                sendEdit.setVisibility(View.GONE);
+            }*/
+            }
         }
         // 전화 걸때
         else {
@@ -710,16 +714,6 @@ public class CallActivity extends AppCompatActivity
 
             Log.d("connecttt", "vidyo 연결");
 
-            //발신자만 채팅방 번호 추가  //채팅방이름은 발신자id+수신자id
-            getChatCnt1(user, connectUser);
-
-
-            //채팅창 보이도록
-            if (chatFrame.getVisibility() == View.GONE) {
-                chatFrame.setVisibility(View.VISIBLE);
-            } else {
-                chatFrame.setVisibility(View.GONE);
-            }
 
             /*if (sendEdit.getVisibility() == View.GONE) {
                 sendEdit.setVisibility(View.VISIBLE);
@@ -744,6 +738,19 @@ public class CallActivity extends AppCompatActivity
             vc_preview.selectDefaultCamera();
             vc_preview.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
             vc.connect("prod.vidyo.io", token, "call", displayName, this);
+
+            while(!cflag.equals("Y")){ }
+
+            if(cflag.equals("Y")){
+                //발신자만 채팅방 번호 추가  //채팅방이름은 발신자id+수신자id
+                getChatCnt1(user, connectUser);
+                //채팅창 보이도록
+                if (chatFrame.getVisibility() == View.GONE) {
+                    chatFrame.setVisibility(View.VISIBLE);
+                } else {
+                    chatFrame.setVisibility(View.GONE);
+                }
+            }
         }
     }
 
@@ -761,6 +768,7 @@ public class CallActivity extends AppCompatActivity
         callStatus = CallStatus.Default;
         naverRecognizer.getSpeechRecognizer().stop();
         Log.d(TAG, "clova finish");
+        cflag = "N";
 
         //this.setResult(0);
         finish();
@@ -880,6 +888,7 @@ public class CallActivity extends AppCompatActivity
     // Participant Joined
     public void onParticipantJoined(Participant participant) {
         Log.d("connecttt", "ParticipainJoined");
+        cflag = "Y";
     }
 
     // Participant Left

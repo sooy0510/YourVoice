@@ -1,6 +1,7 @@
 package com.example.ds.yourvoice;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,10 +82,6 @@ public class RListViewAdapter extends ArrayAdapter implements View.OnClickListen
         chatCnt = listViewItem.getChatCnt();
         caller = listViewItem.getCaller();
         receiver = listViewItem.getReceiver();
-        checkVis = listViewItem.getTextVisibility();
-        /*if(checkVis.equals("Y")){
-            textButton.setVisibility(View.VISIBLE);
-        }*/
 
         // button3의 TAG에 position값 지정. Adapter를 click listener로 지정.
         Button rphone = (Button) convertView.findViewById(R.id.rphone);

@@ -10,7 +10,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:text="Notice"
+            android:id="@+id/hfriend"
+            android:text="이름"
+            android:textSize="20sp"
+            android:textColor="#fff"
+            android:gravity="center"
+            android:background="#ff7a00"
+            android:layout_width="match_parent"
+            android:layout_height="53dp"/>
+    </LinearLayout>
+    <!-- //end 타이틀바 -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/hdate"
+            android:text="날짜"
             android:textSize="20sp"
             android:textColor="#fff"
             android:gravity="center"
@@ -18,7 +34,6 @@
             android:layout_width="match_parent"
             android:layout_height="53dp" />
     </LinearLayout>
-    <!-- //end 타이틀바 -->
 
     <!-- Notice -->
     <LinearLayout
@@ -26,7 +41,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <TextView
+        <ListView
             android:id="@+id/txtText"
             android:textSize="15sp"
             android:textColor="#000"
@@ -34,7 +49,17 @@
             android:gravity="center"
             android:layout_marginBottom="3dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="300dp">
+        </ListView>
+        <!--<TextView
+            android:id="@+id/txtText"
+            android:textSize="15sp"
+            android:textColor="#000"
+            android:alpha="0.87"
+            android:gravity="center"
+            android:layout_marginBottom="3dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />-->
     </LinearLayout>
     <!-- Notice -->
 

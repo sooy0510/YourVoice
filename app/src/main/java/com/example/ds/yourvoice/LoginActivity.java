@@ -123,7 +123,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     }
                     //Log.e("ssssssssssssssss",flagId.toString());
-                    Toast.makeText(getApplicationContext(), usermsg, Toast.LENGTH_SHORT). show();
+                    //Toast.makeText(getApplicationContext(), usermsg, Toast.LENGTH_SHORT). show();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -148,7 +148,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 else
-                    Toast.makeText(getApplicationContext(), "아이디와 비밀번호를 확인해주세요", Toast.LENGTH_SHORT). show();
+                    Toast.makeText(getApplicationContext(), "아이디와 비밀번호를 확인해주세요", Toast.LENGTH_SHORT).show();
             }
 
             @Override

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#dfdfdf"
     tools:context="com.example.ds.yourvoice.LoginActivity">
 
     <LinearLayout
@@ -14,55 +15,70 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:layout_marginTop="300sp"
-            android:gravity="center">
+            android:layout_marginTop="260dp"
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <EditText
                 android:id="@+id/userID"
-                android:layout_width="wrap_content"
+                android:layout_width="260dp"
                 android:layout_height="wrap_content"
+                android:backgroundTint="#64ffffff"
+                android:textCursorDrawable="@drawable/cursor"
+                android:drawableLeft="@drawable/identity_white"
+                android:drawablePadding="10dp"
                 android:ems="10"
-                android:inputType="text"
                 android:hint="아이디"
-                tools:text="아이디 입력" />
+                android:inputType="text" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <EditText
                 android:id="@+id/userPW"
-                android:layout_width="wrap_content"
+                android:layout_width="260dp"
                 android:layout_height="wrap_content"
+                android:backgroundTint="#64ffffff"
+                android:textCursorDrawable="@drawable/cursor"
+                android:drawableLeft="@drawable/lock_white"
+                android:drawablePadding="10dp"
                 android:ems="10"
                 android:hint="비밀번호"
                 android:inputType="textPassword" />
 
         </LinearLayout>
 
-        <Button
-            android:id="@+id/login"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:gravity="center"
-            android:layout_marginTop="50dp"
-            android:layout_gravity="center_horizontal"
-            android:text="로그인"
-            android:onClick="login"/>
+            android:orientation="horizontal"
+            android:layout_marginTop="50dp">
 
-        <Button
-            android:id="@+id/join"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_gravity="center_horizontal"
-            android:text="회원가입"
-            android:onClick="join"/>
+            <Button
+                android:id="@+id/join"
+                android:layout_width="125dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_join"
+                android:layout_marginRight="10dp"
+                android:onClick="join"
+                android:text="Join" />
+
+            <Button
+                android:id="@+id/login"
+                android:layout_width="125dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="#83ffa200"
+                android:onClick="login"
+                android:text="Log in" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

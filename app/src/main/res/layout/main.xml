@@ -14,7 +14,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="#83ffa200"
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
@@ -26,7 +26,8 @@
 
             <TabWidget
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/underline"
                 android:id="@android:id/tabs">
             </TabWidget>
 
@@ -39,7 +40,7 @@
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_gravity="top"
                     android:id="@+id/tab_friendList">
 
@@ -53,8 +54,8 @@
 
                 <LinearLayout
                     android:orientation="vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:id="@+id/tab_recentCall">
 
                     <ListView
@@ -66,41 +67,48 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:orientation="vertical"
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/tab_addFriend"
                     android:gravity="center">
 
                     <LinearLayout
+                        android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center">
+                        android:gravity="center"
+                        android:layout_marginBottom="40dp">
 
                         <EditText
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="40dp"
                             android:id="@+id/addFriendId"
-                            android:hint="추가할 아이디"
+                            android:background="#ffffff"
+                            android:textCursorDrawable="@drawable/cursor_black"
+                            android:paddingLeft="10dp"
+                            android:layout_marginRight="2dp"
                             android:inputType="text"
                             android:ems="10"
                             android:maxLength="11"/>
 
+                        <Button
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="#83ffa200"
+                            android:onClick="addFriend"
+                            android:textSize="18sp"
+                            android:textColor="#ffffff"
+                            android:textStyle="bold"
+                            android:text="＋"/>
+
                     </LinearLayout>
-
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="50dp"
-                        android:text="추가"
-                        android:onClick="addFriend"/>
-
                 </LinearLayout>
 
             </FrameLayout>
         </TabHost>
     </LinearLayout>
+
     <!--<RelativeLayout-->
         <!--android:id="@+id/callReceiveLayout"-->
         <!--android:layout_width="match_parent"-->

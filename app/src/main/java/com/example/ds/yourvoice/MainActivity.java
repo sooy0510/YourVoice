@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Icon;
 import android.os.AsyncTask;
 import android.os.PowerManager;
 import android.support.v4.content.ContextCompat;
@@ -14,14 +15,19 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ds.yourvoice.FListViewAdapter.ListBtnClickListener;
@@ -134,27 +140,51 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true); //커스터마이징 하기 위해 필요
         actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setDisplayHomeAsUpEnabled(true); // 뒤로가기 버튼, 디폴트로 true만 해도 백버튼이 생김
+        actionBar.setDisplayHomeAsUpEnabled(false); // 뒤로가기 버튼, 디폴트로 true만 해도 백버튼이 생김
 
+        // 탭 설정
+        //https://www.androidpub.com/650765
         TabHost tabHost = (TabHost) findViewById(android.R.id.tabhost);
         tabHost.setup();
         //TabHost tabHost1 = getTabHost();
 
+        // 친구목록 탭 설정
+        LayoutInflater layoutInflater1 = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view1 = layoutInflater1.inflate(R.layout.custom_tab, null);
+        ImageView icon1 = (ImageView)view1.findViewById(R.id.tab_icon);
+        icon1.setImageDrawable(getResources().getDrawable(R.drawable.baseline_people_black_18));
+        TextView tv = (TextView)view1.findViewById(R.id.tab_text);
+        tv.setText("친구목록");
+
         TabHost.TabSpec ts1 = tabHost.newTabSpec("Tab1");
+        ts1.setIndicator(view1);
         ts1.setContent(R.id.tab_friendList);
-        ts1.setIndicator("친구목록");
         tabHost.addTab(ts1);
 
+        // 통화기록 탭 설정
+        LayoutInflater layoutInflater2 = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view2 = layoutInflater2.inflate(R.layout.custom_tab, null);
+        ImageView icon2 = (ImageView)view2.findViewById(R.id.tab_icon);
+        icon2.setImageDrawable(getResources().getDrawable(R.drawable.list_black));
+        TextView tv2 = (TextView)view2.findViewById(R.id.tab_text);
+        tv2.setText("통화기록");
+
         TabHost.TabSpec ts2 = tabHost.newTabSpec("Tab2");
+        ts2.setIndicator(view2);
         ts2.setContent(R.id.tab_recentCall);
-        ts2.setIndicator("최근통화기록");
         tabHost.addTab(ts2);
 
+        // 친구추가 탭 설정
+        LayoutInflater layoutInflater3 = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view3 = layoutInflater3.inflate(R.layout.custom_tab, null);
+        ImageView icon3 = (ImageView)view3.findViewById(R.id.tab_icon);
+        icon3.setImageDrawable(getResources().getDrawable(R.drawable.person_add_black));
+        TextView tv3 = (TextView)view3.findViewById(R.id.tab_text);
+        tv3.setText("친구추가");
+
         TabHost.TabSpec ts3 = tabHost.newTabSpec("Tab3");
-        //ts3.setContent(new Intent(MainActivity.this, AddFriendActivity.class));
+        ts3.setIndicator(view3);
         ts3.setContent(R.id.tab_addFriend);
-        // ts3.setContent(new Intent(MainActivity.this, AddFriendActivity.class));
-        ts3.setIndicator("친구추가");
         tabHost.addTab(ts3);
 
         //로그인 했을때 처음 화면 설정
@@ -256,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
-                Toast.makeText(getApplicationContext(), "나머지 버튼 클릭됨", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), "나머지 버튼 클릭됨", Toast.LENGTH_LONG).show();
                 return super.onOptionsItemSelected(item);
         }
     }
@@ -1030,7 +1060,6 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
         InsertData task = new InsertData();
         task.execute(connectId, Id);
     }
-
 
     private void logout(final String Id) {
 

@@ -33,7 +33,7 @@
 
         <activity android:name=".MainActivity"></activity>
         <activity android:name=".JoinActivity"></activity>
-        <activity android:name=".CallActivity"  android:theme="@style/Transparent"></activity>
+        <activity android:name=".CallActivity"></activity>
         <activity android:name=".CallReceiveActivity">
             <!--<intent-filter>-->
                 <!--<category android:name="android.intent.category.DEFAULT"/>-->

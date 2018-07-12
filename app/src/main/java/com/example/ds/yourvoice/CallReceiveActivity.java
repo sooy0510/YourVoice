@@ -178,19 +178,21 @@ public class CallReceiveActivity extends AppCompatActivity {
         Intent intent = new Intent(CallReceiveActivity.this, CallActivity.class);
         intent.putExtra("Caller", caller);
         intent.putExtra("Receiver", receiver);
-        startActivityForResult(intent, 0);
+        startActivity(intent);
+        finish();
+        //startActivityForResult(intent, 0);
         //stopService(cIntent);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("callactivitt","finish");
-        if (resultCode == 0) {
-            Log.d("CallActivitt Finish", "receive finish call");
-            //startService(cIntent);
-            finish();
-        }
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        Log.d("callactivitt","finish");
+//        if (resultCode == 0) {
+//            Log.d("CallActivitt Finish", "receive finish call");
+//            //startService(cIntent);
+//            finish();
+//        }
+//    }
 
     /* ---------------------------------------------- 전화걸기 끝 ----------------------------------------------------------- */
 

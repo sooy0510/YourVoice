@@ -175,7 +175,7 @@ public class CallService extends Service {
 
                             if (result.equals("false")) {
                                 Log.d("전화체크", user + " 전화없음");
-                                thread.sleep(2 * 1000);
+                                thread.sleep(1 * 1000);
                             } else if (result.equals("caller")) {
                                 Log.d("전화", "caller");
                                 callerThread = new callerCheck();
@@ -283,6 +283,7 @@ public class CallService extends Service {
                     }
                 } catch (Exception e) {
                     Log.d("발신자전화서비스스레드 Exception", e.toString());
+                    registerRestartAlarm();
                     break;
                 }
             }

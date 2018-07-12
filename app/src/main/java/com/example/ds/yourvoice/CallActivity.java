@@ -762,7 +762,7 @@ public class CallActivity extends AppCompatActivity
         naverRecognizer.getSpeechRecognizer().stop();
         Log.d(TAG, "clova finish");
 
-        this.setResult(0);
+        //this.setResult(0);
         finish();
     }
 

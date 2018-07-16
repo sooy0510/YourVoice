@@ -111,12 +111,12 @@ public class HistoryAdapter extends BaseAdapter{
             //text.setText(m_List.get(0).msg);
 
             if(h_List.get(position).type == 0 ) {
-                text.setBackgroundResource(R.drawable.inbox2);
+                text.setBackgroundResource(R.drawable.bubble_left);
                 layout.setGravity(Gravity.LEFT);
                 viewRight.setVisibility(View.GONE);
                 viewLeft.setVisibility(View.GONE);
             }else if(h_List.get(position).type == 1){
-                text.setBackgroundResource(R.drawable.outbox2);
+                text.setBackgroundResource(R.drawable.bubble_left);
                 layout.setGravity(Gravity.RIGHT);
                 viewRight.setVisibility(View.GONE);
                 viewLeft.setVisibility(View.GONE);

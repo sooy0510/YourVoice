@@ -62,7 +62,7 @@ public class RListViewAdapter extends ArrayAdapter implements View.OnClickListen
         // 화면에 표시될 View(Layout이 inflate된)로부터 위젯에 대한 참조 획득
         final ImageView iconImageView = (ImageView) convertView.findViewById(R.id.imageView1);
         final TextView textTextView1 = (TextView) convertView.findViewById(R.id.textView1);
-        final TextView textTextView2 = (TextView) convertView.findViewById(R.id.textView2);
+        //final TextView textTextView2 = (TextView) convertView.findViewById(R.id.textView2);
         final TextView callDate = (TextView) convertView.findViewById(R.id.callDate);
         final String chatCnt;
         final String caller;
@@ -77,7 +77,7 @@ public class RListViewAdapter extends ArrayAdapter implements View.OnClickListen
         // 아이템 내 각 위젯에 데이터 반영
         iconImageView.setImageDrawable(listViewItem.getIcon());
         textTextView1.setText(listViewItem.getName());
-        textTextView2.setText(listViewItem.getId());
+        //textTextView2.setText(listViewItem.getId());
         callDate.setText(listViewItem.getDate());
         chatCnt = listViewItem.getChatCnt();
         caller = listViewItem.getCaller();

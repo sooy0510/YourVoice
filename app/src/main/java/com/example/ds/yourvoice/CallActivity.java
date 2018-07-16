@@ -673,7 +673,7 @@ public class CallActivity extends AppCompatActivity
             vc_preview.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
             vc.connect("prod.vidyo.io", token, "call", displayName, this);
 
-            while(!cflag.equals("Y")){ }
+            /*while(!cflag.equals("Y")){ }
 
             if(cflag.equals("Y")){
                 getChatCnt(user, connectUser);
@@ -684,12 +684,15 @@ public class CallActivity extends AppCompatActivity
                 } else {
                     chatFrame.setVisibility(View.GONE);
                 }
-
-            /*if (sendEdit.getVisibility() == View.GONE) {
-                sendEdit.setVisibility(View.VISIBLE);
-            } else {
-                sendEdit.setVisibility(View.GONE);
             }*/
+
+            getChatCnt(user, connectUser);
+
+            //채팅창 보이도록
+            if (chatFrame.getVisibility() == View.GONE) {
+                chatFrame.setVisibility(View.VISIBLE);
+            } else {
+                chatFrame.setVisibility(View.GONE);
             }
         }
         // 전화 걸때
@@ -738,6 +741,15 @@ public class CallActivity extends AppCompatActivity
             vc_preview.selectDefaultCamera();
             vc_preview.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
             vc.connect("prod.vidyo.io", token, "call", displayName, this);
+
+/*            //발신자만 채팅방 번호 추가  //채팅방이름은 발신자id+수신자id
+            getChatCnt1(user, connectUser);
+            //채팅창 보이도록
+            if (chatFrame.getVisibility() == View.GONE) {
+                chatFrame.setVisibility(View.VISIBLE);
+            } else {
+                chatFrame.setVisibility(View.GONE);
+            }*/
 
             while(!cflag.equals("Y")){ }
 

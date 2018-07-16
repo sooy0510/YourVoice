@@ -113,7 +113,7 @@ public class MessageAdapter extends BaseAdapter {
         //text.setText(m_List.get(0).msg);
 
         if(m_List.get(position).type == 0 ) {
-            text.setBackgroundResource(R.drawable.inbox2);
+            text.setBackgroundResource(R.drawable.bubble_right);
             layout.setGravity(Gravity.LEFT);
             viewRight.setVisibility(View.GONE);
             viewLeft.setVisibility(View.GONE);

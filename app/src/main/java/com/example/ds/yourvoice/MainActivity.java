@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.PowerManager;
 import android.support.v4.content.ContextCompat;
@@ -28,12 +27,7 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.ds.yourvoice.FListViewAdapter.ListBtnClickListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -511,7 +505,7 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
             for (int i = 0; i < fArrayList.size(); i++) {
                 HashMap<String, String> ffitem = fArrayList.get(i);
                 fitem = new FListViewItem();
-                fitem.setIcon(ContextCompat.getDrawable(this, R.drawable.icon));
+                fitem.setIcon(ContextCompat.getDrawable(this, R.drawable.sentiment_satisfied_alt_black));
                 fitem.setName(ffitem.get(FTAG_NAME));
                 fitem.setId(ffitem.get(FTAG_ID));
                 f_list.add(fitem);
@@ -659,9 +653,9 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
                 HashMap<String, String> rritem = rArrayList.get(i);
                 ritem = new RListViewItem();
                 if(rritem.get(RTAG_RECEIVER).equals(userId)){  //사용자가 수신자
-                    ritem.setIcon(ContextCompat.getDrawable(this, R.drawable.receiver));
+                    ritem.setIcon(ContextCompat.getDrawable(this, R.drawable.arrow_back_red));
                 }else{  //사용자가 발신자
-                    ritem.setIcon(ContextCompat.getDrawable(this, R.drawable.caller));
+                    ritem.setIcon(ContextCompat.getDrawable(this, R.drawable.arrow_forward_green));
                 }
                 //ritem.setIcon(ContextCompat.getDrawable(this, R.drawable.icon));
                 ritem.setName(rritem.get(RTAG_NAME));
@@ -718,18 +712,18 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
     /* ---------------------------------------------- DB에 친구 번호 추가 ----------------------------------------------------------- */
     private void insertToDatabase(final String userId, String friendId) {
         class InsertData extends AsyncTask<String, Void, String> {
-            ProgressDialog loading;
+            //ProgressDialog loading;
 
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                loading = ProgressDialog.show(MainActivity.this, "Please Wait", null, true, true);
+                //loading = ProgressDialog.show(MainActivity.this, "Please Wait", null, true, true);
             }
 
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                loading.dismiss();
+                //loading.dismiss();
                 Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
 
                 addId.setText("");

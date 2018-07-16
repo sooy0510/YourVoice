@@ -44,11 +44,23 @@
                     android:layout_gravity="top"
                     android:id="@+id/tab_friendList">
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"
+                        android:layout_marginTop="56dp"
+                        android:paddingLeft="20dp"
+                        android:gravity="bottom"
+                        android:background="@drawable/underline_list"
+                        android:textSize="10sp"
+                        android:text="친구"/>
+
                     <ListView
                         android:id="@+id/friend_list_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="50dp">
+                        android:background="#ffffff"
+                        android:dividerHeight="0.5dp"
+                        android:divider="#dcdcdc">
                     </ListView>
                 </LinearLayout>
 
@@ -58,11 +70,23 @@
                     android:layout_height="match_parent"
                     android:id="@+id/tab_recentCall">
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"
+                        android:layout_marginTop="56dp"
+                        android:paddingLeft="20dp"
+                        android:gravity="bottom"
+                        android:background="@drawable/underline_list"
+                        android:textSize="10sp"
+                        android:text="통화기록"/>
+
                     <ListView
                         android:id="@+id/recent_call_list_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="50dp">
+                        android:background="#ffffff"
+                        android:dividerHeight="0.5dp"
+                        android:divider="#dcdcdc">
                     </ListView>
                 </LinearLayout>
 

@@ -6,8 +6,8 @@
         android:padding="5dp">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:id="@+id/imageView1"
             android:layout_weight="1" />
 
@@ -24,7 +24,7 @@
                     android:layout_height="wrap_content"
                     android:text="New Text"
                     android:id="@+id/textView1"
-                    android:textSize="24dp"
+                    android:textSize="18sp"
                     android:textColor="#000000"
                     android:gravity="center_vertical"
                     android:layout_weight="4" />
@@ -34,7 +34,7 @@
                     android:layout_height="wrap_content"
                     android:text="New Text"
                     android:id="@+id/textView2"
-                    android:textSize="16dp"
+                    android:textSize="10sp"
                     android:textColor="#666666"
                     android:layout_weight="3" />
 
@@ -43,7 +43,7 @@
                     android:layout_height="wrap_content"
                     android:text="New Text"
                     android:id="@+id/callDate"
-                    android:textSize="16dp"
+                    android:textSize="10sp"
                     android:textColor="#666666"
                     android:layout_weight="3" />
         </LinearLayout>
@@ -53,19 +53,21 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="2"
-            android:layout_marginLeft="20dp">
+            android:layout_marginRight="10dp"
+            android:gravity="right">
                 <Button
                     android:id="@+id/rphone"
-                    android:layout_width="45dp"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/phone"/>
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/baseline_phone_orange"/>
                 <Button
                     android:id="@+id/textbutton"
-                    android:layout_width="45dp"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/text"/>
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="10dp"
+                    android:background="@drawable/library_books_orange"/>
 
                 <!--<Button
                     android:id="@+id/button4"

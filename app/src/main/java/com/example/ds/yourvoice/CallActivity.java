@@ -638,7 +638,7 @@ public class CallActivity extends AppCompatActivity
 
         Log.d("connecttt", "연결");
         token = "cHJvdmlzaW9uAGluc2VvbkA0OTNmN2UudmlkeW8uaW8AMTYzNjg5NjA5MDM5AAAwMjA1NGY0YTIxOTRkYzQ1NTc1ZGM5NGVmZThjMTI3MGI1Yjk2Y2FmN2ZmYzAxYjJiOTZiYTY1ZGJiYjYwYmI2MTBmNGQ1MTcyNWI1NTQxMzY2NWNkZTFhNGViYzY1NWU=";
-
+        //token = "cHJvdmlzaW9uAGNhbGxlckA0OTNmN2UudmlkeW8uaW8ANzM2OTg1OTkyODEAAGM5ZGVjNzMyNThkZmYyNWMwNDNjMGFmMjJiZjdlYzM3ZTdiNDc0Y2YwZGQzNjc4MjU5MGUyYjk5MjVkZjlmYjQwY2JmZTc5N2E2OTk1MjYwYzk1YWUwNmIxM2VkZDUyYw==";
         // 전화 받을 떄
         if (callStatus.name().equals("Receiver")) {
             displayName = user + "-" + connectUser;

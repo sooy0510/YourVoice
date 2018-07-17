@@ -6,44 +6,61 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.ds.yourvoice.JoinActivity"
     android:orientation="vertical"
-    android:gravity="center">
+    android:gravity="center"
+    android:background="#ffffff">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:gravity="center">
         <EditText
             android:id="@+id/newID"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:paddingLeft="10dp"
+            android:background="#f5f5f5"
             android:inputType="text"
             android:ems="6"
             android:maxLength="20"
             android:hint="아이디" />
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:background="#83ffa200"
+            android:foreground="@drawable/ripple_effect"
             android:text="중복체크"
+            android:textColor="#ffffff"
             android:onClick="checkID"/>
     </LinearLayout>
+
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginBottom="20dp">
         <EditText
             android:id="@+id/newPW"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="280dp"
+            android:layout_height="40dp"
+            android:paddingLeft="10dp"
+            android:background="#f5f5f5"
             android:inputType="textPassword"
             android:ems="10"
             android:maxLength="20"
             android:hint="비밀번호"/>
     </LinearLayout>
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginBottom="20dp">
         <EditText
             android:id="@+id/newName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="280dp"
+            android:layout_height="40dp"
+            android:paddingLeft="10dp"
+            android:background="#f5f5f5"
             android:inputType=""
             android:ems="10"
             android:maxLength="20"
@@ -51,26 +68,35 @@
             android:hint="이름"/>
     </LinearLayout>
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
         <EditText
             android:id="@+id/newPhone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:paddingLeft="10dp"
+            android:background="#f5f5f5"
             android:inputType="number"
             android:ems="6"
             android:maxLength="20"
             android:hint="전화번호"/>
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:background="#83ffa200"
+            android:foreground="@drawable/ripple_effect"
             android:text="중복체크"
+            android:textColor="#ffffff"
             android:onClick="checkPhone"/>
     </LinearLayout>
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_width="280dp"
+        android:layout_height="40dp"
+        android:background="#83ffa200"
+        android:foreground="@drawable/ripple_effect"
+        android:layout_marginTop="100dp"
         android:text="가입하기"
+        android:textColor="#ffffff"
         android:onClick="insert"/>
 </LinearLayout>

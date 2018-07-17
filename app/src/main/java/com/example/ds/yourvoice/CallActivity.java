@@ -24,6 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -211,7 +212,9 @@ public class CallActivity extends AppCompatActivity
             naverRecognizer = new NaverRecognizer(this, handler, CLIENT_ID);
             callStatus = CallStatus.Caller;
 
-            startCall(friendId, userId);
+            //startCall(friendId, userId);
+            Thread startCall = new startCall();
+            startCall.start();
             //Connect();
             Log.d("콜액티비티실행", "발신자");
         }
@@ -718,11 +721,14 @@ public class CallActivity extends AppCompatActivity
             Log.d("전화수신", user + "->" + connectUser);
 
             //Connector(Object viewId, ConnectorViewStyle viewStyle, int remoteParticipants, String logFileFilter, String logFileName, long userData)
+            byte num = (byte) 00;
             vc = new Connector(videoFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 1, "warning info@VidyoClient info@VidyoConnector", "", 0);
             vc.showPreview(false);
             vc.showViewLabel(videoFrame, false);
+            vc.setViewBackgroundColor(videoFrame, num, num, num);
             vc_preview = new Connector(localFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 0, "warning info@VidyoClient info@VidyoConnector", "", 0);
             vc_preview.showViewLabel(localFrame, false);
+            vc_preview.setViewBackgroundColor(localFrame, num, num, num);
             RegisterForVidyoEvents();
 
             //clova 음성인식 시작
@@ -780,12 +786,14 @@ public class CallActivity extends AppCompatActivity
             callStatus = CallStatus.Caller;
 
             //RegisterForVidyoEvents();
+            byte num = (byte) 00;
             vc = new Connector(videoFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 1, "warning info@VidyoClient info@VidyoConnector", "", 0);
             vc.showPreview(false);
             vc.showViewLabel(videoFrame, false);
+            vc.setViewBackgroundColor(videoFrame, num, num, num);
             vc_preview = new Connector(localFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 0, "warning info@VidyoClient info@VidyoConnector", "", 0);
-            //vc_preview.showPreview(true);
             vc_preview.showViewLabel(localFrame, false);
+            vc_preview.setViewBackgroundColor(localFrame, num, num, num);
             RegisterForVidyoEvents();
 
             Log.d("connecttt", "vidyo 연결");
@@ -958,6 +966,8 @@ public class CallActivity extends AppCompatActivity
                     Log.d("connecttt", "remotecamera");
                     vc.assignViewToRemoteCamera(videoFrame, remoteCamera, false, false);
                     vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
+                    ImageButton ibtn = findViewById(R.id.disconnect);
+                    ibtn.bringToFront();
                 }
             });
         }
@@ -1034,71 +1044,107 @@ public class CallActivity extends AppCompatActivity
             Disconnect(findViewById(R.id.disconnect));
     }
 
-    private void startCall(final String connectId, String Id) {
+    private class startCall extends Thread {
+        @Override
+        public void run() {
+            try {
 
-        class InsertData extends AsyncTask<String, Void, String> {
+                String link = "http://13.124.94.107/startCall.php";
+                String data = URLEncoder.encode("connectId", "UTF-8") + "=" + URLEncoder.encode(friendId, "UTF-8");
+                data += "&" + URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(userId, "UTF-8");
 
-            protected void onCancelled() {
-                //stopCall(user);
-            }
+                URL url = new URL(link);
+                URLConnection conn = url.openConnection();
 
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
+                conn.setDoOutput(true);
+                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
 
-            @Override
-            protected void onPostExecute(String s) {
-                super.onPostExecute(s);
+                wr.write(data);
+                wr.flush();
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+                StringBuilder sb = new StringBuilder();
+                String line = null;
+
+                // Read Server Response
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                    break;
+                }
+
                 Connect();
-            }
-
-            @Override
-            protected String doInBackground(String... params) {
-
-                if (this.isCancelled()) {
-                    // 비동기작업을 cancel해도 자동으로 취소해주지 않으므로,
-                    // 작업중에 이런식으로 취소 체크를 해야 한다.
-                    return null;
-                }
-
-                try {
-                    String connectId = (String) params[0];
-                    String Id = (String) params[1];
-                    Log.d("connecttt", connectId + Id);
-
-                    String link = "http://13.124.94.107/startCall.php";
-                    String data = URLEncoder.encode("connectId", "UTF-8") + "=" + URLEncoder.encode(connectId, "UTF-8");
-                    data += "&" + URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(Id, "UTF-8");
-
-                    URL url = new URL(link);
-                    URLConnection conn = url.openConnection();
-
-                    conn.setDoOutput(true);
-                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-
-                    wr.write(data);
-                    wr.flush();
-
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-                    StringBuilder sb = new StringBuilder();
-                    String line = null;
-
-                    // Read Server Response
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line);
-                        break;
-                    }
-                    return sb.toString();
-                } catch (Exception e) {
-                    return new String("Exception: " + e.getMessage());
-                }
+            } catch (Exception e) {
+                Log.d("startCall Exception: ", e.getMessage().toString());
             }
         }
-        InsertData task = new InsertData();
-        task.execute(connectId, Id);
     }
+//
+//    private void startCall(final String connectId, String Id) {
+//
+//        class InsertData extends AsyncTask<String, Void, String> {
+//
+//            protected void onCancelled() {
+//                //stopCall(user);
+//            }
+//
+//            @Override
+//            protected void onPreExecute() {
+//                super.onPreExecute();
+//            }
+//
+//            @Override
+//            protected void onPostExecute(String s) {
+//                super.onPostExecute(s);
+//                Connect();
+//            }
+//
+//            @Override
+//            protected String doInBackground(String... params) {
+//
+//                if (this.isCancelled()) {
+//                    // 비동기작업을 cancel해도 자동으로 취소해주지 않으므로,
+//                    // 작업중에 이런식으로 취소 체크를 해야 한다.
+//                    return null;
+//                }
+//
+//                try {
+//                    String connectId = (String) params[0];
+//                    String Id = (String) params[1];
+//                    Log.d("connecttt", connectId + Id);
+//
+//                    String link = "http://13.124.94.107/startCall.php";
+//                    String data = URLEncoder.encode("connectId", "UTF-8") + "=" + URLEncoder.encode(connectId, "UTF-8");
+//                    data += "&" + URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(Id, "UTF-8");
+//
+//                    URL url = new URL(link);
+//                    URLConnection conn = url.openConnection();
+//
+//                    conn.setDoOutput(true);
+//                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+//
+//                    wr.write(data);
+//                    wr.flush();
+//
+//                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//
+//                    StringBuilder sb = new StringBuilder();
+//                    String line = null;
+//
+//                    // Read Server Response
+//                    while ((line = reader.readLine()) != null) {
+//                        sb.append(line);
+//                        break;
+//                    }
+//                    return sb.toString();
+//                } catch (Exception e) {
+//                    return new String("Exception: " + e.getMessage());
+//                }
+//            }
+//        }
+//        InsertData task = new InsertData();
+//        task.execute(connectId, Id);
+//    }
 
     private class stopCall extends Thread {
 
@@ -1108,10 +1154,7 @@ public class CallActivity extends AppCompatActivity
                 String link = "http://13.124.94.107/stopCall.php";
                 String data;
 
-                if(callStatus.name().equals("Caller"))
-                    data = URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(user, "UTF-8");
-                else
-                    data = URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(connectUser, "UTF-8");
+                data = URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(userId, "UTF-8");
 
                 URL url = new URL(link);
                 URLConnection conn = url.openConnection();

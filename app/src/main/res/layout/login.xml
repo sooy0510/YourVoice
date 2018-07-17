@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#dfdfdf"
+    android:background="#ffffff"
     tools:context="com.example.ds.yourvoice.LoginActivity">
 
     <LinearLayout
@@ -16,17 +16,19 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="260dp"
+            android:layout_marginBottom="10dp"
             android:gravity="center"
             android:orientation="horizontal">
 
             <EditText
                 android:id="@+id/userID"
                 android:layout_width="260dp"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#64ffffff"
+                android:layout_height="40dp"
+                android:background="#f5f5f5"
                 android:textCursorDrawable="@drawable/cursor"
-                android:drawableLeft="@drawable/baseline_perm_identity_white_18"
+                android:drawableLeft="@drawable/baseline_perm_identity_android_orange_1"
                 android:drawablePadding="10dp"
+                android:paddingLeft="10dp"
                 android:ems="10"
                 android:hint="아이디"
                 android:inputType="text" />
@@ -42,11 +44,12 @@
             <EditText
                 android:id="@+id/userPW"
                 android:layout_width="260dp"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#64ffffff"
+                android:layout_height="40dp"
+                android:background="#f5f5f5"
                 android:textCursorDrawable="@drawable/cursor"
-                android:drawableLeft="@drawable/baseline_lock_white_18"
+                android:drawableLeft="@drawable/baseline_lock_android_orange_1"
                 android:drawablePadding="10dp"
+                android:paddingLeft="10dp"
                 android:ems="10"
                 android:hint="비밀번호"
                 android:inputType="textPassword" />
@@ -64,10 +67,11 @@
                 android:id="@+id/join"
                 android:layout_width="125dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/button_join"
+                android:background="@drawable/orange_line_box"
+                android:foreground="@drawable/ripple_effect"
                 android:layout_marginRight="10dp"
                 android:onClick="join"
-                android:text="Join" />
+                android:text="Join"/>
 
             <Button
                 android:id="@+id/login"
@@ -75,6 +79,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:background="#83ffa200"
+                android:foreground="@drawable/ripple_effect"
                 android:onClick="login"
                 android:text="Log in" />
 

@@ -46,12 +46,20 @@
             android:layout_marginRight="10dp"
             android:gravity="right">
 
+                <!--<Button-->
+                    <!--android:id="@+id/fphone"-->
+                    <!--android:layout_width="25dp"-->
+                    <!--android:layout_height="25dp"-->
+                    <!--android:layout_gravity="center"-->
+                    <!--android:background="@drawable/baseline_phone_orange_18"/>-->
+
                 <Button
                     android:id="@+id/fphone"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center"
-                    android:background="@drawable/baseline_phone_orange_18"/>
+                    android:background="@drawable/ripple_effect"
+                    android:foreground="@drawable/baseline_phone_orange_18"/>
 
                 <!--<Button
                     android:id="@+id/button2"

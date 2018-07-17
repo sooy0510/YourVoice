@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:color="#dcdcdc"
+    tools:targetApi="lollipop"> <!-- ripple effect color -->
+    <!--<item android:id="@android:id/background">-->
+        <!--<shape android:shape="rectangle">-->
+            <!--<solid android:color="#ffffff" /> &lt;!&ndash; background color &ndash;&gt;-->
+        <!--</shape>-->
+    <!--</item>-->
+</ripple>
+
+
+<!--출처: http://soulduse.tistory.com/52 [프로그래밍좀비]-->
+<!--https://stackoverflow.com/questions/39738066/how-to-set-button-background-drawable-image-with-ripple-effect-in-android-->

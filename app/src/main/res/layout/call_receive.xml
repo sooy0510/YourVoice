@@ -38,7 +38,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="100dp"
             android:layout_marginLeft="30dp"
-            android:background="@drawable/call_start_line"
+            android:background="@drawable/call_start_selector"
             android:src="@drawable/baseline_call_white_36" />
 
         <ImageButton
@@ -50,7 +50,7 @@
             android:layout_marginBottom="100dp"
             android:layout_alignParentRight="true"
             android:layout_marginRight="30dp"
-            android:background="@drawable/call_end_line"
+            android:background="@drawable/call_end_selector"
             android:src="@drawable/baseline_call_end_white_36"/>
 
     </RelativeLayout>

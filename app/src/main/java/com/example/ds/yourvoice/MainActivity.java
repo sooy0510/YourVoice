@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
         LayoutInflater layoutInflater2 = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view2 = layoutInflater2.inflate(R.layout.custom_tab, null);
         ImageView icon2 = (ImageView)view2.findViewById(R.id.tab_icon);
-        icon2.setImageDrawable(getResources().getDrawable(R.drawable.list_black));
+        icon2.setImageDrawable(getResources().getDrawable(R.drawable.baseline_list_black_18));
         TextView tv2 = (TextView)view2.findViewById(R.id.tab_text);
         tv2.setText("통화기록");
 
@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
         LayoutInflater layoutInflater3 = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view3 = layoutInflater3.inflate(R.layout.custom_tab, null);
         ImageView icon3 = (ImageView)view3.findViewById(R.id.tab_icon);
-        icon3.setImageDrawable(getResources().getDrawable(R.drawable.person_add_black));
+        icon3.setImageDrawable(getResources().getDrawable(R.drawable.baseline_person_add_black_18));
         TextView tv3 = (TextView)view3.findViewById(R.id.tab_text);
         tv3.setText("친구추가");
 
@@ -505,7 +505,7 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
             for (int i = 0; i < fArrayList.size(); i++) {
                 HashMap<String, String> ffitem = fArrayList.get(i);
                 fitem = new FListViewItem();
-                fitem.setIcon(ContextCompat.getDrawable(this, R.drawable.sentiment_satisfied_alt_black));
+                fitem.setIcon(ContextCompat.getDrawable(this, R.drawable.baseline_sentiment_satisfied_alt_black_18));
                 fitem.setName(ffitem.get(FTAG_NAME));
                 fitem.setId(ffitem.get(FTAG_ID));
                 f_list.add(fitem);
@@ -653,9 +653,9 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
                 HashMap<String, String> rritem = rArrayList.get(i);
                 ritem = new RListViewItem();
                 if(rritem.get(RTAG_RECEIVER).equals(userId)){  //사용자가 수신자
-                    ritem.setIcon(ContextCompat.getDrawable(this, R.drawable.arrow_back_red));
+                    ritem.setIcon(ContextCompat.getDrawable(this, R.drawable.baseline_arrow_back_red_18));
                 }else{  //사용자가 발신자
-                    ritem.setIcon(ContextCompat.getDrawable(this, R.drawable.arrow_forward_green));
+                    ritem.setIcon(ContextCompat.getDrawable(this, R.drawable.baseline_arrow_forward_green_18));
                 }
                 //ritem.setIcon(ContextCompat.getDrawable(this, R.drawable.icon));
                 ritem.setName(rritem.get(RTAG_NAME));

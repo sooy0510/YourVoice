@@ -673,10 +673,11 @@ public class CallActivity extends AppCompatActivity
             vc_preview.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
             vc.connect("prod.vidyo.io", token, "call", displayName, this);
 
-            /*while(!cflag.equals("Y")){ }
+            getChatCnt(user, connectUser);
+
+            while(!cflag.equals("Y")){ }
 
             if(cflag.equals("Y")){
-                getChatCnt(user, connectUser);
 
                 //채팅창 보이도록
                 if (chatFrame.getVisibility() == View.GONE) {
@@ -684,16 +685,16 @@ public class CallActivity extends AppCompatActivity
                 } else {
                     chatFrame.setVisibility(View.GONE);
                 }
-            }*/
+            }
 
-            getChatCnt(user, connectUser);
+            /*getChatCnt(user, connectUser);
 
             //채팅창 보이도록
             if (chatFrame.getVisibility() == View.GONE) {
                 chatFrame.setVisibility(View.VISIBLE);
             } else {
                 chatFrame.setVisibility(View.GONE);
-            }
+            }*/
         }
         // 전화 걸때
         else {
@@ -751,11 +752,12 @@ public class CallActivity extends AppCompatActivity
                 chatFrame.setVisibility(View.GONE);
             }*/
 
+            //발신자만 채팅방 번호 추가  //채팅방이름은 발신자id+수신자id
+            getChatCnt1(user, connectUser);
+
             while(!cflag.equals("Y")){ }
 
             if(cflag.equals("Y")){
-                //발신자만 채팅방 번호 추가  //채팅방이름은 발신자id+수신자id
-                getChatCnt1(user, connectUser);
                 //채팅창 보이도록
                 if (chatFrame.getVisibility() == View.GONE) {
                     chatFrame.setVisibility(View.VISIBLE);
@@ -771,10 +773,13 @@ public class CallActivity extends AppCompatActivity
         Log.d("connecttt", "연결종료");
         vc.disconnect();
 
-        if (callStatus.name().equals("Caller"))
-            stopCall(user);
-        else
-            stopCall(connectUser);
+        //if (callStatus.name().equals("Caller")) {
+            //stopCall(user);
+            Thread stopCallThread = new stopCall();
+            stopCallThread.start();
+        //}
+        //else
+            //stopCall(connectUser);
 
         //clova
         callStatus = CallStatus.Default;
@@ -960,7 +965,7 @@ public class CallActivity extends AppCompatActivity
         class InsertData extends AsyncTask<String, Void, String> {
 
             protected void onCancelled() {
-                stopCall(user);
+                //stopCall(user);
             }
 
             @Override
@@ -1021,75 +1026,113 @@ public class CallActivity extends AppCompatActivity
         task.execute(connectId, Id);
     }
 
-    private void stopCall(final String Id) {
+    private class stopCall extends Thread {
 
-        class InsertData extends AsyncTask<String, Void, String> {
-            //ProgressDialog loading;
+        @Override
+        public void run() {
+            try {
+                String link = "http://13.124.94.107/stopCall.php";
+                String data;
 
-            protected void onCancelled() {
-                super.onCancelled();
-            }
+                if(callStatus.name().equals("Caller"))
+                    data = URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(user, "UTF-8");
+                else
+                    data = URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(connectUser, "UTF-8");
 
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                //loading = ProgressDialog.show(CallActivity.this, "caling...", null, true, true);
-                //Toast.makeText(getApplicationContext(), "외않되", Toast.LENGTH_SHORT). show();
-            }
+                URL url = new URL(link);
+                URLConnection conn = url.openConnection();
 
-            @Override
-            protected void onPostExecute(String s) {
-                super.onPostExecute(s);
-                //loading.dismiss();
+                conn.setDoOutput(true);
+                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
 
-                if (s.toString().equals("Disconnect")) {
-                    Log.d("Disconnect", "DB초기화");
+                wr.write(data);
+                wr.flush();
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+                StringBuilder sb = new StringBuilder();
+                String line = null;
+
+                // Read Server Response
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                    break;
                 }
-            }
-
-            @Override
-            protected String doInBackground(String... params) {
-
-                if (this.isCancelled()) {
-                    // 비동기작업을 cancel해도 자동으로 취소해주지 않으므로,
-                    // 작업중에 이런식으로 취소 체크를 해야 한다.
-                    return null;
-                }
-
-                try {
-                    String Id = (String) params[0];
-
-                    String link = "http://13.124.94.107/stopCall.php";
-                    String data = URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(Id, "UTF-8");
-
-                    URL url = new URL(link);
-                    URLConnection conn = url.openConnection();
-
-                    conn.setDoOutput(true);
-                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-
-                    wr.write(data);
-                    wr.flush();
-
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-                    StringBuilder sb = new StringBuilder();
-                    String line = null;
-
-                    // Read Server Response
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line);
-                        break;
-                    }
-                    return sb.toString();
-                } catch (Exception e) {
-                    return new String("Exception: " + e.getMessage());
-                }
+            } catch (Exception e) {
+                Log.d("stopCall exception", e.getMessage().toString());
             }
         }
-        InsertData task = new InsertData();
-        task.execute(Id);
     }
+
+//    private void stopCall(final String Id) {
+//
+//        class InsertData extends AsyncTask<String, Void, String> {
+//            //ProgressDialog loading;
+//
+//            protected void onCancelled() {
+//                super.onCancelled();
+//            }
+//
+//            @Override
+//            protected void onPreExecute() {
+//                super.onPreExecute();
+//                //loading = ProgressDialog.show(CallActivity.this, "caling...", null, true, true);
+//                //Toast.makeText(getApplicationContext(), "외않되", Toast.LENGTH_SHORT). show();
+//            }
+//
+//            @Override
+//            protected void onPostExecute(String s) {
+//                super.onPostExecute(s);
+//                //loading.dismiss();
+//
+//                if (s.toString().equals("Disconnect")) {
+//                    Log.d("Disconnect", "DB초기화");
+//                }
+//            }
+//
+//            @Override
+//            protected String doInBackground(String... params) {
+//
+//                if (this.isCancelled()) {
+//                    // 비동기작업을 cancel해도 자동으로 취소해주지 않으므로,
+//                    // 작업중에 이런식으로 취소 체크를 해야 한다.
+//                    return null;
+//                }
+//
+//                try {
+//                    String Id = (String) params[0];
+//
+//                    String link = "http://13.124.94.107/stopCall.php";
+//                    String data = URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(Id, "UTF-8");
+//
+//                    URL url = new URL(link);
+//                    URLConnection conn = url.openConnection();
+//
+//                    conn.setDoOutput(true);
+//                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+//
+//                    wr.write(data);
+//                    wr.flush();
+//
+//                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//
+//                    StringBuilder sb = new StringBuilder();
+//                    String line = null;
+//
+//                    // Read Server Response
+//                    while ((line = reader.readLine()) != null) {
+//                        sb.append(line);
+//                        break;
+//                    }
+//                    return sb.toString();
+//                } catch (Exception e) {
+//                    return new String("Exception: " + e.getMessage());
+//                }
+//            }
+//        }
+//        InsertData task = new InsertData();
+//        task.execute(Id);
+//    }
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override

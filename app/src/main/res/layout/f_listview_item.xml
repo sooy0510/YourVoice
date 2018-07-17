@@ -51,7 +51,7 @@
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center"
-                    android:background="@drawable/baseline_phone_orange"/>
+                    android:background="@drawable/baseline_phone_orange_18"/>
 
                 <!--<Button
                     android:id="@+id/button2"

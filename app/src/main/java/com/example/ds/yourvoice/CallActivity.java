@@ -368,142 +368,213 @@ public class CallActivity extends AppCompatActivity
 
     /* ---------------------------------------------- 채팅방 번호 구하기 ----------------------------------------------------------- */
 
-    private void getChatCnt(final String userId, String friendId) {
-        class getChatRoomNum extends AsyncTask<String, Void, String> {
-            //ProgressDialog loading;
+    private class getChatCnt extends Thread {
 
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                //loading = ProgressDialog.show(CallActivity.this, "Please Wait", null, true, true);
-            }
+        @Override
+        public void run() {
+            try {
+                String link = "http://13.124.94.107/getChatCnt.php";
+                String data = URLEncoder.encode("UserId", "UTF-8") + "=" + URLEncoder.encode(user, "UTF-8");
+                data += "&" + URLEncoder.encode("FriendId", "UTF-8") + "=" + URLEncoder.encode(connectUser, "UTF-8");
 
-            @Override
-            protected void onPostExecute(String s) {
-                super.onPostExecute(s);
-                //loading.dismiss();
-                //int chatnum = Integer.parseInt(s);
-                //chatCntStr = Integer.toString(chatnum);
-                chatCntStr = s;
-            }
+                URL url = new URL(link);
+                URLConnection conn = url.openConnection();
 
-            @Override
-            protected String doInBackground(String... params) {
+                conn.setDoOutput(true);
+                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
 
-                try {
-                    String userId = (String) params[0];
-                    String friendId = (String) params[1];
+                wr.write(data);
+                wr.flush();
 
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
-                    String link = "http://13.124.94.107/getChatCnt.php";
-                    String data = URLEncoder.encode("UserId", "UTF-8") + "=" + URLEncoder.encode(userId, "UTF-8");
-                    data += "&" + URLEncoder.encode("FriendId", "UTF-8") + "=" + URLEncoder.encode(friendId, "UTF-8");
+                StringBuilder sb = new StringBuilder();
+                String line = null;
 
-
-                    URL url = new URL(link);
-                    URLConnection conn = url.openConnection();
-
-
-                    conn.setDoOutput(true);
-                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-
-
-                    wr.write(data);
-                    wr.flush();
-
-
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-
-                    StringBuilder sb = new StringBuilder();
-                    String line = null;
-
-
-                    // Read Server Response
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line);
-                        break;
-                    }
-                    chatCntStr = sb.toString();
-                    return sb.toString();
-                } catch (Exception e) {
-                    return new String("Exception: " + e.getMessage());
+                // Read Server Response
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                    break;
                 }
+                chatCntStr = sb.toString();
+            } catch (Exception e) {
+                Log.d("getChateCnt Exception: ", e.getMessage().toString());
             }
         }
-        getChatRoomNum task = new getChatRoomNum();
-        task.execute(userId, friendId);
     }
+//
+//    private void getChatCnt(final String userId, String friendId) {
+//        class getChatRoomNum extends AsyncTask<String, Void, String> {
+//            //ProgressDialog loading;
+//
+//            @Override
+//            protected void onPreExecute() {
+//                super.onPreExecute();
+//                //loading = ProgressDialog.show(CallActivity.this, "Please Wait", null, true, true);
+//            }
+//
+//            @Override
+//            protected void onPostExecute(String s) {
+//                super.onPostExecute(s);
+//                //loading.dismiss();
+//                //int chatnum = Integer.parseInt(s);
+//                //chatCntStr = Integer.toString(chatnum);
+//                chatCntStr = s;
+//            }
+//
+//            @Override
+//            protected String doInBackground(String... params) {
+//
+//                try {
+//                    String userId = (String) params[0];
+//                    String friendId = (String) params[1];
+//
+//
+//                    String link = "http://13.124.94.107/getChatCnt.php";
+//                    String data = URLEncoder.encode("UserId", "UTF-8") + "=" + URLEncoder.encode(userId, "UTF-8");
+//                    data += "&" + URLEncoder.encode("FriendId", "UTF-8") + "=" + URLEncoder.encode(friendId, "UTF-8");
+//
+//
+//                    URL url = new URL(link);
+//                    URLConnection conn = url.openConnection();
+//
+//
+//                    conn.setDoOutput(true);
+//                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+//
+//
+//                    wr.write(data);
+//                    wr.flush();
+//
+//
+//                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//
+//
+//                    StringBuilder sb = new StringBuilder();
+//                    String line = null;
+//
+//
+//                    // Read Server Response
+//                    while ((line = reader.readLine()) != null) {
+//                        sb.append(line);
+//                        break;
+//                    }
+//                    chatCntStr = sb.toString();
+//                    return sb.toString();
+//                } catch (Exception e) {
+//                    return new String("Exception: " + e.getMessage());
+//                }
+//            }
+//        }
+//        getChatRoomNum task = new getChatRoomNum();
+//        task.execute(userId, friendId);
+//    }
 
     /* ---------------------------------------------- 채팅방 번호 구하기 끝 ----------------------------------------------------------- */
 
 
     /* ---------------------------------------------- 채팅방 번호 구하기/ DB에 CNT+1----------------------------------------------------------- */
-    private void getChatCnt1(final String userId, String friendId) {
-        class getChatRoomNum1 extends AsyncTask<String, Void, String> {
-            //ProgressDialog loading;
 
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                //loading = ProgressDialog.show(CallActivity.this, "Please Wait", null, true, true);
-            }
+    private class getChatCnt1 extends Thread {
+        @Override
+        public void run() {
+            try {
+                String link = "http://13.124.94.107/getChatCnt1.php";
+                String data = URLEncoder.encode("UserId", "UTF-8") + "=" + URLEncoder.encode(user, "UTF-8");
+                data += "&" + URLEncoder.encode("FriendId", "UTF-8") + "=" + URLEncoder.encode(connectUser, "UTF-8");
 
-            @Override
-            protected void onPostExecute(String s) {
-                super.onPostExecute(s);
-                //loading.dismiss();
-                chatnum = Integer.parseInt(s);
-                chatCntStr = Integer.toString(chatnum);
-                //Toast.makeText(getApplicationContext(), chatCntStr, Toast.LENGTH_SHORT).show();
-            }
+                URL url = new URL(link);
+                URLConnection conn = url.openConnection();
 
-            @Override
-            protected String doInBackground(String... params) {
+                conn.setDoOutput(true);
+                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
 
-                try {
-                    String userId = (String) params[0];
-                    String friendId = (String) params[1];
+                wr.write(data);
+                wr.flush();
 
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
-                    String link = "http://13.124.94.107/getChatCnt1.php";
-                    String data = URLEncoder.encode("UserId", "UTF-8") + "=" + URLEncoder.encode(userId, "UTF-8");
-                    data += "&" + URLEncoder.encode("FriendId", "UTF-8") + "=" + URLEncoder.encode(friendId, "UTF-8");
+                StringBuilder sb = new StringBuilder();
+                String line = null;
 
-
-                    URL url = new URL(link);
-                    URLConnection conn = url.openConnection();
-
-
-                    conn.setDoOutput(true);
-                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-
-
-                    wr.write(data);
-                    wr.flush();
-
-
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-
-                    StringBuilder sb = new StringBuilder();
-                    String line = null;
-
-
-                    // Read Server Response
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line);
-                        break;
-                    }
-                    return sb.toString();
-                } catch (Exception e) {
-                    return new String("Exception: " + e.getMessage());
+                // Read Server Response
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                    break;
                 }
+                chatnum = Integer.parseInt(sb.toString());
+                chatCntStr = Integer.toString(chatnum);
+            } catch (Exception e) {
+                Log.d("getChatCnt1 Exception: ", e.getMessage().toString());
             }
         }
-        getChatRoomNum1 task = new getChatRoomNum1();
-        task.execute(userId, friendId);
     }
+
+//    private void getChatCnt1(final String userId, String friendId) {
+//        class getChatRoomNum1 extends AsyncTask<String, Void, String> {
+//            //ProgressDialog loading;
+//
+//            @Override
+//            protected void onPreExecute() {
+//                super.onPreExecute();
+//                //loading = ProgressDialog.show(CallActivity.this, "Please Wait", null, true, true);
+//            }
+//
+//            @Override
+//            protected void onPostExecute(String s) {
+//                super.onPostExecute(s);
+//                //loading.dismiss();
+//                chatnum = Integer.parseInt(s);
+//                chatCntStr = Integer.toString(chatnum);
+//                //Toast.makeText(getApplicationContext(), chatCntStr, Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            protected String doInBackground(String... params) {
+//
+//                try {
+//                    String userId = (String) params[0];
+//                    String friendId = (String) params[1];
+//
+//
+//                    String link = "http://13.124.94.107/getChatCnt1.php";
+//                    String data = URLEncoder.encode("UserId", "UTF-8") + "=" + URLEncoder.encode(userId, "UTF-8");
+//                    data += "&" + URLEncoder.encode("FriendId", "UTF-8") + "=" + URLEncoder.encode(friendId, "UTF-8");
+//
+//
+//                    URL url = new URL(link);
+//                    URLConnection conn = url.openConnection();
+//
+//
+//                    conn.setDoOutput(true);
+//                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+//
+//
+//                    wr.write(data);
+//                    wr.flush();
+//
+//
+//                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//
+//
+//                    StringBuilder sb = new StringBuilder();
+//                    String line = null;
+//
+//
+//                    // Read Server Response
+//                    while ((line = reader.readLine()) != null) {
+//                        sb.append(line);
+//                        break;
+//                    }
+//                    return sb.toString();
+//                } catch (Exception e) {
+//                    return new String("Exception: " + e.getMessage());
+//                }
+//            }
+//        }
+//        getChatRoomNum1 task = new getChatRoomNum1();
+//        task.execute(userId, friendId);
+//    }
 
     /* ---------------------------------------------- 채팅방 번호 구하기/ DB에 CNT+1 끝 ----------------------------------------------------------- */
 
@@ -673,7 +744,8 @@ public class CallActivity extends AppCompatActivity
             vc_preview.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
             vc.connect("prod.vidyo.io", token, "call", displayName, this);
 
-            getChatCnt(user, connectUser);
+            Thread getChatCnt = new getChatCnt();
+            getChatCnt.start();
 
             while(!cflag.equals("Y")){ }
 
@@ -753,7 +825,9 @@ public class CallActivity extends AppCompatActivity
             }*/
 
             //발신자만 채팅방 번호 추가  //채팅방이름은 발신자id+수신자id
-            getChatCnt1(user, connectUser);
+            Thread getChatCnt1 = new getChatCnt1();
+            getChatCnt1.start();
+            //getChatCnt1(user, connectUser);
 
             while(!cflag.equals("Y")){ }
 

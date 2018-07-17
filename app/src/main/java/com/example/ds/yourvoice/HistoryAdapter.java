@@ -1,6 +1,8 @@
 package com.example.ds.yourvoice;
 
 import android.content.Context;
+import android.graphics.Paint;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,8 +107,32 @@ public class HistoryAdapter extends BaseAdapter{
                 viewLeft = holder.viewLeft;
             }
 
+            String chatText = h_List.get(position).msg;
+
+            Paint paint = text.getPaint();
+            int frameWidth = 800;
+            int startIndex = 0;
+            int endIndex = paint.breakText(chatText, true, frameWidth, null);
+            String save = chatText.substring(startIndex, endIndex);
+
+            int lines = 1;
+
+            while(true){
+                startIndex = endIndex;
+                chatText = chatText.substring(startIndex);
+
+                if(chatText.length() == 0)break;
+                else lines++;
+
+                endIndex = paint.breakText(chatText, true, frameWidth, null);
+                save += "\n"+chatText.substring(0, endIndex);
+            }
+
+
+
             // Text 등록
-            text.setText(h_List.get(position).msg);
+            //text.setText(h_List.get(position).msg);
+            text.setText(save);
 
             if(h_List.get(position).type == 0 ) {
                 text.setBackgroundResource(R.drawable.chat_left);

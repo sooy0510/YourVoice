@@ -88,7 +88,7 @@ public class TextPopupActivity extends Activity {
                     //nstring = new SimpleDateFormat("yyyy년 MM월 dd일").format(date1);
                     DateFormat date1 = new SimpleDateFormat("yyyyMMddHHmmss");
                     Date date2 = date1.parse(nstring);
-                    SimpleDateFormat transFormat = new SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm분 ss초");
+                    SimpleDateFormat transFormat = new SimpleDateFormat("yyyy년 MM월 dd일 HH:mm:ss");
                     tranf = transFormat.format(date2);
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -117,7 +117,7 @@ public class TextPopupActivity extends Activity {
                 // notifyDataSetChanged를 안해주면 ListView 갱신이 안됨
                 h_Adapter.notifyDataSetChanged();
                 // ListView 의 위치를 마지막으로 보내주기 위함
-                h_ListView.setSelection(h_Adapter.getCount() - 1);
+                //h_ListView.setSelection(h_Adapter.getCount() - 1);
             }
 
             @Override

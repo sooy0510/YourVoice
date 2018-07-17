@@ -11,7 +11,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by DS on 2018-06-28.
@@ -78,7 +82,18 @@ public class RListViewAdapter extends ArrayAdapter implements View.OnClickListen
         iconImageView.setImageDrawable(listViewItem.getIcon());
         textTextView1.setText(listViewItem.getName());
         //textTextView2.setText(listViewItem.getId());
-        callDate.setText(listViewItem.getDate());
+        String nstring = listViewItem.getDate();
+        String tranf="";
+        try {
+            DateFormat date1 = new SimpleDateFormat("yyyyMMddHHmmss");
+            Date date2 = date1.parse(nstring);
+            SimpleDateFormat transFormat = new SimpleDateFormat("yyyy년 MM월 dd일 HH:mm:ss");
+            tranf = transFormat.format(date2);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        callDate.setText(tranf);
         chatCnt = listViewItem.getChatCnt();
         caller = listViewItem.getCaller();
         receiver = listViewItem.getReceiver();

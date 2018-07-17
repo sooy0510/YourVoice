@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
     private static String RTAG = "RECENTCALL";
 
     private static final String RTAG_JSON = "recentCallList";
+    private static final String RTAG_USERNAME = "username";
     private static final String RTAG_USERID = "userid";
     private static final String RTAG_NAME = "friendname";
     private static final String RTAG_ID = "friendid";
@@ -614,8 +615,7 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
                 final HashMap<String, String> hashMap = new HashMap<>();
 
                 if(item.getString(RTAG_ID).equals(userId)){  //사용자가 수신자
-                    //friendname = userName;
-                    friendname = item.getString(RTAG_NAME);
+                    friendname = item.getString(RTAG_USERNAME);
                     friendid = item.getString(RTAG_USERID);
 
                     hashMap.put(RTAG_CALLER, friendid);

@@ -82,7 +82,7 @@ public class HistoryAdapter extends BaseAdapter{
             if ( convertView == null ) {
                 // view가 null일 경우 커스텀 레이아웃을 얻어 옴
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = inflater.inflate(R.layout.activity_chatitem, parent, false);
+                convertView = inflater.inflate(R.layout.history_chatitem, parent, false);
 
                 layout    = (LinearLayout) convertView.findViewById(R.id.layout);
                 text    = (TextView) convertView.findViewById(R.id.text);
@@ -108,41 +108,43 @@ public class HistoryAdapter extends BaseAdapter{
 
             // Text 등록
             text.setText(h_List.get(position).msg);
-            //text.setText(m_List.get(0).msg);
 
             if(h_List.get(position).type == 0 ) {
-                text.setBackgroundResource(R.drawable.bubble_left);
+                text.setBackgroundResource(R.drawable.ggg);
                 layout.setGravity(Gravity.LEFT);
                 viewRight.setVisibility(View.GONE);
                 viewLeft.setVisibility(View.GONE);
             }else if(h_List.get(position).type == 1){
-                text.setBackgroundResource(R.drawable.bubble_left);
+                text.setBackgroundResource(R.drawable.hhh);
                 layout.setGravity(Gravity.RIGHT);
                 viewRight.setVisibility(View.GONE);
                 viewLeft.setVisibility(View.GONE);
             }else if(h_List.get(position).type == 2){
-                text.setBackgroundResource(R.drawable.datebg);
-                layout.setGravity(Gravity.CENTER);
-                viewRight.setVisibility(View.VISIBLE);
-                viewLeft.setVisibility(View.VISIBLE);
+                //text.setBackgroundResource(R.drawable.datebg);
+                //layout.setGravity(Gravity.CENTER);
+                //viewRight.setVisibility(View.VISIBLE);
+                //viewLeft.setVisibility(View.VISIBLE);
+                viewRight.setVisibility(View.GONE);
+                viewLeft.setVisibility(View.GONE);
             }
 
 
 
+
             // 리스트 아이템을 터치 했을 때 이벤트 발생
-            convertView.setOnClickListener(new View.OnClickListener() {
+            /*convertView.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
                     // 터치 시 해당 아이템 이름 출력
                     Toast.makeText(context, "리스트 클릭 : "+h_List.get(pos), Toast.LENGTH_SHORT).show();
                 }
-            });
+            });*/
 
 
 
             // 리스트 아이템을 길게 터치 했을때 이벤트 발생
-            convertView.setOnLongClickListener(new View.OnLongClickListener() {
+            /*convertView.setOnLongClickListener(new View.OnLongClickListener() {
 
                 @Override
                 public boolean onLongClick(View v) {
@@ -150,7 +152,7 @@ public class HistoryAdapter extends BaseAdapter{
                     Toast.makeText(context, "리스트 롱 클릭 : "+h_List.get(pos), Toast.LENGTH_SHORT).show();
                     return true;
                 }
-            });
+            });*/
 
             return convertView;
         }

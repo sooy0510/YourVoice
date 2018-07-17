@@ -1,13 +1,11 @@
 package com.example.ds.yourvoice;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -113,7 +111,7 @@ public class MessageAdapter extends BaseAdapter {
         //text.setText(m_List.get(0).msg);
 
         if(m_List.get(position).type == 0 ) {
-            text.setBackgroundResource(R.drawable.bubble_right);
+            text.setBackgroundResource(R.drawable.bubble_h_left);
             layout.setGravity(Gravity.LEFT);
             viewRight.setVisibility(View.GONE);
             viewLeft.setVisibility(View.GONE);

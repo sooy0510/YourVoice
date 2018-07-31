@@ -1,6 +1,5 @@
 package com.example.ds.yourvoice;
 
-import android.hardware.Camera;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -19,7 +18,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -47,7 +45,6 @@ import com.vidyo.VidyoClient.Connector.Connector;
 import com.vidyo.VidyoClient.Device.Device;
 import com.vidyo.VidyoClient.Device.LocalCamera;
 import com.vidyo.VidyoClient.Device.RemoteCamera;
-import com.vidyo.VidyoClient.Device.VideoFrame;
 import com.vidyo.VidyoClient.Endpoint.ChatMessage;
 import com.vidyo.VidyoClient.Endpoint.Participant;
 
@@ -485,7 +482,7 @@ public class CallActivity extends AppCompatActivity
     private class getChatCnt1 extends Thread {
         @Override
         public void run() {
-            try { Log.d("connecttt", "Aaaa");
+            try {
                 String link = "http://13.124.94.107/getChatCnt1.php";
                 String data = URLEncoder.encode("UserId", "UTF-8") + "=" + URLEncoder.encode(user, "UTF-8");
                 data += "&" + URLEncoder.encode("FriendId", "UTF-8") + "=" + URLEncoder.encode(connectUser, "UTF-8");
@@ -726,10 +723,10 @@ public class CallActivity extends AppCompatActivity
 
             //Connector(Object viewId, ConnectorViewStyle viewStyle, int remoteParticipants, String logFileFilter, String logFileName, long userData)
             byte num = (byte) 00;
-            vc = new Connector(null, VIDYO_CONNECTORVIEWSTYLE_Default, 1, "warning info@VidyoClient info@VidyoConnector", "", 0);
-            //vc.showPreview(false);
-            //vc.showViewLabel(videoFrame, false);
-            //vc.setViewBackgroundColor(videoFrame, num, num, num);
+            vc = new Connector(videoFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 1, "warning info@VidyoClient info@VidyoConnector", "", 0);
+//            vc.showPreview(false);
+//            vc.showViewLabel(videoFrame, false);
+//            vc.setViewBackgroundColor(videoFrame, num, num, num);
 //            vc_preview = new Connector(localFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 0, "warning info@VidyoClient info@VidyoConnector", "", 0);
 //            vc_preview.showViewLabel(localFrame, false);
 //            vc_preview.setViewBackgroundColor(localFrame, num, num, num);
@@ -750,9 +747,8 @@ public class CallActivity extends AppCompatActivity
                 naverRecognizer.getSpeechRecognizer().stop();
             }
 
-//            vc_preview.selectDefaultCamera();
-//            vc_preview.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
-            //vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
+            //vc_preview.selectDefaultCamera();
+            //vc_preview.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
             vc.connect("prod.vidyo.io", token, "call", displayName, this);
             ImageButton ibtn = findViewById(R.id.disconnect);
             ibtn.bringToFront();
@@ -797,10 +793,10 @@ public class CallActivity extends AppCompatActivity
 
             //RegisterForVidyoEvents();
             byte num = (byte) 00;
-            vc = new Connector(null, VIDYO_CONNECTORVIEWSTYLE_Default, 1, "warning info@VidyoClient info@VidyoConnector", "", 0);
-            //vc.showPreview(false);
-            vc.showViewLabel(videoFrame, false);
-            vc.setViewBackgroundColor(videoFrame, num, num, num);
+            vc = new Connector(videoFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 1, "warning info@VidyoClient info@VidyoConnector", "", 0);
+//            vc.showPreview(false);
+//            vc.showViewLabel(videoFrame, false);
+//            vc.setViewBackgroundColor(videoFrame, num, num, num);
 //            vc_preview = new Connector(localFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 0, "warning info@VidyoClient info@VidyoConnector", "", 0);
 //            vc_preview.showViewLabel(localFrame, false);
 //            vc_preview.setViewBackgroundColor(localFrame, num, num, num);
@@ -854,7 +850,7 @@ public class CallActivity extends AppCompatActivity
 
         Log.d("connecttt", "연결종료");
         if(vc!=null)
-           vc.disconnect();
+            vc.disconnect();
 
         //if (callStatus.name().equals("Caller")) {
             //stopCall(user);
@@ -953,7 +949,7 @@ public class CallActivity extends AppCompatActivity
     public void onLocalCameraStateUpdated(LocalCamera localCamera, Device.DeviceState state) {
         Log.d("connecttt", "onLocalCameraStateUpdated");
         Log.d("connecttt", state.toString());
-//        if(state == Device.DeviceState.VIDYO_DEVICESTATE_Started) {
+        //        if(state == Device.DeviceState.VIDYO_DEVICESTATE_Started) {
 //            vc.assignViewToLocalCamera(localFrame, localCamera, false, false);
 //            vc.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
 //        }
@@ -967,7 +963,7 @@ public class CallActivity extends AppCompatActivity
         Log.d("connecttt", "onRemoteCameraAdded");
         Log.d("connecttt", participant.getId().toString());
 
-//        vc.assignViewToCompositeRenderer(localFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 0);
+        //        vc.assignViewToCompositeRenderer(localFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 0);
         vc.assignViewToRemoteCamera(videoFrame, remoteCamera, true, false);
         vc.showViewLabel(videoFrame, false);
         vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());

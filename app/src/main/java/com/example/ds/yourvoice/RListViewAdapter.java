@@ -72,6 +72,7 @@ public class RListViewAdapter extends ArrayAdapter implements View.OnClickListen
         final String caller;
         final String receiver;
         final String checkVis;
+        final String fname;
         final Button textButton = (Button) convertView.findViewById(R.id.textbutton);
 
 

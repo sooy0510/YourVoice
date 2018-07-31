@@ -111,12 +111,12 @@ public class MessageAdapter extends BaseAdapter {
         //text.setText(m_List.get(0).msg);
 
         if(m_List.get(position).type == 0 ) {
-            text.setBackgroundResource(R.drawable.chat_bg);
+            text.setBackgroundResource(R.drawable.chat_bg1);
             layout.setGravity(Gravity.LEFT);
             viewRight.setVisibility(View.GONE);
             viewLeft.setVisibility(View.GONE);
         }else if(m_List.get(position).type == 1){
-            text.setBackgroundResource(R.drawable.chat_bg);
+            text.setBackgroundResource(R.drawable.chat_bg1);
             layout.setGravity(Gravity.RIGHT);
             viewRight.setVisibility(View.GONE);
             viewLeft.setVisibility(View.GONE);

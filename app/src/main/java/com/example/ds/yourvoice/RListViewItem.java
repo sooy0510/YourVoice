@@ -16,6 +16,7 @@ public class RListViewItem {
     private String callerStr ;
     private String receiverStr ;
     private String checkVisibility ;
+    private String fName ;
 
 
     public void setIcon(Drawable icon) {
@@ -34,9 +35,7 @@ public class RListViewItem {
     public void setChatCnt(String chatcnt) {
         chatCnt = chatcnt ;
     }
-    public void setCaller(String caller) {
-        callerStr = caller ;
-    }
+    public void setCaller(String caller) { callerStr = caller ; }
     public void setReceiver(String receiver) { receiverStr = receiver ; }
 
     public Drawable getIcon() {

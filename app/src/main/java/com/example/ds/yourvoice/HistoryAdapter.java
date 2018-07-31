@@ -146,7 +146,7 @@ public class HistoryAdapter extends BaseAdapter{
                 viewLeft.setVisibility(View.GONE);
             }else if(h_List.get(position).type == 2){
                 //text.setBackgroundResource(R.drawable.datebg);
-                //layout.setGravity(Gravity.CENTER);
+                layout.setGravity(Gravity.CENTER);
                 //viewRight.setVisibility(View.VISIBLE);
                 //viewLeft.setVisibility(View.VISIBLE);
                 viewRight.setVisibility(View.GONE);

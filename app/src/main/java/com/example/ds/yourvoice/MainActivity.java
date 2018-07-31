@@ -26,12 +26,15 @@ import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
+import org.json.simple.*;
 
 import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -67,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
     RListViewAdapter r_adapter;
     ArrayList<RListViewItem> r_list = new ArrayList<RListViewItem>(); //실질적인 listview
 
-    String checkvis;
+    String cdrcFlag = "";
 
     public static Context context;
     public Intent cIntent;
@@ -366,6 +369,7 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
             String chatcnt = friend.getChatCnt();
             String chatRoom = caller+receiver;
             String date = friend.getDate();
+            String fname = friend.getName();
 
             intent.putExtra("chatcnt", chatcnt);
             intent.putExtra("chatRoom", chatRoom);
@@ -373,6 +377,7 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
             intent.putExtra("receiver", receiver);
             intent.putExtra("userId", userId);
             intent.putExtra("date", date);
+            intent.putExtra("fname", fname);
 
             startActivityForResult(intent, 1);
 
@@ -562,6 +567,7 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
             try {
                 //String link = "http://13.124.94.107/addFriend.php";
                 String data = URLEncoder.encode("userId", "UTF-8") + "=" + URLEncoder.encode(userId, "UTF-8");
+                //data += "&" + URLEncoder.encode("wFlag", "UTF-8") + "=" + URLEncoder.encode(friendId, "UTF-8");
 
                 URL url = new URL(serverURL);
                 URLConnection conn = url.openConnection();
@@ -700,14 +706,6 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
     }
 
     /* ---------------------------------------------- 친구 삭제 끝 ----------------------------------------------------------- */
-
-    /* ---------------------------------------------- 최근대화기록 삭제 ----------------------------------------------------------- */
-    public void deleteRecentCall(int pos, String id, String chatcnt, String caller, String receiver) {
-        deleteRecentCallFromDatabase(pos, userId, id, chatcnt, caller, receiver);
-    }
-
-    /* ---------------------------------------------- 최근대화기록 삭제 끝 ----------------------------------------------------------- */
-
 
     /* ---------------------------------------------- DB에 친구 번호 추가 ----------------------------------------------------------- */
     private void insertToDatabase(final String userId, String friendId) {
@@ -851,6 +849,184 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
 
     /* ---------------------------------------------- DB에 친구 번호 삭제 끝 ----------------------------------------------------------- */
 
+
+    /* ---------------------------------------------- 최근대화기록 삭제 ----------------------------------------------------------- */
+    public void deleteRecentCall(int pos, String id, String chatcnt, String caller, String receiver) {
+        CheckDeleteRecentCallFlag task1 = new CheckDeleteRecentCallFlag();  //recentcall테이블에서 udflag, fdflag값 가져오기
+        task1.execute(caller, receiver, chatcnt);
+        String wFlag = "";
+        if(cdrcFlag.equals("YY")){  //mysql과 firebase에서 완전 삭제
+            deleteRecentCallFromDatabase(pos, userId, id, chatcnt, caller, receiver);
+        }else{
+            if(userId.equals(caller)){
+                wFlag = "U";
+                ChangeDeleteFlag task2 = new ChangeDeleteFlag();  //recentcall테이블에서 udflag 바꾸기
+                task2.execute(caller, receiver, chatcnt, wFlag, Integer.toString(pos));
+            }else{
+                wFlag = "F";
+                ChangeDeleteFlag task2 = new ChangeDeleteFlag();  //recentcall테이블에서 fdflag값 바꾸기
+                task2.execute(caller, receiver, chatcnt, wFlag, Integer.toString(pos));
+            }
+        }
+
+    }
+
+    /* ---------------------------------------------- 최근대화기록 삭제 끝 ----------------------------------------------------------- */
+
+
+    /* ---------------------------------------------- RECENTCALL TABLE에서 UDFLAG, FDFLAG값 가져오기 ----------------------------------------------------------- */
+    public class CheckDeleteRecentCallFlag extends AsyncTask<String, Void, String> {
+        ProgressDialog loading;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            loading = ProgressDialog.show(MainActivity.this, "Please Wait", null, true, true);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            loading.dismiss();
+            //Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
+            JSONParser parser = new JSONParser();
+            Object obj = null;
+            try {
+                obj = parser.parse(s);
+                JSONObject jsonObject = (JSONObject) obj;
+
+                try {
+                    String udflag = (String)jsonObject.get("udflag");
+                    String fdflag = (String)jsonObject.get("fdflag");
+
+                    cdrcFlag = udflag+fdflag;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                String caller = (String) params[0];
+                String receiver = (String) params[1];
+                String chatcnt = (String) params[2];
+
+                String link = "http://13.124.94.107/checkDeleteRecentCall.php";
+                String data = URLEncoder.encode("caller", "UTF-8") + "=" + URLEncoder.encode(caller, "UTF-8");
+                data += "&" + URLEncoder.encode("receiver", "UTF-8") + "=" + URLEncoder.encode(receiver, "UTF-8");
+                data += "&" + URLEncoder.encode("chatcnt", "UTF-8") + "=" + URLEncoder.encode(chatcnt, "UTF-8");
+
+
+                URL url = new URL(link);
+                URLConnection conn = url.openConnection();
+
+
+                conn.setDoOutput(true);
+                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+
+                wr.write(data);
+                wr.flush();
+
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+
+                StringBuilder sb = new StringBuilder();
+                String line = null;
+
+
+                // Read Server Response
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                    break;
+                }
+                return sb.toString();
+            } catch (Exception e) {
+                return new String("Exception: " + e.getMessage());
+            }
+        }
+    }
+
+    /* ---------------------------------------------- RECENTCALL TABLE에서 UDFLAG, FDFLAG값 가져오기 끝 ----------------------------------------------------------- */
+
+
+    /* ---------------------------------------------- RECENTCALL TABLE에서 UDFLAG, FDFLAG값 바꾸기 ----------------------------------------------------------- */
+    public class ChangeDeleteFlag extends AsyncTask<String, Void, String> {
+        ProgressDialog loading;
+        int pos;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            loading = ProgressDialog.show(MainActivity.this, "Please Wait", null, true, true);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            loading.dismiss();
+            Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
+            r_list.remove(pos);
+            r_adapter.notifyDataSetChanged();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                String caller = (String) params[0];
+                String receiver = (String) params[1];
+                String chatcnt = (String) params[2];
+                String wflag = (String) params[3];
+                pos = Integer.parseInt(params[4]);
+
+                String link = "http://13.124.94.107/changeDeleteRecentCall.php";
+                String data = URLEncoder.encode("caller", "UTF-8") + "=" + URLEncoder.encode(caller, "UTF-8");
+                data += "&" + URLEncoder.encode("receiver", "UTF-8") + "=" + URLEncoder.encode(receiver, "UTF-8");
+                data += "&" + URLEncoder.encode("chatcnt", "UTF-8") + "=" + URLEncoder.encode(chatcnt, "UTF-8");
+                data += "&" + URLEncoder.encode("wflag", "UTF-8") + "=" + URLEncoder.encode(wflag, "UTF-8");
+
+
+                URL url = new URL(link);
+                URLConnection conn = url.openConnection();
+
+
+                conn.setDoOutput(true);
+                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+
+                wr.write(data);
+                wr.flush();
+
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+
+                StringBuilder sb = new StringBuilder();
+                String line = null;
+
+
+                // Read Server Response
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                    break;
+                }
+                return sb.toString();
+            } catch (Exception e) {
+                return new String("Exception: " + e.getMessage());
+            }
+        }
+    }
+
+    /* ---------------------------------------------- RECENTCALL TABLE에서 UDFLAG, FDFLAG값 바꾸기 끝 ----------------------------------------------------------- */
+
     /* ---------------------------------------------- DB에 최근통화기록 삭제 ----------------------------------------------------------- */
     private void deleteRecentCallFromDatabase(final int pos, String userId, String friendId, final String chatCnt, String caller, String receiver) {
         class DeleteRecentCallData extends AsyncTask<String, Void, String> {
@@ -878,7 +1054,6 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
                 try {
                     String userId = (String) params[0];
                     String friendId = (String) params[1];
-
 
                     String link = "http://13.124.94.107/deleteRecentCall.php";
                     String data = URLEncoder.encode("UserId", "UTF-8") + "=" + URLEncoder.encode(userId, "UTF-8");

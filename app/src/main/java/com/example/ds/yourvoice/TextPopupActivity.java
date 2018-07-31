@@ -69,11 +69,11 @@ public class TextPopupActivity extends Activity {
         final String receiver = intent.getStringExtra("receiver");
         final String userId = intent.getStringExtra("userId");
         final String date = intent.getStringExtra("date");
+        final String fname = intent.getStringExtra("fname");
         //txtText.setText(data);
 
-
-
         DatabaseReference databaseReference = firebaseDatabase.getReference("chats").child(chatroom).child(chatcnt);
+
         databaseReference.addValueEventListener(new ValueEventListener() {
 
             @Override
@@ -94,19 +94,30 @@ public class TextPopupActivity extends Activity {
                     e.printStackTrace();
                 }
 
-                hdate.setText("날짜  "+tranf);
+
+                if (userId.equals(caller)) { //사용자 = 발신자
+                    hfriend.setText("수신자 | "+fname);
+                } else { //사용자 = 수신자
+                    hfriend.setText("발신자 | "+fname);
+                }
+
+                hdate.setText("날짜 | "+tranf);
+
+                if(dataSnapshot.getChildrenCount() == 0){
+                    h_Adapter.add("자막내역이 없음", 2);
+                }
                 for (DataSnapshot messageData : dataSnapshot.getChildren()) {
                     //String msg = messageData.getValue().toString();
                     Chat chat = messageData.getValue(Chat.class);
                     if (userId.equals(caller)) { //사용자 = 발신자
-                        hfriend.setText("수신자  "+receiver);
+                        //hfriend.setText("수신자  "+receiver);
                         if (userId.equals(chat.user)) { //사용자 = 채팅의 user
                             h_Adapter.add(chat.text, 1);
                         } else {
                             h_Adapter.add(chat.text, 0);
                         }
                     } else { //사용자 = 수신자
-                        hfriend.setText("발신자  "+caller);
+                        //hfriend.setText("발신자  "+caller);
                         if (receiver.equals(chat.user)) { //사용자 = 채팅의 user
                             h_Adapter.add(chat.text, 1);
                         } else {

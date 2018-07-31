@@ -29,7 +29,9 @@
                 android:drawableLeft="@drawable/baseline_perm_identity_android_orange_1"
                 android:drawablePadding="10dp"
                 android:paddingLeft="10dp"
-                android:ems="10"
+                android:textSize="15sp"
+                android:textColorHint="#a7a7a7"
+                android:maxLength="20"
                 android:hint="아이디"
                 android:inputType="text" />
 
@@ -50,7 +52,9 @@
                 android:drawableLeft="@drawable/baseline_lock_android_orange_1"
                 android:drawablePadding="10dp"
                 android:paddingLeft="10dp"
-                android:ems="10"
+                android:textSize="15sp"
+                android:textColorHint="#a7a7a7"
+                android:maxLength="20"
                 android:hint="비밀번호"
                 android:inputType="textPassword" />
 

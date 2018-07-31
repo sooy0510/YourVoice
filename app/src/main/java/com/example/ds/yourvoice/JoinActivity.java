@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -27,6 +29,7 @@ import java.net.URLEncoder;
 
 public class JoinActivity extends AppCompatActivity {
 
+    private Toolbar toolbar;
     private EditText editTextId;
     private EditText editTextPw;
     private EditText editTextName;
@@ -39,11 +42,28 @@ public class JoinActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.join);
 
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.baseline_keyboard_arrow_left_orange_24);
+
         editTextId = (EditText)findViewById(R.id.newID);
         editTextPw = (EditText)findViewById(R.id.newPW);
         editTextName = (EditText)findViewById(R.id.newName);
         editTextPhone = (EditText)findViewById(R.id.newPhone);
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:{ //toolbar의 back키 눌렀을 때 동작
+                finish();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /* 아이디 중복체크버튼 클릭 */

@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="transparent">#B3000000</color>
+    <color name="nonpressed">#DCDCDC</color>
+    <color name="pressed">#83FFA200</color>
     <!--
     투명도
     100% — FF

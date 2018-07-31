@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="#83ffa200"
-            android:elevation="4dp"
+            android:elevation="0dp"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
@@ -105,26 +105,25 @@
                         android:layout_marginBottom="40dp">
 
                         <EditText
-                            android:layout_width="wrap_content"
+                            android:layout_width="200dp"
                             android:layout_height="40dp"
                             android:id="@+id/addFriendId"
                             android:background="#ffffff"
-                            android:textCursorDrawable="@drawable/cursor_black"
+                            android:textCursorDrawable="@drawable/cursor"
                             android:paddingLeft="10dp"
-                            android:layout_marginRight="2dp"
+                            android:layout_marginRight="10dp"
                             android:inputType="text"
-                            android:ems="10"
-                            android:maxLength="11"/>
+                            android:textSize="15sp"
+                            android:maxLength="20"/>
 
-                        <Button
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:background="#83ffa200"
-                            android:onClick="addFriend"
-                            android:textSize="18sp"
-                            android:textColor="#ffffff"
-                            android:textStyle="bold"
-                            android:text="＋"/>
+                        <ImageButton
+                            android:layout_width="35dp"
+                            android:layout_height="25dp"
+                            android:background="@drawable/add_selector"
+                            android:src="@drawable/baseline_person_add_black_18"
+                            android:scaleType="center"
+                            android:padding="5dp"
+                            android:onClick="addFriend"/>
 
                     </LinearLayout>
                 </LinearLayout>

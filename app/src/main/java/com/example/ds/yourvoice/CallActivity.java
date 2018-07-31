@@ -1,5 +1,6 @@
 package com.example.ds.yourvoice;
 
+import android.hardware.Camera;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -18,6 +19,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -45,6 +47,7 @@ import com.vidyo.VidyoClient.Connector.Connector;
 import com.vidyo.VidyoClient.Device.Device;
 import com.vidyo.VidyoClient.Device.LocalCamera;
 import com.vidyo.VidyoClient.Device.RemoteCamera;
+import com.vidyo.VidyoClient.Device.VideoFrame;
 import com.vidyo.VidyoClient.Endpoint.ChatMessage;
 import com.vidyo.VidyoClient.Endpoint.Participant;
 
@@ -81,6 +84,7 @@ public class CallActivity extends AppCompatActivity
 
     private Connector vc;
     private Connector vc_preview;
+    private LocalCamera localCam;
     private String token;
     private String displayName, resourceId;
     private String connectUser;
@@ -481,7 +485,7 @@ public class CallActivity extends AppCompatActivity
     private class getChatCnt1 extends Thread {
         @Override
         public void run() {
-            try {
+            try { Log.d("connecttt", "Aaaa");
                 String link = "http://13.124.94.107/getChatCnt1.php";
                 String data = URLEncoder.encode("UserId", "UTF-8") + "=" + URLEncoder.encode(user, "UTF-8");
                 data += "&" + URLEncoder.encode("FriendId", "UTF-8") + "=" + URLEncoder.encode(connectUser, "UTF-8");
@@ -722,13 +726,13 @@ public class CallActivity extends AppCompatActivity
 
             //Connector(Object viewId, ConnectorViewStyle viewStyle, int remoteParticipants, String logFileFilter, String logFileName, long userData)
             byte num = (byte) 00;
-            vc = new Connector(videoFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 1, "warning info@VidyoClient info@VidyoConnector", "", 0);
-            vc.showPreview(false);
-            vc.showViewLabel(videoFrame, false);
-            vc.setViewBackgroundColor(videoFrame, num, num, num);
-            vc_preview = new Connector(localFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 0, "warning info@VidyoClient info@VidyoConnector", "", 0);
-            vc_preview.showViewLabel(localFrame, false);
-            vc_preview.setViewBackgroundColor(localFrame, num, num, num);
+            vc = new Connector(null, VIDYO_CONNECTORVIEWSTYLE_Default, 1, "warning info@VidyoClient info@VidyoConnector", "", 0);
+            //vc.showPreview(false);
+            //vc.showViewLabel(videoFrame, false);
+            //vc.setViewBackgroundColor(videoFrame, num, num, num);
+//            vc_preview = new Connector(localFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 0, "warning info@VidyoClient info@VidyoConnector", "", 0);
+//            vc_preview.showViewLabel(localFrame, false);
+//            vc_preview.setViewBackgroundColor(localFrame, num, num, num);
             RegisterForVidyoEvents();
 
             //clova 음성인식 시작
@@ -746,9 +750,12 @@ public class CallActivity extends AppCompatActivity
                 naverRecognizer.getSpeechRecognizer().stop();
             }
 
-            vc_preview.selectDefaultCamera();
-            vc_preview.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
+//            vc_preview.selectDefaultCamera();
+//            vc_preview.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
+            //vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
             vc.connect("prod.vidyo.io", token, "call", displayName, this);
+            ImageButton ibtn = findViewById(R.id.disconnect);
+            ibtn.bringToFront();
 
             Thread getChatCnt = new getChatCnt();
             getChatCnt.start();
@@ -785,25 +792,21 @@ public class CallActivity extends AppCompatActivity
 
             callStatus = CallStatus.Caller;
 
+            ImageButton ibtn = findViewById(R.id.disconnect);
+            ibtn.bringToFront();
+
             //RegisterForVidyoEvents();
             byte num = (byte) 00;
-            vc = new Connector(videoFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 1, "warning info@VidyoClient info@VidyoConnector", "", 0);
-            vc.showPreview(false);
+            vc = new Connector(null, VIDYO_CONNECTORVIEWSTYLE_Default, 1, "warning info@VidyoClient info@VidyoConnector", "", 0);
+            //vc.showPreview(false);
             vc.showViewLabel(videoFrame, false);
             vc.setViewBackgroundColor(videoFrame, num, num, num);
-            vc_preview = new Connector(localFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 0, "warning info@VidyoClient info@VidyoConnector", "", 0);
-            vc_preview.showViewLabel(localFrame, false);
-            vc_preview.setViewBackgroundColor(localFrame, num, num, num);
+//            vc_preview = new Connector(localFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 0, "warning info@VidyoClient info@VidyoConnector", "", 0);
+//            vc_preview.showViewLabel(localFrame, false);
+//            vc_preview.setViewBackgroundColor(localFrame, num, num, num);
             RegisterForVidyoEvents();
 
             Log.d("connecttt", "vidyo 연결");
-
-
-            /*if (sendEdit.getVisibility() == View.GONE) {
-                sendEdit.setVisibility(View.VISIBLE);
-            } else {
-                sendEdit.setVisibility(View.GONE);
-            }*/
 
             //clova 음성인식 시작
             if (!naverRecognizer.getSpeechRecognizer().isRunning()) {
@@ -819,23 +822,20 @@ public class CallActivity extends AppCompatActivity
                 //btnStart.setEnabled(false);
                 naverRecognizer.getSpeechRecognizer().stop();
             }
-            vc_preview.selectDefaultCamera();
-            vc_preview.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
+
+            Log.d("connecttt", "clova 시작");
+
+            //vc_preview.selectDefaultCamera();
+            //vc_preview.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
+            //vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
             vc.connect("prod.vidyo.io", token, "call", displayName, this);
+//            ImageButton ibtn = findViewById(R.id.disconnect);
+//            ibtn.bringToFront();
+            Log.d("connecttt", "connect  시작");
 
-/*            //발신자만 채팅방 번호 추가  //채팅방이름은 발신자id+수신자id
-            getChatCnt1(user, connectUser);
-            //채팅창 보이도록
-            if (chatFrame.getVisibility() == View.GONE) {
-                chatFrame.setVisibility(View.VISIBLE);
-            } else {
-                chatFrame.setVisibility(View.GONE);
-            }*/
-
-            //발신자만 채팅방 번호 추가  //채팅방이름은 발신자id+수신자id
+//            발신자만 채팅방 번호 추가  //채팅방이름은 발신자id+수신자id
             Thread getChatCnt1 = new getChatCnt1();
             getChatCnt1.start();
-            //getChatCnt1(user, connectUser);
 
             while(!cflag.equals("Y")){ }
 
@@ -853,7 +853,8 @@ public class CallActivity extends AppCompatActivity
     public void Disconnect(View v) {
 
         Log.d("connecttt", "연결종료");
-        vc.disconnect();
+        if(vc!=null)
+           vc.disconnect();
 
         //if (callStatus.name().equals("Caller")) {
             //stopCall(user);
@@ -913,7 +914,7 @@ public class CallActivity extends AppCompatActivity
         // Register to receive chat messages
         vc.registerMessageEventListener(this);
 
-        //vc.registerLocalCameraEventListener(this);
+        vc.registerLocalCameraEventListener(this);
         vc.registerRemoteCameraEventListener(this);
 
        /* Register for local window share and local monitor events */
@@ -923,7 +924,10 @@ public class CallActivity extends AppCompatActivity
     /* custom local preview */
     public void onLocalCameraAdded(LocalCamera localCamera)    {
         Log.d("connecttt", "onLocalCameraAdded");
-        //vc.assignViewToLocalCamera(videoFrame, localCamera, false, false);
+        vc.assignViewToLocalCamera(localFrame, localCamera, true, false);
+        vc.showViewLabel(localFrame, false);
+//        vc.setViewBackgroundColor(videoFrame, num, num, num);
+        vc.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
     }
 
     public void onLocalCameraRemoved(LocalCamera localCamera)  {
@@ -932,23 +936,27 @@ public class CallActivity extends AppCompatActivity
 
     public void onLocalCameraSelected(final LocalCamera localCamera) { /* Camera was selected by user or automatically */
         Log.d("connecttt", "onLocalCameraSelected");
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (localCamera != null) {
-                    Log.d("connecttt", "localcamera");
-                    //vc_preview.assignViewToCompositeRenderer(localFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 0);
-                    vc_preview.assignViewToLocalCamera(localFrame, localCamera, false, false);
-                    vc_preview.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
-                } else {
-                    vc.hideView(localFrame);
-                }
-            }
-        });
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (localCamera != null) {
+//                    Log.d("connecttt", "localcamera");
+//                    //vc_preview.assignViewToCompositeRenderer(localFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 0);
+//                    vc_preview.assignViewToLocalCamera(localFrame, localCamera, false, false);
+//                    vc_preview.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
+//                } else {
+//                    vc.hideView(localFrame);
+//                }
+//            }
+//        });
     }
     public void onLocalCameraStateUpdated(LocalCamera localCamera, Device.DeviceState state) {
         Log.d("connecttt", "onLocalCameraStateUpdated");
         Log.d("connecttt", state.toString());
+//        if(state == Device.DeviceState.VIDYO_DEVICESTATE_Started) {
+//            vc.assignViewToLocalCamera(localFrame, localCamera, false, false);
+//            vc.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
+//        }
     }
     /* Local camera change initiated by user. Note: this is an arbitrary function name. */
 
@@ -959,18 +967,32 @@ public class CallActivity extends AppCompatActivity
         Log.d("connecttt", "onRemoteCameraAdded");
         Log.d("connecttt", participant.getId().toString());
 
-        if (remoteCamera!=null) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Log.d("connecttt", "remotecamera");
-                    vc.assignViewToRemoteCamera(videoFrame, remoteCamera, false, false);
-                    vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
-                    ImageButton ibtn = findViewById(R.id.disconnect);
-                    ibtn.bringToFront();
-                }
-            });
-        }
+//        vc.assignViewToCompositeRenderer(localFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 0);
+        vc.assignViewToRemoteCamera(videoFrame, remoteCamera, true, false);
+        vc.showViewLabel(videoFrame, false);
+        vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
+
+//        if (remoteCamera!=null) {
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    Log.d("connecttt", "remotecamera");
+////                    vc.assignViewToRemoteCamera(videoFrame, remoteCamera, false, false);
+////                    vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
+////                    ImageButton ibtn = findViewById(R.id.disconnect);
+////                    ibtn.bringToFront();
+//                    //vc.showPreview(false);
+//                    //vc_preview = new Connector(localFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 0, "warning info@VidyoClient info@VidyoConnector", "", 0);
+//                    //vc_preview.showViewLabel(localFrame, false);
+//                    vc.assignViewToCompositeRenderer(localFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 0);
+//                    vc.assignViewToLocalCamera(localFrame, localCam, false, false);
+//                    //vc.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
+//                    //vc_preview.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
+//                    //assignViewToLocalCamera(Object viewId, LocalCamera localCamera, boolean displayCropped, boolean allowZoom)
+//                    //vc_preview.setViewBackgroundColor(localFrame, num, num, num);
+//                }
+//            });
+//        }
     }
 
     public void onRemoteCameraRemoved(RemoteCamera remoteCamera, Participant participant) {

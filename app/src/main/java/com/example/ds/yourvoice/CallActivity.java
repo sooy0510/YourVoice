@@ -80,8 +80,6 @@ public class CallActivity extends AppCompatActivity
     public static Context context;
 
     private Connector vc;
-    private Connector vc_preview;
-    private LocalCamera localCam;
     private String token;
     private String displayName, resourceId;
     private String connectUser;
@@ -723,7 +721,7 @@ public class CallActivity extends AppCompatActivity
 
             //Connector(Object viewId, ConnectorViewStyle viewStyle, int remoteParticipants, String logFileFilter, String logFileName, long userData)
             byte num = (byte) 00;
-            vc = new Connector(videoFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 1, "warning info@VidyoClient info@VidyoConnector", "", 0);
+            vc = new Connector(null, VIDYO_CONNECTORVIEWSTYLE_Default, 1, "warning info@VidyoClient info@VidyoConnector", "", 0);
 //            vc.showPreview(false);
 //            vc.showViewLabel(videoFrame, false);
 //            vc.setViewBackgroundColor(videoFrame, num, num, num);
@@ -750,8 +748,8 @@ public class CallActivity extends AppCompatActivity
             //vc_preview.selectDefaultCamera();
             //vc_preview.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
             vc.connect("prod.vidyo.io", token, "call", displayName, this);
-            ImageButton ibtn = findViewById(R.id.disconnect);
-            ibtn.bringToFront();
+//            ImageButton ibtn = findViewById(R.id.disconnect);
+//            ibtn.bringToFront();
 
             Thread getChatCnt = new getChatCnt();
             getChatCnt.start();
@@ -788,12 +786,12 @@ public class CallActivity extends AppCompatActivity
 
             callStatus = CallStatus.Caller;
 
-            ImageButton ibtn = findViewById(R.id.disconnect);
-            ibtn.bringToFront();
+//            ImageButton ibtn = findViewById(R.id.disconnect);
+//            ibtn.bringToFront();
 
             //RegisterForVidyoEvents();
             byte num = (byte) 00;
-            vc = new Connector(videoFrame, VIDYO_CONNECTORVIEWSTYLE_Default, 1, "warning info@VidyoClient info@VidyoConnector", "", 0);
+            vc = new Connector(null, VIDYO_CONNECTORVIEWSTYLE_Default, 1, "warning info@VidyoClient info@VidyoConnector", "", 0);
 //            vc.showPreview(false);
 //            vc.showViewLabel(videoFrame, false);
 //            vc.setViewBackgroundColor(videoFrame, num, num, num);
@@ -887,9 +885,6 @@ public class CallActivity extends AppCompatActivity
             // Release device resources
             vc.disable();
             vc = null;
-
-            vc_preview.disable();
-            vc_preview = null;
 
             // Uninitialize the VidyoClient library
             ConnectorPkg.uninitialize();
@@ -1042,11 +1037,6 @@ public class CallActivity extends AppCompatActivity
         if(vc!=null) {
             vc.disable();
             vc = null;
-        }
-
-        if(vc_preview!=null){
-            vc_preview.disable();
-            vc_preview = null;
         }
 
         if(mVidyoClientInitialized)

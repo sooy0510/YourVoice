@@ -855,7 +855,7 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
         CheckDeleteRecentCallFlag task1 = new CheckDeleteRecentCallFlag();  //recentcall테이블에서 udflag, fdflag값 가져오기
         task1.execute(caller, receiver, chatcnt);
         String wFlag = "";
-        if(cdrcFlag.equals("YY")){  //mysql과 firebase에서 완전 삭제
+        if(cdrcFlag.equals("Y")){  //mysql과 firebase에서 완전 삭제
             deleteRecentCallFromDatabase(pos, userId, id, chatcnt, caller, receiver);
         }else{
             if(userId.equals(caller)){
@@ -899,7 +899,9 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
                     String udflag = (String)jsonObject.get("udflag");
                     String fdflag = (String)jsonObject.get("fdflag");
 
-                    cdrcFlag = udflag+fdflag;
+                    if(udflag.equals("Y") || fdflag.equals("Y")){
+                        cdrcFlag = "Y";
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#83ffa200"
+            android:foreground="@drawable/ripple_effect"
+            android:text="로그아웃"
+            android:id="@+id/dialog_logout"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#ffffff"
+            android:foreground="@drawable/ripple_effect"
+            android:text="취소"
+            android:id="@+id/dialog_cancle"/>
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

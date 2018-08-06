@@ -919,6 +919,11 @@ public class CallActivity extends AppCompatActivity
         vc.showViewLabel(localFrame, false);
 //        vc.setViewBackgroundColor(videoFrame, num, num, num);
         vc.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
+
+//        if(callStatus == CallStatus.Caller) {
+//            ImageButton ibtn = findViewById(R.id.disconnect);
+//            ibtn.bringToFront();
+//        }
     }
 
     public void onLocalCameraRemoved(LocalCamera localCamera)  {
@@ -962,6 +967,11 @@ public class CallActivity extends AppCompatActivity
         vc.assignViewToRemoteCamera(videoFrame, remoteCamera, true, false);
         vc.showViewLabel(videoFrame, false);
         vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
+
+//        if(callStatus == CallStatus.Caller) {
+//            ImageButton ibtn = findViewById(R.id.disconnect);
+//            ibtn.bringToFront();
+//        }
 
 //        if (remoteCamera!=null) {
 //            runOnUiThread(new Runnable() {

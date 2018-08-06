@@ -3,9 +3,16 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">#ffa200</item>
+        <item name="colorPrimaryDark">#ffa200</item>
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AlertDialogCustom" parent="@android:style/Theme.Dialog">
+        <item name="android:textColor">#000000</item>
+        <item name="android:background">#ffa200</item>
+        <item name="android:typeface">monospace</item>
+        <item name="android:textSize">10sp</item>
     </style>
 
     <style name="Transparent" parent="@style/Theme.AppCompat">

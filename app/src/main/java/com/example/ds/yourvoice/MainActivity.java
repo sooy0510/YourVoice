@@ -2,11 +2,13 @@ package com.example.ds.yourvoice;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.PowerManager;
 import android.support.v4.content.ContextCompat;
@@ -14,14 +16,21 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -249,40 +258,65 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
     public boolean onOptionsItemSelected(MenuItem item) {
         //return super.onOptionsItemSelected(item);
         switch (item.getItemId()) {
-            case R.id.action_settings1:
-                // User chose the "Settings" item, show the app settings UI...
-                Toast.makeText(getApplicationContext(), "환경설정 버튼 클릭됨", Toast.LENGTH_LONG).show();
-                return true;
+//            case R.id.action_settings1:
+//                // User chose the "Settings" item, show the app settings UI...
+//                Toast.makeText(getApplicationContext(), "환경설정 버튼 클릭됨", Toast.LENGTH_LONG).show();
+//                return true;
             case R.id.logout:
-                new AlertDialog.Builder(this)
-                        .setTitle("로그아웃").setMessage("로그아웃 하시겠습니까?")
-                        .setPositiveButton("로그아웃", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                logout(userId);
-                                Intent i = new Intent(MainActivity.this, LoginActivity.class);
-                                //i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                                startActivity(i);
-                                SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
-                                SharedPreferences.Editor editor = auto.edit();
-                                editor.clear();
-                                editor.commit();
-                                Toast.makeText(MainActivity.this, "로그아웃", Toast.LENGTH_SHORT).show();
-                                finish();
-                            }
-                        })
-                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
+//                new AlertDialog.Builder(this)
+//                        .setTitle("로그아웃").setMessage("로그아웃 하시겠습니까?")
+//                        .setPositiveButton("로그아웃", new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int whichButton) {
+//                                logout(userId);
+//                                Intent i = new Intent(MainActivity.this, LoginActivity.class);
+//                                //i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//                                startActivity(i);
+//                                SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
+//                                SharedPreferences.Editor editor = auto.edit();
+//                                editor.clear();
+//                                editor.commit();
+//                                Toast.makeText(MainActivity.this, "로그아웃", Toast.LENGTH_SHORT).show();
+//                                finish();
+//                            }
+//                        })
+//                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int whichButton) {
+//
+//                            }
+//                        })
+//                        .show();
 
-                            }
-                        })
-                        .show();
+                CustomDialog dialog = new CustomDialog(this);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.show();
+
+                Display display = getWindowManager().getDefaultDisplay();
+                Point size = new Point();
+                display.getSize(size);
+
+                Window window = dialog.getWindow();
+                window.setGravity(Gravity.BOTTOM);
+                window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                //http://book2s.com/java/api/android/view/window/setlayout-2.html
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-    /* ---------------------------------------------- 설정 버튼 끝 ----------------------------------------------------------- */
 
+    public void dialogLogout() {
+        logout(userId);
+        Intent i = new Intent(MainActivity.this, LoginActivity.class);
+        //i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(i);
+        SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = auto.edit();
+        editor.clear();
+        editor.commit();
+        finish();
+    }
+    /* ---------------------------------------------- 설정 버튼 끝 ----------------------------------------------------------- */
 
     /* ---------------------------------------------- TAB1의 버튼 클릭 ----------------------------------------------------------- */
     @Override

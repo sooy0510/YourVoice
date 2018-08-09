@@ -18,7 +18,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -84,6 +83,9 @@ public class CallActivity extends AppCompatActivity
     private IntentFilter mIntentFilter;
     public static Context context;
 
+    SoftKeyboard softKeyboard;
+    RelativeLayout calllayout;
+
     private Connector vc;
     private String token;
     private String displayName, resourceId;
@@ -144,9 +146,6 @@ public class CallActivity extends AppCompatActivity
 
     private VidyoConnectorState mVidyoConnectorState = VidyoConnectorState.VidyoConnectorStateDisconnected;
 
-    SoftKeyboard softKeyboard;
-    RelativeLayout calllayout;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -157,7 +156,6 @@ public class CallActivity extends AppCompatActivity
 
         context = this;
 
-
         //수신자가 전화거부하면 브로드캐스트 받음
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction("CALL_DENIAL");
@@ -167,6 +165,9 @@ public class CallActivity extends AppCompatActivity
         mVidyoClientInitialized = ConnectorPkg.initialize();
         localFrame = findViewById(R.id.localFrame);
         videoFrame = findViewById(R.id.videoFrame);
+
+        ImageButton b = findViewById(R.id.sendButton);
+        b.setEnabled(false);
 
         //firebase
         database = FirebaseDatabase.getInstance();
@@ -275,19 +276,17 @@ public class CallActivity extends AppCompatActivity
             softKeyboard.unRegisterSoftKeyboardCallback();
         }*/
 
-
-
         findViewById(R.id.sendButton).setOnClickListener(new Button.OnClickListener() {
-                                                          @Override
-                                                          public void onClick(View v) {
-                                                              EditText editText = (EditText) findViewById(R.id.sendText);
-                                                              String inputValue = editText.getText().toString();
-                                                              editText.setText("");
-                                                              if(!inputValue.trim().equals("")){
-                                                                  addUserChat(inputValue);
-                                                              }
-                                                          }
-                                                      }
+                                                             @Override
+                                                             public void onClick(View v) {
+                                                                 //Toast.makeText(getApplicationContext(), "외않되", Toast.LENGTH_SHORT). show();
+                                                                 EditText editText = (EditText) findViewById(R.id.sendText);
+                                                                 String inputValue = editText.getText().toString();
+                                                                 editText.setText("");
+                                                                 //refresh(inputValue, 0);
+                                                                 addUserChat(inputValue);
+                                                             }
+                                                         }
         );
     }
 
@@ -309,6 +308,7 @@ public class CallActivity extends AppCompatActivity
             case R.id.clientReady:
                 // Now an user can speak.
 
+                //txtResult.append("\n Connected");
                 //m_Adapter.add("Connected", 2);
                 writer = new AudioWriterPCM(
                         Environment.getExternalStorageDirectory().getAbsolutePath() + "/NaverSpeechTest");
@@ -322,6 +322,15 @@ public class CallActivity extends AppCompatActivity
             case R.id.partialResult:
                 // Extract obj property typed with String.
                 mResult = (String) (msg.obj);
+                /*if(mResult.length() > 10){
+                    Message msg1 = Message.obtain(handler, R.id.finalResult, mResult);
+                    //msg1.sendToTarget();
+                    handleMessage(msg1);
+                    //naverRecognizer.onResult((SpeechRecognitionResult)msg.obj);
+                }*/
+                //txtResult.setText(mResult);
+                //txtResult.append(mResult);
+                //m_Adapter.add(mResult,1);
                 break;
 
             case R.id.finalResult:
@@ -337,7 +346,10 @@ public class CallActivity extends AppCompatActivity
                 mResult = strBuf.toString();
                 if (!mResult.equals("")) {
                     addUserChat(mResult);
+                    //m_Adapter.add(mResult,1);
+                    //m_Adapter.notifyDataSetChanged();
                 }
+                //addUserChat(mResult);
                 break;
 
             case R.id.recognitionError:
@@ -346,7 +358,11 @@ public class CallActivity extends AppCompatActivity
                 }
 
                 mResult = "Error code : " + msg.obj.toString();
+                //addUserChat(mResult);
+                //txtResult.setText(mResult);
                 m_Adapter.add("error code:" + mResult, 2);
+                //btnStart.setText(R.string.str_start);
+                //btnStart.setEnabled(true);
                 break;
 
             case R.id.clientInactive:
@@ -356,6 +372,9 @@ public class CallActivity extends AppCompatActivity
                 if (writer != null) {
                     writer.close();
                 }
+
+                //btnStart.setText(R.string.str_start);
+                // btnStart.setEnabled(true);
                 break;
         }
     }
@@ -374,7 +393,13 @@ public class CallActivity extends AppCompatActivity
 
         if(m_Adapter!=null) {
             mResult = "";
+            //txtResult.setText("");
             m_Adapter.add(mResult, 2);
+            //btnStart.setText(R.string.str_start);
+            //btnStart.setEnabled(true);
+            //Log.d("callActivity", "전화시작");
+            //Connect(findViewById(R.id.button2));
+            //findViewById(R.id.button2).performClick();
         }
     }
 
@@ -750,7 +775,6 @@ public class CallActivity extends AppCompatActivity
 
         Log.d("connecttt", "연결");
         token = "cHJvdmlzaW9uAHVzZXIxQGFjNjM1OC52aWR5by5pbwA2MzcwMTExMDc5NgAANjk5Yzc1ZDZhMGM1ZDA4NmJkMTJhMWRlMGIxNjViNjM4YWJjZWRmMDAzMzBjMTllZjRiY2FiMGZiMzcxMzE0ODdkYmEyMTgyYTFjZTk0NWVjOTBlZmZhYzhlMzc2ODE0";
-        //token = "cHJvdmlzaW9uAGNhbGxlckA0OTNmN2UudmlkeW8uaW8ANzM2OTg1OTkyODEAAGM5ZGVjNzMyNThkZmYyNWMwNDNjMGFmMjJiZjdlYzM3ZTdiNDc0Y2YwZGQzNjc4MjU5MGUyYjk5MjVkZjlmYjQwY2JmZTc5N2E2OTk1MjYwYzk1YWUwNmIxM2VkZDUyYw==";
         // 전화 받을 떄
         if (callStatus.name().equals("Receiver")) {
             displayName = user + "-" + connectUser;
@@ -769,6 +793,20 @@ public class CallActivity extends AppCompatActivity
 //            vc_preview.setViewBackgroundColor(localFrame, num, num, num);
             RegisterForVidyoEvents();
 
+//            //clova 음성인식 시작
+//            if (!naverRecognizer.getSpeechRecognizer().isRunning()) {
+//                // Start button is pushed when SpeechRecognizer's state is inactive.
+//                // Run SpeechRecongizer by calling recognize().
+//                mResult = "";
+//                /*if (chatFrame.getVisibility() == View.VISIBLE) {
+//                    m_Adapter.add("Connecting...", 2);
+//                }*/
+//                naverRecognizer.recognize();
+//            } else {
+//                Log.d(TAG, "stop and wait Final Result");
+//                //btnStart.setEnabled(false);
+//                naverRecognizer.getSpeechRecognizer().stop();
+//            }
 
             //vc_preview.selectDefaultCamera();
             //vc_preview.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
@@ -779,31 +817,17 @@ public class CallActivity extends AppCompatActivity
             Thread getChatCnt = new getChatCnt();
             getChatCnt.start();
 
-            //clova 음성인식 시작
-            /*if (!naverRecognizer.getSpeechRecognizer().isRunning()) {
-                // Start button is pushed when SpeechRecognizer's state is inactive.
-                // Run SpeechRecongizer by calling recognize().
-                mResult = "";
-                *//*if (chatFrame.getVisibility() == View.VISIBLE) {
-                    m_Adapter.add("Connecting...", 2);
-                }*//*
-                naverRecognizer.recognize();
-            } else {
-                Log.d(TAG, "stop and wait Final Result");
-                //btnStart.setEnabled(false);
-                naverRecognizer.getSpeechRecognizer().stop();
-            }*/
-            /*while(!cflag.equals("Y")){ }
-
-            if(cflag.equals("Y")){
-                Log.d("ssssss","자막 띄우기");
-                //채팅창 보이도록
-                if (chatFrame.getVisibility() == View.GONE) {
-                    chatFrame.setVisibility(View.VISIBLE);
-                } else {
-                    chatFrame.setVisibility(View.GONE);
-                }
-            }*/
+//            while(!cflag.equals("Y")){ }
+//
+//            if(cflag.equals("Y")){
+//
+//                //채팅창 보이도록
+//                if (chatFrame.getVisibility() == View.GONE) {
+//                    chatFrame.setVisibility(View.VISIBLE);
+//                } else {
+//                    chatFrame.setVisibility(View.GONE);
+//                }
+//            }
 
             /*getChatCnt(user, connectUser);
 
@@ -841,6 +865,23 @@ public class CallActivity extends AppCompatActivity
 
             Log.d("connecttt", "vidyo 연결");
 
+//            //clova 음성인식 시작
+//            if (!naverRecognizer.getSpeechRecognizer().isRunning()) {
+//                // Start button is pushed when SpeechRecognizer's state is inactive.
+//                // Run SpeechRecongizer by calling recognize().
+//                mResult = "";
+//                /*if (chatFrame.getVisibility() == View.VISIBLE) {
+//                    m_Adapter.add("Connecting...", 2);
+//                }*/
+//                naverRecognizer.recognize();
+//            } else {
+//                Log.d(TAG, "stop and wait Final Result");
+//                //btnStart.setEnabled(false);
+//                naverRecognizer.getSpeechRecognizer().stop();
+//            }
+
+            Log.d("connecttt", "clova 시작");
+
             //vc_preview.selectDefaultCamera();
             //vc_preview.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
             //vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
@@ -853,35 +894,16 @@ public class CallActivity extends AppCompatActivity
             Thread getChatCnt1 = new getChatCnt1();
             getChatCnt1.start();
 
-
-            //clova 음성인식 시작
-            /*if (!naverRecognizer.getSpeechRecognizer().isRunning()) {
-                // Start button is pushed when SpeechRecognizer's state is inactive.
-                // Run SpeechRecongizer by calling recognize().
-                mResult = "";
-                *//*if (chatFrame.getVisibility() == View.VISIBLE) {
-                    m_Adapter.add("Connecting...", 2);
-                }*//*
-                naverRecognizer.recognize();
-            } else {
-                Log.d(TAG, "stop and wait Final Result");
-                //btnStart.setEnabled(false);
-                naverRecognizer.getSpeechRecognizer().stop();
-            }*/
-
-            Log.d("connecttt", "clova 시작");
-
-            /*while(!cflag.equals("Y")){ }
-
-            if(cflag.equals("Y")){
-                Log.d("ssssss","자막 띄우기");
-                //채팅창 보이도록
-                if (chatFrame.getVisibility() == View.GONE) {
-                    chatFrame.setVisibility(View.VISIBLE);
-                } else {
-                    chatFrame.setVisibility(View.GONE);
-                }
-            }*/
+//            while(!cflag.equals("Y")){ }
+//
+//            if(cflag.equals("Y")){
+//                //채팅창 보이도록
+//                if (chatFrame.getVisibility() == View.GONE) {
+//                    chatFrame.setVisibility(View.VISIBLE);
+//                } else {
+//                    chatFrame.setVisibility(View.GONE);
+//                }
+//            }
         }
     }
 
@@ -1055,6 +1077,7 @@ public class CallActivity extends AppCompatActivity
         Log.d("connecttt", "ParticipainJoined");
         cflag = "Y";
 
+        //clova 음성인식 시작
         if (!naverRecognizer.getSpeechRecognizer().isRunning()) {
             // Start button is pushed when SpeechRecognizer's state is inactive.
             // Run SpeechRecongizer by calling recognize().
@@ -1072,11 +1095,10 @@ public class CallActivity extends AppCompatActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Button b = findViewById(R.id.sendButton);
+                ImageButton b = findViewById(R.id.sendButton);
                 b.setEnabled(true);
             }
         });
-
     }
 
     // Participant Left
@@ -1337,6 +1359,7 @@ public class CallActivity extends AppCompatActivity
         @Override
         public void onReceive(final Context context, final Intent mintent) {
             if (mintent.getAction().equals("CALL_DENIAL")) {
+                Log.d("connecttt", "call_denial");
                 Disconnect(findViewById(R.id.disconnect));
             }
         }

@@ -4,7 +4,7 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#232323"
+    android:background="#ffffff"
     tools:context="com.example.ds.yourvoice.CallActivity">
 
     <!-- <Button
@@ -44,10 +44,9 @@
         <LinearLayout
             android:id="@+id/localFrame"
             android:orientation="horizontal"
-            android:layout_width="120dp"
-            android:layout_height="170dp"
-            android:layout_gravity="right">
-            <!--android:layout_height="300dp"-->
+            android:layout_width="130dp"
+            android:layout_height="160dp"
+            android:layout_gravity="left">
         </LinearLayout>
 
         <LinearLayout
@@ -55,13 +54,15 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
             <ImageButton
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:layout_marginTop="180dp"
+                android:padding="5dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/call_end_selector"
-                android:src="@drawable/baseline_call_end_white_24"
+                android:background="@drawable/ripple_effect"
+                android:foreground="@drawable/call_end_stroke"
+                android:src="@drawable/baseline_call_end_red_36"
                 android:id="@+id/disconnect"
                 android:onClick="Disconnect" />
         </LinearLayout>
@@ -88,39 +89,37 @@
             </LinearLayout>
         </LinearLayout>
 
-<!--        <LinearLayout
+        <LinearLayout
+            android:id="@+id/send_edit"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
+            android:layout_margin="10dp"
             android:layout_gravity="bottom"
-            android:orientation="vertical"
-            android:id="@+id/l2">-->
-            <LinearLayout
-                android:id="@+id/send_edit"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:background="#32ffffff"
-                android:layout_gravity="bottom"
-                android:orientation="horizontal">
-                <EditText
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_weight="9"
-                    android:id="@+id/sendText"
-                    android:inputType="textMultiLine"
-                    android:maxLines="4"/>
-                <Button
-                    android:id="@+id/sendButton"
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
-                    android:background="@color/pressed"
-                    android:text="전송"
-                    android:enabled="false"/>
-            </LinearLayout>
+            android:orientation="horizontal"
+            android:background="@drawable/send_box_topline">
 
-  <!--      </LinearLayout>-->
+            <EditText
+                android:layout_width="200dp"
+                android:layout_height="match_parent"
+                android:paddingLeft="10dp"
+                android:layout_weight="9"
+                android:id="@+id/sendText"
+                android:inputType="textMultiLine"
+                android:textCursorDrawable="@drawable/cursor"
+                android:textSize="13sp"
+                android:background="#46ffffff"
+                android:maxLines="4"/>
+            <ImageButton
+                android:id="@+id/sendButton"
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:clickable="false"
+                android:src="@drawable/send_selector"
+                android:background="#46ffffff"
+                android:text="전송" />
+        </LinearLayout>
 
     </FrameLayout>
 
@@ -136,31 +135,31 @@
         </ScrollView>-->
 
     <!--<RelativeLayout-->
-    <!--android:id="@+id/callReceiveLayout"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:background="#000000"-->
-    <!--android:visibility="invisible">-->
+        <!--android:id="@+id/callReceiveLayout"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:background="#000000"-->
+        <!--android:visibility="invisible">-->
 
-    <!--<Button-->
-    <!--android:id="@+id/callReceive"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_alignParentBottom="true"-->
-    <!--android:layout_centerInParent="true"-->
-    <!--android:layout_marginBottom="100dp"-->
-    <!--android:text="전화받기"-->
-    <!--android:enabled="true"/>-->
+        <!--<Button-->
+            <!--android:id="@+id/callReceive"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:layout_centerInParent="true"-->
+            <!--android:layout_marginBottom="100dp"-->
+            <!--android:text="전화받기"-->
+            <!--android:enabled="true"/>-->
 
-    <!--<Button-->
-    <!--android:id="@+id/callDenial"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_alignParentBottom="true"-->
-    <!--android:layout_marginBottom="100dp"-->
-    <!--android:layout_toRightOf="@+id/callReceive"-->
-    <!--android:text="전화끊기"-->
-    <!--android:enabled="true"/>-->
+        <!--<Button-->
+            <!--android:id="@+id/callDenial"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:layout_marginBottom="100dp"-->
+            <!--android:layout_toRightOf="@+id/callReceive"-->
+            <!--android:text="전화끊기"-->
+            <!--android:enabled="true"/>-->
 
     <!--</RelativeLayout>-->
 

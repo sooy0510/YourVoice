@@ -10,5 +10,5 @@
 
     <item
         android:state_focused="false"
-        android:drawable="@drawable/call_end_line"/>
+        android:drawable="@drawable/call_denial_line"/>
 </selector>

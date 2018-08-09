@@ -258,4 +258,3 @@ public class SoftKeyboard implements View.OnFocusChangeListener
     }
 }
 
-

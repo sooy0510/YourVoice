@@ -3,9 +3,8 @@
     <item>
         <shape
             android:shape="oval">
-            <solid android:color="#dcdcdc" />
+            <stroke android:width="0.5dp"
+                android:color="#ff5035"/>
         </shape>
     </item>
 </layer-list>
-
-    <!--https://stackoverflow.com/questions/30676208/how-to-create-ring-shape-drawable-in-android-->

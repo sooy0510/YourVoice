@@ -33,14 +33,13 @@
 
         <activity android:name=".MainActivity"></activity>
         <activity android:name=".JoinActivity"></activity>
-        <activity android:name=".CallActivity" android:windowSoftInputMode="adjustResize|stateHidden"></activity>
+        <activity android:name=".CallActivity" android:windowSoftInputMode="adjustResize|stateAlwaysHidden"></activity>
         <activity android:name=".CallReceiveActivity">
             <!--<intent-filter>-->
                 <!--<category android:name="android.intent.category.DEFAULT"/>-->
             <!--</intent-filter>-->
         </activity>
         <activity android:name=".TextPopupActivity" android:theme="@android:style/Theme.Dialog"></activity>
-
         <!--<service android:name=".CallService"></service>-->
 
 

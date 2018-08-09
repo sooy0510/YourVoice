@@ -65,60 +65,66 @@
                 android:id="@+id/disconnect"
                 android:onClick="Disconnect" />
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="vertical"
+            android:id="@+id/l1">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="40dp"
+                android:id="@+id/im1">
+                <ListView
+                    android:id="@+id/listView1"
+                    android:listSelector="#00000000"
+                    android:divider="#000000"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:transcriptMode="alwaysScroll"/>
+            </LinearLayout>
+        </LinearLayout>
+
+<!--        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="vertical"
+            android:id="@+id/l2">-->
+            <LinearLayout
+                android:id="@+id/send_edit"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="#32ffffff"
+                android:layout_gravity="bottom"
+                android:orientation="horizontal">
+                <EditText
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="9"
+                    android:id="@+id/sendText"
+                    android:inputType="textMultiLine"
+                    android:maxLines="4"/>
+                <Button
+                    android:id="@+id/sendButton"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:background="@color/pressed"
+                    android:text="전송"
+                    android:enabled="false"/>
+            </LinearLayout>
+
+  <!--      </LinearLayout>-->
+
     </FrameLayout>
 
-    <LinearLayout
-        android:visibility="gone"
-        android:layout_width="fill_parent"
-        android:id="@+id/im1"
-        android:layout_height="150dp"
-        android:layout_weight="1"
-        android:layout_marginTop="470dp">
-        <FrameLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
-            <!--<ListView
-                android:id="@+id/listView1"
-                android:listSelector="#00000000"
-                android:cacheColorHint="#00000000"
-                android:divider="#000000"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:transcriptMode="alwaysScroll"/>-->
-            <ListView
-                android:id="@+id/listView1"
-                android:listSelector="#00000000"
-                android:divider="#000000"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:transcriptMode="alwaysScroll" />
-        </FrameLayout>
-    </LinearLayout>
-    <!--  텍스트 보내기  <LinearLayout
-            android:visibility="gone"
-            android:id="@+id/send_edit"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="#2F4F4F"
-            android:layout_below="@id/im1"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="20dp"
-                android:layout_height="wrap_content" />
-            <EditText
-                android:hint="메세지를 입력하세요"
-                android:id="@+id/editText1"
-                android:inputType="textMultiLine"
-                android:maxLines="4"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"/>
-            <Button
-                android:id="@+id/button1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="전 송" />
 
-        </LinearLayout>-->
     <!--    <ScrollView
             android:layout_width="match_parent"
             android:layout_height="150dp"
@@ -130,31 +136,31 @@
         </ScrollView>-->
 
     <!--<RelativeLayout-->
-        <!--android:id="@+id/callReceiveLayout"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:background="#000000"-->
-        <!--android:visibility="invisible">-->
+    <!--android:id="@+id/callReceiveLayout"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:background="#000000"-->
+    <!--android:visibility="invisible">-->
 
-        <!--<Button-->
-            <!--android:id="@+id/callReceive"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentBottom="true"-->
-            <!--android:layout_centerInParent="true"-->
-            <!--android:layout_marginBottom="100dp"-->
-            <!--android:text="전화받기"-->
-            <!--android:enabled="true"/>-->
+    <!--<Button-->
+    <!--android:id="@+id/callReceive"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:layout_centerInParent="true"-->
+    <!--android:layout_marginBottom="100dp"-->
+    <!--android:text="전화받기"-->
+    <!--android:enabled="true"/>-->
 
-        <!--<Button-->
-            <!--android:id="@+id/callDenial"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentBottom="true"-->
-            <!--android:layout_marginBottom="100dp"-->
-            <!--android:layout_toRightOf="@+id/callReceive"-->
-            <!--android:text="전화끊기"-->
-            <!--android:enabled="true"/>-->
+    <!--<Button-->
+    <!--android:id="@+id/callDenial"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:layout_marginBottom="100dp"-->
+    <!--android:layout_toRightOf="@+id/callReceive"-->
+    <!--android:text="전화끊기"-->
+    <!--android:enabled="true"/>-->
 
     <!--</RelativeLayout>-->
 

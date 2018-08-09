@@ -287,13 +287,6 @@ public class CallService extends Service {
                     break;
                 }
             }
-            if(!denial) {
-                Intent broadcastIntent = new Intent();
-                broadcastIntent.setAction("CALL_DENIAL");
-                sendBroadcast(broadcastIntent);
-                connectUser = null;
-                //this.interrupt();
-            }
         }
     }
 

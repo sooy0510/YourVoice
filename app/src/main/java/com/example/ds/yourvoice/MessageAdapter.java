@@ -121,10 +121,9 @@ public class MessageAdapter extends BaseAdapter {
             viewRight.setVisibility(View.GONE);
             viewLeft.setVisibility(View.GONE);
         }else if(m_List.get(position).type == 2){
-            text.setBackgroundResource(R.drawable.datebg);
             layout.setGravity(Gravity.CENTER);
-            viewRight.setVisibility(View.VISIBLE);
-            viewLeft.setVisibility(View.VISIBLE);
+            viewRight.setVisibility(View.GONE);
+            viewLeft.setVisibility(View.GONE);
         }
 
 

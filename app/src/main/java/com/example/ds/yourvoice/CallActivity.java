@@ -83,14 +83,17 @@ public class CallActivity extends AppCompatActivity
     private IntentFilter mIntentFilter;
     public static Context context;
 
+    //키보드
     SoftKeyboard softKeyboard;
     RelativeLayout calllayout;
+    private InputMethodManager imm;
 
     private Connector vc;
     private String token;
     private String displayName, resourceId;
     private String connectUser;
     private String user;
+    private EditText sendText;
     private LinearLayout videoFrame;
     private LinearLayout localFrame;
     private LinearLayout chatFrame;
@@ -195,6 +198,15 @@ public class CallActivity extends AppCompatActivity
         // ListView에 어댑터 연결
         m_ListView.setAdapter(m_Adapter);
 
+        //키보드
+        imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+
+        //영상통화 연결되기 전까지는 sendtext 막기
+        sendText = (EditText)findViewById(R.id.sendText);
+        sendText.setClickable(false);
+        sendText.setFocusable(false);
+        //imm.showSoftInput((View) sendText.getWindowToken(),0);
+        //sendText.setFocusable(false);
 
         if (intent.getStringExtra("Caller") != null && intent.getStringExtra("Receiver") != null) {
             CLIENT_ID = "Us8JNMyTCu8dGWq1HCqh";
@@ -260,9 +272,10 @@ public class CallActivity extends AppCompatActivity
                             @Override
                             public void run() {
                                 // 키보드 올라왔을때
+                                Log.d("connecttt","키보드 올라옴");
                                 LinearLayout.LayoutParams plControl = (LinearLayout.LayoutParams)chatFrame.getLayoutParams();
-                                plControl.topMargin = 800;
-                                plControl.height = 200;
+                                plControl.topMargin = 470;
+                                plControl.height = 535;
                                 chatFrame.setLayoutParams(plControl);
 
                             }
@@ -1031,6 +1044,11 @@ public class CallActivity extends AppCompatActivity
         vc.showViewLabel(videoFrame, false);
         vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
 
+        //키보드 보이게
+        sendText.setFocusableInTouchMode(true);
+        sendText.setClickable(true);
+        sendText.setFocusable(true);
+
 //        if(callStatus == CallStatus.Caller) {
 //            ImageButton ibtn = findViewById(R.id.disconnect);
 //            ibtn.bringToFront();
@@ -1099,6 +1117,12 @@ public class CallActivity extends AppCompatActivity
                 b.setEnabled(true);
             }
         });
+
+        //키보드 보이게
+        /*sendText.setFocusableInTouchMode(true);
+        sendText.setClickable(true);
+        sendText.setFocusable(true);*/
+        //imm.showSoftInput(sendText, 0);
     }
 
     // Participant Left

@@ -129,19 +129,19 @@ public class MessageAdapter extends BaseAdapter {
 
 
         // 리스트 아이템을 터치 했을 때 이벤트 발생
-        convertView.setOnClickListener(new View.OnClickListener() {
+        /*convertView.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 // 터치 시 해당 아이템 이름 출력
                 Toast.makeText(context, "리스트 클릭 : "+m_List.get(pos), Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
 
 
 
         // 리스트 아이템을 길게 터치 했을때 이벤트 발생
-        convertView.setOnLongClickListener(new View.OnLongClickListener() {
+        /*convertView.setOnLongClickListener(new View.OnLongClickListener() {
 
             @Override
             public boolean onLongClick(View v) {
@@ -149,7 +149,7 @@ public class MessageAdapter extends BaseAdapter {
                 Toast.makeText(context, "리스트 롱 클릭 : "+m_List.get(pos), Toast.LENGTH_SHORT).show();
                 return true;
             }
-        });
+        });*/
 
         return convertView;
     }

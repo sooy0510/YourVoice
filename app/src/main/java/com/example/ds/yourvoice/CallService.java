@@ -51,7 +51,7 @@ public class CallService extends Service {
 
     private Thread thread;
     private Thread callerThread;
-    //private boolean call = false;
+    private boolean end;
 
     private String result;
 
@@ -139,7 +139,7 @@ public class CallService extends Service {
                     while (connectUser == null && user != null) {
 
                         try {
-                            thread.sleep(1000 * 2);
+                            thread.sleep(1000 * 1);
                         } catch (Exception e) {
                             Log.d("서비스스레드 Exception", e.toString());
                         }
@@ -223,13 +223,12 @@ public class CallService extends Service {
 
     private class callerCheck extends Thread {
 
-        private boolean denial = false;
-
         @Override
         public void run() {
             //super.run();
             Log.d("전화", "타이머태스크");
             long now = System.currentTimeMillis();
+            end = false;
 
             //60초동안 수신을 기다림
             while (System.currentTimeMillis() - now < 1000 * 60) {
@@ -277,12 +276,19 @@ public class CallService extends Service {
                         broadcastIntent.setAction("CALL_DENIAL");
                         sendBroadcast(broadcastIntent);
                         connectUser = null;
-                        denial = true;
+                        end = true;
                         //this.interrupt();
                         break;
                     }
                 } catch (Exception e) {
                     Log.d("발신자전화서비스스레드 Exception", e.toString());
+                    if(!end) {
+                        Intent broadcastIntent = new Intent();
+                        broadcastIntent.setAction("CALL_DENIAL");
+                        sendBroadcast(broadcastIntent);
+                        connectUser = null;
+                        end = true;
+                    }
                     registerRestartAlarm();
                     break;
                 }

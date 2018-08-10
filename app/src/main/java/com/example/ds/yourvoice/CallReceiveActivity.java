@@ -64,6 +64,7 @@ public class CallReceiveActivity extends AppCompatActivity {
         @Override
         public void onReceive(final Context context, final Intent mintent) {
             if (mintent.getAction().equals("CALL_DENIAL")) {
+                Log.d("connecttt", "call_denial");
                 callingUpdate(callerId, "0");
             }
         }

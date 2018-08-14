@@ -17,6 +17,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -788,6 +789,8 @@ public class CallActivity extends AppCompatActivity
 
         Log.d("connecttt", "연결");
         token = "cHJvdmlzaW9uAHVzZXIxQGFjNjM1OC52aWR5by5pbwA2MzcwMTExMDc5NgAANjk5Yzc1ZDZhMGM1ZDA4NmJkMTJhMWRlMGIxNjViNjM4YWJjZWRmMDAzMzBjMTllZjRiY2FiMGZiMzcxMzE0ODdkYmEyMTgyYTFjZTk0NWVjOTBlZmZhYzhlMzc2ODE0";
+        //cHJvdmlzaW9uAHVzZXIxQGY4ZGU5Zi52aWR5by5pbwA2MzcwMDk1MzU2NwAANjdjMDQ2NjkzMThjN2VmYTdjYTc0Y2M3OGIxYzUyYjU3ZmQyZmE3YjQwN2YxZDNkMDVhYjg3YjRmNWRmNDU2OGY0NmQ0YThjZDY1OGIwMzBiYTM1NjljOWZkYzdhZTNj
+
         // 전화 받을 떄
         if (callStatus.name().equals("Receiver")) {
             displayName = user + "-" + connectUser;
@@ -796,7 +799,7 @@ public class CallActivity extends AppCompatActivity
             Log.d("전화수신", user + "->" + connectUser);
 
             //Connector(Object viewId, ConnectorViewStyle viewStyle, int remoteParticipants, String logFileFilter, String logFileName, long userData)
-            byte num = (byte) 00;
+
             vc = new Connector(null, VIDYO_CONNECTORVIEWSTYLE_Default, 1, "warning info@VidyoClient info@VidyoConnector", "", 0);
 //            vc.showPreview(false);
 //            vc.showViewLabel(videoFrame, false);
@@ -866,8 +869,9 @@ public class CallActivity extends AppCompatActivity
 //            ibtn.bringToFront();
 
             //RegisterForVidyoEvents();
-            byte num = (byte) 00;
+
             vc = new Connector(null, VIDYO_CONNECTORVIEWSTYLE_Default, 1, "warning info@VidyoClient info@VidyoConnector", "", 0);
+            vc. setCpuTradeOffProfile (Connector.ConnectorTradeOffProfile.VIDYO_CONNECTORTRADEOFFPROFILE_High);
 //            vc.showPreview(false);
 //            vc.showViewLabel(videoFrame, false);
 //            vc.setViewBackgroundColor(videoFrame, num, num, num);
@@ -992,10 +996,15 @@ public class CallActivity extends AppCompatActivity
     /* custom local preview */
     public void onLocalCameraAdded(LocalCamera localCamera)    {
         Log.d("connecttt", "onLocalCameraAdded");
+        localCamera.setAspectRatioConstraint(1, 1);
         vc.assignViewToLocalCamera(localFrame, localCamera, true, false);
         vc.showViewLabel(localFrame, false);
-//        vc.setViewBackgroundColor(videoFrame, num, num, num);
         vc.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
+
+        //vc.selectDefaultMicrophone();
+
+        localCamera.setFramerateTradeOffProfile (LocalCamera.LocalCameraTradeOffProfile.VIDYO_LOCALCAMERATRADEOFFPROFILE_High);
+        localCamera.setResolutionTradeOffProfile (LocalCamera.LocalCameraTradeOffProfile.VIDYO_LOCALCAMERATRADEOFFPROFILE_High);
 
 //        if(callStatus == CallStatus.Caller) {
 //            ImageButton ibtn = findViewById(R.id.disconnect);
@@ -1029,7 +1038,7 @@ public class CallActivity extends AppCompatActivity
         //        if(state == Device.DeviceState.VIDYO_DEVICESTATE_Started) {
 //            vc.assignViewToLocalCamera(localFrame, localCamera, false, false);
 //            vc.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
-//        }
+//        };
     }
     /* Local camera change initiated by user. Note: this is an arbitrary function name. */
 

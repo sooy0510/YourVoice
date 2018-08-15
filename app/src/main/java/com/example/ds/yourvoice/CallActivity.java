@@ -254,7 +254,6 @@ public class CallActivity extends AppCompatActivity
 
         gallery = findViewById(R.id.gallery);
         sendImage = findViewById(R.id.sendImage);
-        imageView = findViewById(R.id.imageview);
         showImage = findViewById(R.id.showimage);
         closeImage = findViewById(R.id.close);
         /*if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
@@ -552,10 +551,7 @@ public class CallActivity extends AppCompatActivity
                         //upload(getPath(photoURI));
                         Log.d("ggggggg", String.valueOf(data.getData()));
                         Log.d("ggggggg", getPath(data.getData()));
-                        //Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), photoURI);
-                        //Bitmap bitmap1 = (Bitmap) sendImage.setImageBitmap(bitmap);
-                        //imageView.setImageBitmap(bitmap);
-                        imageView.setImageURI(Uri.fromFile(f));
+                        //imageView.setImageURI(Uri.fromFile(f));
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -630,6 +626,35 @@ public class CallActivity extends AppCompatActivity
                     Log.d("gggggg","사진추가");
                     Glide.with(CallActivity.context).load(dataSnapshot.getValue(ImageDTO.class).imageUrl).override(300,300).into(showImage);
                     showImage.setVisibility(View.VISIBLE);
+                }else{
+                    // 데이터를 읽어올 때 모든 데이터를 읽어오기때문에 List 를 초기화해주는 작업이 필요하다.
+                    m_Adapter.clean();
+                    for (DataSnapshot messageData : dataSnapshot.getChildren()) {
+                        //String msg = messageData.getValue().toString();
+                        Chat chat = messageData.getValue(Chat.class);
+
+                    /*if(!chat.equals("")){
+                        Glide.with(CallActivity.context).load(chat.image.imageUrl).into(showImage);
+                    }*/
+
+                        if (user.equals(userId)) { //사용자 = 발신자
+                            if (user.equals(chat.user)) { //사용자 = 채팅의 user
+                                m_Adapter.add(chat.text, 1);
+                            } else {
+                                m_Adapter.add(chat.text, 0);
+                            }
+                        } else { //사용자 = 수신자
+                            if (connectUser.equals(chat.user)) { //사용자 = 채팅의 user
+                                m_Adapter.add(chat.text, 1);
+                            } else {
+                                m_Adapter.add(chat.text, 0);
+                            }
+                        }
+                    }
+                    // notifyDataSetChanged를 안해주면 ListView 갱신이 안됨
+                    m_Adapter.notifyDataSetChanged();
+                    // ListView 의 위치를 마지막으로 보내주기 위함
+                    m_ListView.setSelection(m_Adapter.getCount() - 1);
                 }
             }
 
@@ -640,6 +665,35 @@ public class CallActivity extends AppCompatActivity
                     Log.d("gggggg","사진추가");
                     Glide.with(CallActivity.context).load(dataSnapshot.getValue(ImageDTO.class).imageUrl).override(300,300).into(showImage);
                     showImage.setVisibility(View.VISIBLE);
+                }else{
+                    // 데이터를 읽어올 때 모든 데이터를 읽어오기때문에 List 를 초기화해주는 작업이 필요하다.
+                    m_Adapter.clean();
+                    for (DataSnapshot messageData : dataSnapshot.getChildren()) {
+                        //String msg = messageData.getValue().toString();
+                        Chat chat = messageData.getValue(Chat.class);
+
+                    /*if(!chat.equals("")){
+                        Glide.with(CallActivity.context).load(chat.image.imageUrl).into(showImage);
+                    }*/
+
+                        if (user.equals(userId)) { //사용자 = 발신자
+                            if (user.equals(chat.user)) { //사용자 = 채팅의 user
+                                m_Adapter.add(chat.text, 1);
+                            } else {
+                                m_Adapter.add(chat.text, 0);
+                            }
+                        } else { //사용자 = 수신자
+                            if (connectUser.equals(chat.user)) { //사용자 = 채팅의 user
+                                m_Adapter.add(chat.text, 1);
+                            } else {
+                                m_Adapter.add(chat.text, 0);
+                            }
+                        }
+                    }
+                    // notifyDataSetChanged를 안해주면 ListView 갱신이 안됨
+                    m_Adapter.notifyDataSetChanged();
+                    // ListView 의 위치를 마지막으로 보내주기 위함
+                    m_ListView.setSelection(m_Adapter.getCount() - 1);
                 }
             }
 

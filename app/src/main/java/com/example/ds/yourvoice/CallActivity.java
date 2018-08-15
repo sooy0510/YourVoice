@@ -4,15 +4,23 @@ import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.database.DataSetObserver;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -36,19 +44,28 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.ds.yourvoice.utils.AudioWriterPCM;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 import com.naver.speech.clientapi.SpeechRecognitionResult;
 import com.vidyo.VidyoClient.Connector.ConnectorPkg;
 import com.vidyo.VidyoClient.Connector.Connector;
 import com.vidyo.VidyoClient.Device.Device;
 import com.vidyo.VidyoClient.Device.LocalCamera;
 import com.vidyo.VidyoClient.Device.RemoteCamera;
+import com.vidyo.VidyoClient.Endpoint.Call;
 import com.vidyo.VidyoClient.Endpoint.ChatMessage;
 import com.vidyo.VidyoClient.Endpoint.Participant;
 
@@ -57,9 +74,12 @@ import org.json.JSONObject;
 import org.w3c.dom.Comment;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.ref.WeakReference;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -139,6 +159,25 @@ public class CallActivity extends AppCompatActivity
     FirebaseDatabase database;
     private List<Chat> mChat;
 
+    //사진 전송
+    // sendImage;
+    int flag;
+    private ImageView imageView;
+    private ImageView showImage;
+    private EditText title;
+    private EditText description;
+    private Button gallery;
+    private Button sendImage;
+    private String imagePath;
+    //private Uri imgUri, photoURI, albumURI;
+    private String mCurrentPhotoPath;
+    private static final int FROM_CAMERA = 0;
+    private static final int FROM_ALBUM = 1;
+    private Uri photoUrl;
+    private Uri file;
+
+    private FirebaseStorage storage;
+
 
     enum VidyoConnectorState {
         VidyoConnectorStateConnected,
@@ -207,6 +246,33 @@ public class CallActivity extends AppCompatActivity
         sendText.setFocusable(false);
         //imm.showSoftInput((View) sendText.getWindowToken(),0);
         //sendText.setFocusable(false);
+
+        gallery = findViewById(R.id.gallery);
+        sendImage = findViewById(R.id.sendImage);
+        imageView = findViewById(R.id.imageview);
+        showImage = findViewById(R.id.showimage);
+        /*if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
+            requestPermmision(new String[])
+        }*/
+        storage = FirebaseStorage.getInstance();
+
+        //앨범선택, 사진촬영, 취소 다이얼로그 생성
+        gallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                makeDialog();
+            }
+        });
+
+        sendImage.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                upload(imagePath);
+                //addUserChat(imagePath, 1);
+            }
+        });
+
+
 
         if (intent.getStringExtra("Caller") != null && intent.getStringExtra("Receiver") != null) {
             CLIENT_ID = "Us8JNMyTCu8dGWq1HCqh";
@@ -297,7 +363,7 @@ public class CallActivity extends AppCompatActivity
                                                                  String inputValue = editText.getText().toString();
                                                                  editText.setText("");
                                                                  //refresh(inputValue, 0);
-                                                                 addUserChat(inputValue);
+                                                                 addUserChat(inputValue, 0);
                                                              }
                                                          }
         );
@@ -313,6 +379,335 @@ public class CallActivity extends AppCompatActivity
         //super.onBackPressed();
     }
     // 출처: http://migom.tistory.com/14 [devlog.gitlab.io]
+
+    private void makeDialog(){
+
+        AlertDialog.Builder alt_bld = new AlertDialog.Builder(CallActivity.this,R.style.Theme_AppCompat_Dialog);
+
+        alt_bld.setTitle("사진 업로드").setIcon(R.drawable.caller).setCancelable(
+
+                false)/*.setPositiveButton("사진촬영",
+
+                new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        // 사진 촬영 클릭
+
+                        Log.v("알림", "다이얼로그 > 사진촬영 선택");
+
+                        flag = 0;
+
+                        takePhoto();
+
+                    }
+
+                })*/.setNeutralButton("앨범선택",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogInterface, int id) {
+                        Log.v("알림", "다이얼로그 > 앨범선택 선택");
+                        flag = 1;
+                        //앨범에서 선택
+                        selectAlbum();
+                    }
+                }).setNegativeButton("취소   ",
+
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Log.v("알림", "다이얼로그 > 취소 선택");
+                        // 취소 클릭. dialog 닫기.
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert = alt_bld.create();
+        alert.show();
+    }
+
+
+    public File createImageFile() throws IOException {
+        String imgFileName = System.currentTimeMillis() + ".jpg";
+        File imageFile= null;
+        File storageDir = new File(Environment.getExternalStorageDirectory() + "/Pictures", "ireh");
+
+        if(!storageDir.exists()){
+            //없으면 만들기
+            Log.v("알림","storageDir 존재 x " + storageDir.toString());
+            storageDir.mkdirs();
+        }
+
+        Log.v("알림","storageDir 존재함 " + storageDir.toString());
+        imageFile = new File(storageDir,imgFileName);
+        mCurrentPhotoPath = imageFile.getAbsolutePath();
+
+        return imageFile;
+
+    }
+
+
+
+/*    public void galleryAddPic(){
+
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+
+        File f = new File(mCurrentPhotoPath);
+
+        Uri contentUri = Uri.fromFile(f);
+
+        mediaScanIntent.setData(contentUri);
+
+        sendBroadcast(mediaScanIntent);
+
+        Toast.makeText(this,"사진이 저장되었습니다",Toast.LENGTH_SHORT).show();
+
+    }*/
+
+
+
+
+//앨범 선택 클릭
+
+    public void selectAlbum(){
+
+        //앨범에서 이미지 가져옴
+        //앨범 열기
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
+        intent.setType("image/*");
+
+        startActivityForResult(intent, FROM_ALBUM);
+    }
+
+
+//사진 찍기 클릭
+
+/*    public void takePhoto(){
+        // 촬영 후 이미지 가져옴
+        String state = Environment.getExternalStorageState();
+
+        if(Environment.MEDIA_MOUNTED.equals(state)){
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if(intent.resolveActivity(getPackageManager())!=null){
+                File photoFile = null;
+                try{
+                    photoFile = createImageFile();
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+
+                if(photoFile!=null){
+                    Uri providerURI = FileProvider.getUriForFile(CallActivity.this,getPackageName(),photoFile);
+                    imgUri = providerURI;
+                    intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, providerURI);
+                    startActivityForResult(intent, FROM_CAMERA);
+                }
+            }
+        }else{
+            Log.v("알림", "저장공간에 접근 불가능");
+            return;
+        }
+    }*/
+
+
+
+    @Override
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode != RESULT_OK){
+            return;
+        }
+
+        switch (requestCode){
+            case FROM_ALBUM : {
+                //앨범에서 가져오기
+                if(data.getData()!=null){
+                    try{
+                        imagePath = getPath(data.getData());
+                        File f = new File(imagePath);
+                        //upload(getPath(photoURI));
+                        Log.d("ggggggg", String.valueOf(data.getData()));
+                        Log.d("ggggggg", getPath(data.getData()));
+                        //Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), photoURI);
+                        //Bitmap bitmap1 = (Bitmap) sendImage.setImageBitmap(bitmap);
+                        //imageView.setImageBitmap(bitmap);
+                        imageView.setImageURI(Uri.fromFile(f));
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+                break;
+            }
+
+
+            case FROM_CAMERA : {
+                //카메라 촬영
+                try{
+                    Log.v("알림", "FROM_CAMERA 처리");
+                    //galleryAddPic();
+                    //img1.setImageURI(imgUri);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                break;
+            }
+        }
+    }
+
+
+    public void upload(String uri){
+        Log.d("gggggg",uri);  //getpath까지 한 주소
+        StorageReference storageRef = storage.getReferenceFromUrl("gs://yourvoice-577c9.appspot.com");
+        final String chatRoom = user + connectUser;
+        //Uri file = Uri.fromFile(new File(chat));
+        file = Uri.fromFile(new File(uri));
+        StorageReference riversRef = storageRef.child("images/"+file.getLastPathSegment());
+        UploadTask uploadTask = riversRef.putFile(file);
+
+        // Register observers to listen for when the download is done or if it fails
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                Log.d("ggggggg","실패");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                // ...
+                //Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                //downloadUrl = taskSnapshot.getDownloadUrl();
+                photoUrl = taskSnapshot.getDownloadUrl();
+                Log.d("sssssss", photoUrl.toString());
+                Log.d("sssssss", file.toString());
+
+                ImageDTO imageDTO = new ImageDTO();
+                imageDTO.imageUrl = photoUrl.toString();
+                Log.d("ggggg", photoUrl.toString());
+                //imageDTO.description = description.getText().toString();
+                //imageDTO.uid = auth.getCurrentUser().getUid();
+                //imageDTO.userid = auth.getCurrentUser().getEmail();
+
+                //database.getReference("chats").child(chatRoom).child(chatCntStr).child(formattedDate);
+                DatabaseReference myRef = database.getReference("chats").child(chatRoom).child(chatCntStr);
+                Hashtable<String, ImageDTO> chatText = new Hashtable<String, ImageDTO>();
+                chatText.put("image", imageDTO);
+                    /*Hashtable<String, String> chatText = new Hashtable<String, String>();
+                    chatText.put("imageUrl", downloadUrl.toString());*/
+                myRef.setValue(chatText);
+
+                //database.getReference("chats").child(chatRoom).child(chatCntStr).child(formattedDate).push().setValue(imageDTO);
+
+
+                //database.getReference().child("images").orderByChild(downloadUrl.toString()).equalTo(downloadUrl.toString());
+                /////Glide.with(CallActivity.context).load(downloadUrl.toString()).into(showImage);
+
+                Log.d("ggggggg","성공");
+                Thread refreshChat = new refreshChat();
+                refreshChat.start();
+            }
+        });
+    }
+
+    public String getPath(Uri uri){
+        String[] proj = {MediaStore.Images.Media.DATA};
+        CursorLoader cursorLoader = new CursorLoader(this, uri, proj, null, null, null);
+
+        Cursor cursor = cursorLoader.loadInBackground();
+        int index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+
+        cursor.moveToFirst();
+        return cursor.getString(index);
+    }
+
+
+    private class refreshChat extends Thread {
+
+        @Override
+        public void run() {
+            try {
+                Log.d("gggggg", "refresh 안에 들어옴");
+                String chatRoom = user+connectUser;
+                DatabaseReference databaseReference = firebaseDatabase.getReference("chats").child(chatRoom).child(chatCntStr);
+                DatabaseReference dbimg = firebaseDatabase.getReference("chats").child(chatRoom).child(chatCntStr);
+                dbimg.addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        Log.d("gggggg","리스트 새로고침");
+                        //Glide.with(CallActivity.context).load(dataSnapshot.getValue(ImageDTO.class).imageUrl).into(showImage);
+                        Glide.with(CallActivity.context).load(photoUrl.toString()).into(showImage);
+
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+                //childeventlistener로 바꾸기
+                databaseReference.addValueEventListener(new ValueEventListener() {
+
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // 데이터를 읽어올 때 모든 데이터를 읽어오기때문에 List 를 초기화해주는 작업이 필요하다.
+                        m_Adapter.clean();
+                        for (DataSnapshot messageData : dataSnapshot.getChildren()) {
+                            //String msg = messageData.getValue().toString();
+                            Chat chat = messageData.getValue(Chat.class);
+
+                    /*if(!chat.equals("")){
+                        Glide.with(CallActivity.context).load(chat.image.imageUrl).into(showImage);
+                    }*/
+
+                            if (user.equals(userId)) { //사용자 = 발신자
+                                if (user.equals(chat.user)) { //사용자 = 채팅의 user
+                                    m_Adapter.add(chat.text, 1);
+                                } else {
+                                    m_Adapter.add(chat.text, 0);
+                                }
+                            } else { //사용자 = 수신자
+                                if (connectUser.equals(chat.user)) { //사용자 = 채팅의 user
+                                    m_Adapter.add(chat.text, 1);
+                                } else {
+                                    m_Adapter.add(chat.text, 0);
+                                }
+                            }
+                        }
+                        // notifyDataSetChanged를 안해주면 ListView 갱신이 안됨
+                        m_Adapter.notifyDataSetChanged();
+                        // ListView 의 위치를 마지막으로 보내주기 위함
+                        m_ListView.setSelection(m_Adapter.getCount() - 1);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            } catch (Exception e) {
+                Log.d("getChateCnt Exception: ", e.getMessage().toString());
+            }
+        }
+    }
+
+
 
     /* ---------------------------------------------- CLOVA ----------------------------------------------------------- */
     // Handle speech recognition Messages.
@@ -358,7 +753,7 @@ public class CallActivity extends AppCompatActivity
                 //strBuf.append("\n");
                 mResult = strBuf.toString();
                 if (!mResult.equals("")) {
-                    addUserChat(mResult);
+                    addUserChat(mResult,0);
                     //m_Adapter.add(mResult,1);
                     //m_Adapter.notifyDataSetChanged();
                 }
@@ -481,73 +876,6 @@ public class CallActivity extends AppCompatActivity
             }
         }
     }
-//
-//    private void getChatCnt(final String userId, String friendId) {
-//        class getChatRoomNum extends AsyncTask<String, Void, String> {
-//            //ProgressDialog loading;
-//
-//            @Override
-//            protected void onPreExecute() {
-//                super.onPreExecute();
-//                //loading = ProgressDialog.show(CallActivity.this, "Please Wait", null, true, true);
-//            }
-//
-//            @Override
-//            protected void onPostExecute(String s) {
-//                super.onPostExecute(s);
-//                //loading.dismiss();
-//                //int chatnum = Integer.parseInt(s);
-//                //chatCntStr = Integer.toString(chatnum);
-//                chatCntStr = s;
-//            }
-//
-//            @Override
-//            protected String doInBackground(String... params) {
-//
-//                try {
-//                    String userId = (String) params[0];
-//                    String friendId = (String) params[1];
-//
-//
-//                    String link = "http://13.124.94.107/getChatCnt.php";
-//                    String data = URLEncoder.encode("UserId", "UTF-8") + "=" + URLEncoder.encode(userId, "UTF-8");
-//                    data += "&" + URLEncoder.encode("FriendId", "UTF-8") + "=" + URLEncoder.encode(friendId, "UTF-8");
-//
-//
-//                    URL url = new URL(link);
-//                    URLConnection conn = url.openConnection();
-//
-//
-//                    conn.setDoOutput(true);
-//                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-//
-//
-//                    wr.write(data);
-//                    wr.flush();
-//
-//
-//                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//
-//
-//                    StringBuilder sb = new StringBuilder();
-//                    String line = null;
-//
-//
-//                    // Read Server Response
-//                    while ((line = reader.readLine()) != null) {
-//                        sb.append(line);
-//                        break;
-//                    }
-//                    chatCntStr = sb.toString();
-//                    return sb.toString();
-//                } catch (Exception e) {
-//                    return new String("Exception: " + e.getMessage());
-//                }
-//            }
-//        }
-//        getChatRoomNum task = new getChatRoomNum();
-//        task.execute(userId, friendId);
-//    }
 
     /* ---------------------------------------------- 채팅방 번호 구하기 끝 ----------------------------------------------------------- */
 
@@ -589,126 +917,133 @@ public class CallActivity extends AppCompatActivity
         }
     }
 
-//    private void getChatCnt1(final String userId, String friendId) {
-//        class getChatRoomNum1 extends AsyncTask<String, Void, String> {
-//            //ProgressDialog loading;
-//
-//            @Override
-//            protected void onPreExecute() {
-//                super.onPreExecute();
-//                //loading = ProgressDialog.show(CallActivity.this, "Please Wait", null, true, true);
-//            }
-//
-//            @Override
-//            protected void onPostExecute(String s) {
-//                super.onPostExecute(s);
-//                //loading.dismiss();
-//                chatnum = Integer.parseInt(s);
-//                chatCntStr = Integer.toString(chatnum);
-//                //Toast.makeText(getApplicationContext(), chatCntStr, Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            protected String doInBackground(String... params) {
-//
-//                try {
-//                    String userId = (String) params[0];
-//                    String friendId = (String) params[1];
-//
-//
-//                    String link = "http://13.124.94.107/getChatCnt1.php";
-//                    String data = URLEncoder.encode("UserId", "UTF-8") + "=" + URLEncoder.encode(userId, "UTF-8");
-//                    data += "&" + URLEncoder.encode("FriendId", "UTF-8") + "=" + URLEncoder.encode(friendId, "UTF-8");
-//
-//
-//                    URL url = new URL(link);
-//                    URLConnection conn = url.openConnection();
-//
-//
-//                    conn.setDoOutput(true);
-//                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-//
-//
-//                    wr.write(data);
-//                    wr.flush();
-//
-//
-//                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//
-//
-//                    StringBuilder sb = new StringBuilder();
-//                    String line = null;
-//
-//
-//                    // Read Server Response
-//                    while ((line = reader.readLine()) != null) {
-//                        sb.append(line);
-//                        break;
-//                    }
-//                    return sb.toString();
-//                } catch (Exception e) {
-//                    return new String("Exception: " + e.getMessage());
-//                }
-//            }
-//        }
-//        getChatRoomNum1 task = new getChatRoomNum1();
-//        task.execute(userId, friendId);
-//    }
-
     /* ---------------------------------------------- 채팅방 번호 구하기/ DB에 CNT+1 끝 ----------------------------------------------------------- */
 
 
     /* ---------------------------------------------- 사용자 채팅 DB에 추가 ----------------------------------------------------------- */
-    public void addUserChat(String chat) {
+    public void addUserChat(final String chat, int flag) {
 
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String formattedDate = df.format(c.getTime());
+        final String formattedDate = df.format(c.getTime());
+        //final Uri downloadUrl;
 
-        //Toast.makeText(getApplicationContext(), chatCntStr, Toast.LENGTH_SHORT).show();
-
-        //DatabaseReference myRef = database.getReference("chats").child(formattedDate);
-        String chatRoom = user + connectUser;
         Log.d("ddddddddddd", userId);//sooy1
         Log.d("ddddddddddd", user); //inseon
         Log.d("ddddddddddd", friendId); //inseon
         Log.d("ddddddddddd", connectUser); //sooy1
-        if (userId.equals(user)) { //실사용자 = 발신자
-            //getChatCnt(user, connectUser);
-            Log.d("aaaaaaaaa", chatRoom);
-            Log.d("aaaaaaaaa", chatCntStr);
-        } else { //실사용자 = 수신자
-            //getChatCnt(user, connectUser);
-            Log.d("aaaaaaaaa", chatRoom);
-            Log.d("aaaaaaaaa", chatCntStr);
+
+        final String chatRoom = user + connectUser;
+        final DatabaseReference myRef = database.getReference("chats").child(chatRoom).child(chatCntStr).child("text").child(formattedDate);
+
+        if(flag == 0){  //텍스트 보내기
+            Hashtable<String, String> chatText = new Hashtable<String, String>();
+            //user = intent.getStringExtra("userId");
+            chatText.put("text", chat);
+
+            if (userId.equals(user)) { //실사용자 = 발신자
+                chatText.put("user", userId);
+                chatText.put("friend", friendId);
+            } else { //실사용자 = 수신자
+                chatText.put("user", connectUser);
+                chatText.put("friend", user);
+            }
+            myRef.setValue(chatText);
+
+        }else{  //사진 보내기
+            //upload(imagePath);
+
+/*            Log.d("gggggg",chat);  //getpath까지 한 주소
+            StorageReference storageRef = storage.getReferenceFromUrl("gs://yourvoice-577c9.appspot.com");
+            //Uri file = Uri.fromFile(new File(chat));
+            file = Uri.fromFile(new File(chat));
+            StorageReference riversRef = storageRef.child("images/"+file.getLastPathSegment());
+            UploadTask uploadTask = riversRef.putFile(file);
+
+            // Register observers to listen for when the download is done or if it fails
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle unsuccessful uploads
+                    Log.d("ggggggg","실패");
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                    // ...
+                    //Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    //downloadUrl = taskSnapshot.getDownloadUrl();
+                    photoUrl = taskSnapshot.getDownloadUrl();
+                    Log.d("sssssss",chat);
+                    Log.d("sssssss", photoUrl.toString());
+                    Log.d("sssssss", file.toString());
+
+                    ImageDTO imageDTO = new ImageDTO();
+                    imageDTO.imageUrl = photoUrl.toString();
+                    Log.d("ggggg", photoUrl.toString());
+                    //imageDTO.description = description.getText().toString();
+                    //imageDTO.uid = auth.getCurrentUser().getUid();
+                    //imageDTO.userid = auth.getCurrentUser().getEmail();
+
+                    //database.getReference("chats").child(chatRoom).child(chatCntStr).child(formattedDate);
+                    DatabaseReference myRef = database.getReference("chats").child(chatRoom).child(chatCntStr);
+                    Hashtable<String, ImageDTO> chatText = new Hashtable<String, ImageDTO>();
+                    chatText.put("image", imageDTO);
+                    *//*Hashtable<String, String> chatText = new Hashtable<String, String>();
+                    chatText.put("imageUrl", downloadUrl.toString());*//*
+                    myRef.setValue(chatText);
+
+                    //database.getReference("chats").child(chatRoom).child(chatCntStr).child(formattedDate).push().setValue(imageDTO);
+
+
+                    //database.getReference().child("images").orderByChild(downloadUrl.toString()).equalTo(downloadUrl.toString());
+                    /////Glide.with(CallActivity.context).load(downloadUrl.toString()).into(showImage);
+
+                    Log.d("ggggggg","성공");
+                }
+            });*/
         }
+        Thread refreshChat = new refreshChat();
+        refreshChat.start();
+        Log.d("gggggg","refresh");
 
-
-        DatabaseReference myRef = database.getReference("chats").child(chatRoom).child(chatCntStr).child(formattedDate);
-
-
-        Hashtable<String, String> chatText = new Hashtable<String, String>();
-        //user = intent.getStringExtra("userId");
-        chatText.put("text", chat);
-
-        if (userId.equals(user)) { //실사용자 = 발신자
-            chatText.put("user", userId);
-            chatText.put("friend", friendId);
-        } else { //실사용자 = 수신자
-            chatText.put("user", connectUser);
-            chatText.put("friend", user);
-        }
-        myRef.setValue(chatText);
-
-
-        //m_Adapter.add(mResult,1);
-        //m_Adapter.notifyDataSetChanged();
 
 
         //채팅내용 가져오기
-        DatabaseReference databaseReference = firebaseDatabase.getReference("chats").child(chatRoom).child(chatCntStr);
+/*        DatabaseReference databaseReference = firebaseDatabase.getReference("chats").child(chatRoom).child(chatCntStr);
+        DatabaseReference dbimg = firebaseDatabase.getReference("chats").child(chatRoom).child(chatCntStr);
+        dbimg.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Log.d("gggggg","리스트 새로고침");
+                    //Glide.with(CallActivity.context).load(dataSnapshot.getValue(ImageDTO.class).imageUrl).into(showImage);
+                Glide.with(CallActivity.context).load(photoUrl.toString()).into(showImage);
 
+            }
 
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        //childeventlistener로 바꾸기
         databaseReference.addValueEventListener(new ValueEventListener() {
 
             @Override
@@ -718,6 +1053,10 @@ public class CallActivity extends AppCompatActivity
                 for (DataSnapshot messageData : dataSnapshot.getChildren()) {
                     //String msg = messageData.getValue().toString();
                     Chat chat = messageData.getValue(Chat.class);
+
+                    *//*if(!chat.equals("")){
+                        Glide.with(CallActivity.context).load(chat.image.imageUrl).into(showImage);
+                    }*//*
 
                     if (user.equals(userId)) { //사용자 = 발신자
                         if (user.equals(chat.user)) { //사용자 = 채팅의 user
@@ -743,7 +1082,7 @@ public class CallActivity extends AppCompatActivity
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        });*/
 /*
         // 데이터 받아오기 및 어댑터 데이터 추가 및 삭제 등..리스너 관리
         databaseReference.addChildEventListener(new ChildEventListener() {
@@ -787,7 +1126,7 @@ public class CallActivity extends AppCompatActivity
     public void Connect() {
 
         Log.d("connecttt", "연결");
-        token = "cHJvdmlzaW9uAHVzZXIxQGFjNjM1OC52aWR5by5pbwA2MzcwMTExMDc5NgAANjk5Yzc1ZDZhMGM1ZDA4NmJkMTJhMWRlMGIxNjViNjM4YWJjZWRmMDAzMzBjMTllZjRiY2FiMGZiMzcxMzE0ODdkYmEyMTgyYTFjZTk0NWVjOTBlZmZhYzhlMzc2ODE0";
+        token = "cHJvdmlzaW9uAFlvdXJWb2ljZUAxNmNlOTMudmlkeW8uaW8ANjM3MDE2MjY0NDcAAGMwNTM1Y2IyOWMxZDdlMGVjNTYwMjM5NmI0OTA2NTUwMjI3NWMwYWYyNmIyMzg3ZmRhNGExN2NkMmVlNWUwZjEzNTc3NDk5M2E1Njk0ZWRkNjgwOGQ1NjM1YmQ1NjE0MQ==";
         // 전화 받을 떄
         if (callStatus.name().equals("Receiver")) {
             displayName = user + "-" + connectUser;

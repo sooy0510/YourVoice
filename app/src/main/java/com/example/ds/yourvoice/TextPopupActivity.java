@@ -2,14 +2,11 @@ package com.example.ds.yourvoice;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -43,18 +40,12 @@ public class TextPopupActivity extends Activity {
 
     HistoryAdapter h_Adapter;
     ListView h_ListView;
-
-    ImageView iv;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //타이틀바 없애기
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         setContentView(R.layout.text_popup);
-
-        iv = findViewById(R.id.call_icon);
 
         //UI 객체생성
         final TextView hfriend = (TextView)findViewById(R.id.hfriend);
@@ -105,14 +96,12 @@ public class TextPopupActivity extends Activity {
 
 
                 if (userId.equals(caller)) { //사용자 = 발신자
-                    hfriend.setText(fname);
-                    iv.setImageDrawable(getResources().getDrawable(R.drawable.baseline_arrow_forward_green_18));
+                    hfriend.setText("수신자 | "+fname);
                 } else { //사용자 = 수신자
-                    hfriend.setText(fname);
-                    iv.setImageDrawable(getResources().getDrawable(R.drawable.baseline_arrow_back_red_18));
+                    hfriend.setText("발신자 | "+fname);
                 }
 
-                hdate.setText(tranf);
+                hdate.setText("날짜 | "+tranf);
 
                 if(dataSnapshot.getChildrenCount() == 0){
                     h_Adapter.add("자막내역이 없음", 2);

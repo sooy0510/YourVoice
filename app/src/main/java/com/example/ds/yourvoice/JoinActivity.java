@@ -2,18 +2,14 @@ package com.example.ds.yourvoice;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -70,26 +66,12 @@ public class JoinActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    // custom toast 만들기
-    public void makeToast(String s, Drawable d) {
-        View view = View.inflate(JoinActivity.this, R.layout.custom_toast, null);
-        ImageView iv = view.findViewById(R.id.toast_image);
-        iv.setImageDrawable(d);
-        TextView tv = view.findViewById(R.id.toast_text);
-        tv.setText(s);
-        Toast toast = new Toast(JoinActivity.this);
-        toast.setView(view);
-        toast.setGravity(Gravity.CENTER, 0, 150);
-        toast.setDuration(Toast.LENGTH_SHORT);
-        toast.show();
-    }
-
-
     /* 아이디 중복체크버튼 클릭 */
     public void checkID(View v){
         String Id = editTextId.getText().toString();
         if(Id == null || Id.equals("") == true){
-            makeToast("아이디를 입력해주세요", getResources().getDrawable(R.drawable.baseline_clear_white_24));
+            Toast.makeText(getApplicationContext(),"ID를 입력해주세요.",Toast.LENGTH_SHORT)
+                    .show();
         }else{
             isExistID(Id);
         }
@@ -118,11 +100,7 @@ public class JoinActivity extends AppCompatActivity {
 
                     }
                     //Log.e("ssssssssssssssss",flagId.toString());
-                    if(flagId.equals("idokay"))
-                        makeToast(idmsg, getResources().getDrawable(R.drawable.baseline_check_white_24));
-                    else
-                        makeToast(idmsg, getResources().getDrawable(R.drawable.baseline_clear_white_24));
-                    //Toast.makeText(getApplicationContext(), idmsg, Toast.LENGTH_SHORT). show();
+                    Toast.makeText(getApplicationContext(), idmsg, Toast.LENGTH_SHORT). show();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -175,7 +153,8 @@ public class JoinActivity extends AppCompatActivity {
     public void checkPhone(View v){
         String Phone = editTextPhone.getText().toString();
         if(Phone == null || Phone.equals("") == true){
-            makeToast("전화번호를 입력해주세요", getResources().getDrawable(R.drawable.baseline_clear_white_24));
+            Toast.makeText(getApplicationContext(),"휴대폰 번호를 입력해주세요",Toast.LENGTH_SHORT)
+                    .show();
         }else{
             isExistPhone(Phone);
         }
@@ -204,11 +183,7 @@ public class JoinActivity extends AppCompatActivity {
 
                     }
                     //Log.e("ssssssssssssssss",flagPhone.toString());
-                    if(flagPhone.equals("phoneokay"))
-                        makeToast(phonemsg, getResources().getDrawable(R.drawable.baseline_check_white_24));
-                    else
-                        makeToast(phonemsg, getResources().getDrawable(R.drawable.baseline_clear_white_24));
-                    //Toast.makeText(getApplicationContext(), phonemsg, Toast.LENGTH_SHORT). show();
+                    Toast.makeText(getApplicationContext(), phonemsg, Toast.LENGTH_SHORT). show();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -278,11 +253,9 @@ public class JoinActivity extends AppCompatActivity {
                 insertToDatabase(Id, Pw, Name, Phone);
                 startActivity(new Intent(JoinActivity.this, LoginActivity.class));
             }else{
-                makeToast("중복체크버튼을 눌러주세요", getResources().getDrawable(R.drawable.baseline_clear_white_24));
-                //Toast.makeText(getApplicationContext(), "아이디와 번호를 확인 후 중복체크버튼을 눌러주세요", Toast.LENGTH_SHORT). show();
+                Toast.makeText(getApplicationContext(), "아이디와 번호를 확인 후 중복체크버튼을 눌러주세요", Toast.LENGTH_SHORT). show();
             }
-        }else makeToast("모든 항목을 입력해주세요", getResources().getDrawable(R.drawable.baseline_clear_white_24));
-            //Toast.makeText(getApplicationContext(), "모든 항목을 입력해주세요", Toast.LENGTH_SHORT). show();
+        }else Toast.makeText(getApplicationContext(), "모든 항목을 입력해주세요", Toast.LENGTH_SHORT). show();
 
 
     }
@@ -291,17 +264,17 @@ public class JoinActivity extends AppCompatActivity {
 
     private void insertToDatabase(String Id, String Pw, String Name, String Phone) {
         class InsertData extends AsyncTask<String, Void, String> {
-        //ProgressDialog loading;
+        ProgressDialog loading;
         @Override
             protected void onPreExecute() {
             super.onPreExecute();
-            //loading = ProgressDialog.show(JoinActivity.this, "Please Wait", null, true, true);
+            loading = ProgressDialog.show(JoinActivity.this, "Please Wait", null, true, true);
         }
 
         @Override
             protected void  onPostExecute(String s) {
             super.onPostExecute(s);
-            //loading.dismiss();
+            loading.dismiss();
             Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT). show();
         }
 
@@ -354,6 +327,8 @@ public class JoinActivity extends AppCompatActivity {
         }
         InsertData task = new InsertData();
         task.execute(Id, Pw, Name, Phone);
+
+
     }
 
 }

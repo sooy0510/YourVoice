@@ -31,25 +31,22 @@
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:id="@+id/videoFrame"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
-            <LinearLayout
-                android:id="@+id/videoFrame"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
-                <!--android:layout_height="300dp"-->
-            </LinearLayout>
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true">
+            <!--android:layout_height="300dp"-->
+        </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/localFrame"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
-            </LinearLayout>
+        <LinearLayout
+            android:id="@+id/localFrame"
+            android:orientation="horizontal"
+            android:layout_width="130dp"
+            android:layout_height="160dp"
+            android:layout_gravity="left">
         </LinearLayout>
 
         <LinearLayout
@@ -64,7 +61,8 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
                 android:background="@drawable/ripple_effect"
-                android:src="@drawable/baseline_clear_black_24"
+                android:foreground="@drawable/call_end_stroke"
+                android:src="@drawable/baseline_call_end_red_36"
                 android:id="@+id/disconnect"
                 android:onClick="Disconnect" />
             <Button
@@ -128,10 +126,11 @@
         <LinearLayout
             android:id="@+id/send_edit"
             android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:layout_marginBottom="10dp"
+            android:layout_height="30dp"
+            android:layout_margin="10dp"
             android:layout_gravity="bottom"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:background="@drawable/send_box_topline">
 
             <EditText
                 android:layout_width="200dp"

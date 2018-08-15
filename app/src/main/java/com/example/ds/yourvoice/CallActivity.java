@@ -64,6 +64,8 @@ import com.vidyo.VidyoClient.Connector.ConnectorPkg;
 import com.vidyo.VidyoClient.Connector.Connector;
 import com.vidyo.VidyoClient.Device.Device;
 import com.vidyo.VidyoClient.Device.LocalCamera;
+import com.vidyo.VidyoClient.Device.LocalMicrophone;
+import com.vidyo.VidyoClient.Device.LocalSpeaker;
 import com.vidyo.VidyoClient.Device.RemoteCamera;
 import com.vidyo.VidyoClient.Endpoint.Call;
 import com.vidyo.VidyoClient.Endpoint.ChatMessage;
@@ -97,7 +99,7 @@ import static com.vidyo.VidyoClient.Connector.Connector.ConnectorViewStyle.VIDYO
 
 public class CallActivity extends AppCompatActivity
         implements Connector.IConnect, Connector.IRegisterParticipantEventListener, Connector.IRegisterMessageEventListener, Connector.IRegisterLocalCameraEventListener,
-        Connector.IRegisterRemoteCameraEventListener {
+        Connector.IRegisterRemoteCameraEventListener, Connector.IRegisterLocalMicrophoneEventListener, Connector.IRegisterLocalSpeakerEventListener {
 
     private Intent intent;
     private IntentFilter mIntentFilter;
@@ -917,7 +919,7 @@ public class CallActivity extends AppCompatActivity
         }
     }
 
-    /* ---------------------------------------------- 채팅방 번호 구하기/ DB에 CNT+1 끝 ----------------------------------------------------------- */
+  /* ---------------------------------------------- 채팅방 번호 구하기/ DB에 CNT+1 끝 ----------------------------------------------------------- */
 
 
     /* ---------------------------------------------- 사용자 채팅 DB에 추가 ----------------------------------------------------------- */
@@ -954,55 +956,55 @@ public class CallActivity extends AppCompatActivity
             //upload(imagePath);
 
 /*            Log.d("gggggg",chat);  //getpath까지 한 주소
-            StorageReference storageRef = storage.getReferenceFromUrl("gs://yourvoice-577c9.appspot.com");
-            //Uri file = Uri.fromFile(new File(chat));
-            file = Uri.fromFile(new File(chat));
-            StorageReference riversRef = storageRef.child("images/"+file.getLastPathSegment());
-            UploadTask uploadTask = riversRef.putFile(file);
+          StorageReference storageRef = storage.getReferenceFromUrl("gs://yourvoice-577c9.appspot.com");
+          //Uri file = Uri.fromFile(new File(chat));
+          file = Uri.fromFile(new File(chat));
+          StorageReference riversRef = storageRef.child("images/"+file.getLastPathSegment());
+          UploadTask uploadTask = riversRef.putFile(file);
 
-            // Register observers to listen for when the download is done or if it fails
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle unsuccessful uploads
-                    Log.d("ggggggg","실패");
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                    // ...
-                    //Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                    //downloadUrl = taskSnapshot.getDownloadUrl();
-                    photoUrl = taskSnapshot.getDownloadUrl();
-                    Log.d("sssssss",chat);
-                    Log.d("sssssss", photoUrl.toString());
-                    Log.d("sssssss", file.toString());
+          // Register observers to listen for when the download is done or if it fails
+          uploadTask.addOnFailureListener(new OnFailureListener() {
+              @Override
+              public void onFailure(@NonNull Exception exception) {
+                  // Handle unsuccessful uploads
+                  Log.d("ggggggg","실패");
+              }
+          }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+              @Override
+              public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                  // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                  // ...
+                  //Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                  //downloadUrl = taskSnapshot.getDownloadUrl();
+                  photoUrl = taskSnapshot.getDownloadUrl();
+                  Log.d("sssssss",chat);
+                  Log.d("sssssss", photoUrl.toString());
+                  Log.d("sssssss", file.toString());
 
-                    ImageDTO imageDTO = new ImageDTO();
-                    imageDTO.imageUrl = photoUrl.toString();
-                    Log.d("ggggg", photoUrl.toString());
-                    //imageDTO.description = description.getText().toString();
-                    //imageDTO.uid = auth.getCurrentUser().getUid();
-                    //imageDTO.userid = auth.getCurrentUser().getEmail();
+                  ImageDTO imageDTO = new ImageDTO();
+                  imageDTO.imageUrl = photoUrl.toString();
+                  Log.d("ggggg", photoUrl.toString());
+                  //imageDTO.description = description.getText().toString();
+                  //imageDTO.uid = auth.getCurrentUser().getUid();
+                  //imageDTO.userid = auth.getCurrentUser().getEmail();
 
-                    //database.getReference("chats").child(chatRoom).child(chatCntStr).child(formattedDate);
-                    DatabaseReference myRef = database.getReference("chats").child(chatRoom).child(chatCntStr);
-                    Hashtable<String, ImageDTO> chatText = new Hashtable<String, ImageDTO>();
-                    chatText.put("image", imageDTO);
-                    *//*Hashtable<String, String> chatText = new Hashtable<String, String>();
-                    chatText.put("imageUrl", downloadUrl.toString());*//*
-                    myRef.setValue(chatText);
+                  //database.getReference("chats").child(chatRoom).child(chatCntStr).child(formattedDate);
+                  DatabaseReference myRef = database.getReference("chats").child(chatRoom).child(chatCntStr);
+                  Hashtable<String, ImageDTO> chatText = new Hashtable<String, ImageDTO>();
+                  chatText.put("image", imageDTO);
+                  *//*Hashtable<String, String> chatText = new Hashtable<String, String>();
+                  chatText.put("imageUrl", downloadUrl.toString());*//*
+                  myRef.setValue(chatText);
 
-                    //database.getReference("chats").child(chatRoom).child(chatCntStr).child(formattedDate).push().setValue(imageDTO);
+                  //database.getReference("chats").child(chatRoom).child(chatCntStr).child(formattedDate).push().setValue(imageDTO);
 
 
-                    //database.getReference().child("images").orderByChild(downloadUrl.toString()).equalTo(downloadUrl.toString());
-                    /////Glide.with(CallActivity.context).load(downloadUrl.toString()).into(showImage);
+                  //database.getReference().child("images").orderByChild(downloadUrl.toString()).equalTo(downloadUrl.toString());
+                  /////Glide.with(CallActivity.context).load(downloadUrl.toString()).into(showImage);
 
-                    Log.d("ggggggg","성공");
-                }
-            });*/
+                  Log.d("ggggggg","성공");
+              }
+          });*/
         }
         Thread refreshChat = new refreshChat();
         refreshChat.start();
@@ -1012,115 +1014,115 @@ public class CallActivity extends AppCompatActivity
 
         //채팅내용 가져오기
 /*        DatabaseReference databaseReference = firebaseDatabase.getReference("chats").child(chatRoom).child(chatCntStr);
-        DatabaseReference dbimg = firebaseDatabase.getReference("chats").child(chatRoom).child(chatCntStr);
-        dbimg.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.d("gggggg","리스트 새로고침");
-                    //Glide.with(CallActivity.context).load(dataSnapshot.getValue(ImageDTO.class).imageUrl).into(showImage);
-                Glide.with(CallActivity.context).load(photoUrl.toString()).into(showImage);
+      DatabaseReference dbimg = firebaseDatabase.getReference("chats").child(chatRoom).child(chatCntStr);
+      dbimg.addChildEventListener(new ChildEventListener() {
+          @Override
+          public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+              Log.d("gggggg","리스트 새로고침");
+                  //Glide.with(CallActivity.context).load(dataSnapshot.getValue(ImageDTO.class).imageUrl).into(showImage);
+              Glide.with(CallActivity.context).load(photoUrl.toString()).into(showImage);
 
-            }
+          }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+          @Override
+          public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-            }
+          }
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+          @Override
+          public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-            }
+          }
 
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+          @Override
+          public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-            }
+          }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+          @Override
+          public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+          }
+      });
 
-        //childeventlistener로 바꾸기
-        databaseReference.addValueEventListener(new ValueEventListener() {
+      //childeventlistener로 바꾸기
+      databaseReference.addValueEventListener(new ValueEventListener() {
 
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // 데이터를 읽어올 때 모든 데이터를 읽어오기때문에 List 를 초기화해주는 작업이 필요하다.
-                m_Adapter.clean();
-                for (DataSnapshot messageData : dataSnapshot.getChildren()) {
-                    //String msg = messageData.getValue().toString();
-                    Chat chat = messageData.getValue(Chat.class);
+          @Override
+          public void onDataChange(DataSnapshot dataSnapshot) {
+              // 데이터를 읽어올 때 모든 데이터를 읽어오기때문에 List 를 초기화해주는 작업이 필요하다.
+              m_Adapter.clean();
+              for (DataSnapshot messageData : dataSnapshot.getChildren()) {
+                  //String msg = messageData.getValue().toString();
+                  Chat chat = messageData.getValue(Chat.class);
 
-                    *//*if(!chat.equals("")){
-                        Glide.with(CallActivity.context).load(chat.image.imageUrl).into(showImage);
-                    }*//*
+                  *//*if(!chat.equals("")){
+                      Glide.with(CallActivity.context).load(chat.image.imageUrl).into(showImage);
+                  }*//*
 
-                    if (user.equals(userId)) { //사용자 = 발신자
-                        if (user.equals(chat.user)) { //사용자 = 채팅의 user
-                            m_Adapter.add(chat.text, 1);
-                        } else {
-                            m_Adapter.add(chat.text, 0);
-                        }
-                    } else { //사용자 = 수신자
-                        if (connectUser.equals(chat.user)) { //사용자 = 채팅의 user
-                            m_Adapter.add(chat.text, 1);
-                        } else {
-                            m_Adapter.add(chat.text, 0);
-                        }
-                    }
-                }
-                // notifyDataSetChanged를 안해주면 ListView 갱신이 안됨
-                m_Adapter.notifyDataSetChanged();
-                // ListView 의 위치를 마지막으로 보내주기 위함
-                m_ListView.setSelection(m_Adapter.getCount() - 1);
-            }
+                  if (user.equals(userId)) { //사용자 = 발신자
+                      if (user.equals(chat.user)) { //사용자 = 채팅의 user
+                          m_Adapter.add(chat.text, 1);
+                      } else {
+                          m_Adapter.add(chat.text, 0);
+                      }
+                  } else { //사용자 = 수신자
+                      if (connectUser.equals(chat.user)) { //사용자 = 채팅의 user
+                          m_Adapter.add(chat.text, 1);
+                      } else {
+                          m_Adapter.add(chat.text, 0);
+                      }
+                  }
+              }
+              // notifyDataSetChanged를 안해주면 ListView 갱신이 안됨
+              m_Adapter.notifyDataSetChanged();
+              // ListView 의 위치를 마지막으로 보내주기 위함
+              m_ListView.setSelection(m_Adapter.getCount() - 1);
+          }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+          @Override
+          public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });*/
+          }
+      });*/
 /*
-        // 데이터 받아오기 및 어댑터 데이터 추가 및 삭제 등..리스너 관리
-        databaseReference.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Chat chat = dataSnapshot.getValue(Chat.class);
-                mChat.add(chat);
-                //refresh(mChat.,0);(mChat.size()-1);
+      // 데이터 받아오기 및 어댑터 데이터 추가 및 삭제 등..리스너 관리
+      databaseReference.addChildEventListener(new ChildEventListener() {
+          @Override
+          public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+              Chat chat = dataSnapshot.getValue(Chat.class);
+              mChat.add(chat);
+              //refresh(mChat.,0);(mChat.size()-1);
 
 
 
-            }
+          }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+          @Override
+          public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-            }
+          }
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+          @Override
+          public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-            }
+          }
 
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+          @Override
+          public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-            }
+          }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+          @Override
+          public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });*/
+          }
+      });*/
     }
 
 
 
-    /* ---------------------------------------------- 사용자 채팅 DB에 추가 끝 ----------------------------------------------------------- */
+  /* ---------------------------------------------- 사용자 채팅 DB에 추가 끝 ----------------------------------------------------------- */
 
     /* ---------------------------------------------- VIDYO ----------------------------------------------------------- */
     public void Connect() {
@@ -1181,14 +1183,14 @@ public class CallActivity extends AppCompatActivity
 //                }
 //            }
 
-            /*getChatCnt(user, connectUser);
+          /*getChatCnt(user, connectUser);
 
-            //채팅창 보이도록
-            if (chatFrame.getVisibility() == View.GONE) {
-                chatFrame.setVisibility(View.VISIBLE);
-            } else {
-                chatFrame.setVisibility(View.GONE);
-            }*/
+          //채팅창 보이도록
+          if (chatFrame.getVisibility() == View.GONE) {
+              chatFrame.setVisibility(View.VISIBLE);
+          } else {
+              chatFrame.setVisibility(View.GONE);
+          }*/
         }
         // 전화 걸때
         else {
@@ -1267,12 +1269,12 @@ public class CallActivity extends AppCompatActivity
         }
 
         //if (callStatus.name().equals("Caller")) {
-            //stopCall(user);
-            Thread stopCallThread = new stopCall();
-            stopCallThread.start();
+        //stopCall(user);
+        Thread stopCallThread = new stopCall();
+        stopCallThread.start();
         //}
         //else
-            //stopCall(connectUser);
+        //stopCall(connectUser);
 
         //clova
         callStatus = CallStatus.Default;
@@ -1323,8 +1325,10 @@ public class CallActivity extends AppCompatActivity
 
         vc.registerLocalCameraEventListener(this);
         vc.registerRemoteCameraEventListener(this);
+        vc.registerLocalMicrophoneEventListener(this);
+        vc.registerLocalSpeakerEventListener(this);
 
-       /* Register for local window share and local monitor events */
+     /* Register for local window share and local monitor events */
         //vc.registerLocalMonitorEventListener(this);
     }
 
@@ -1370,11 +1374,11 @@ public class CallActivity extends AppCompatActivity
 //            vc.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
 //        }
     }
-    /* Local camera change initiated by user. Note: this is an arbitrary function name. */
+  /* Local camera change initiated by user. Note: this is an arbitrary function name. */
 
 
     /******************************************************************************/
-    /* custom participant's source view */
+  /* custom participant's source view */
     public void onRemoteCameraAdded(final RemoteCamera remoteCamera, final Participant participant) {
         Log.d("connecttt", "onRemoteCameraAdded");
         Log.d("connecttt", participant.getId().toString());
@@ -1419,12 +1423,43 @@ public class CallActivity extends AppCompatActivity
 
     public void onRemoteCameraRemoved(RemoteCamera remoteCamera, Participant participant) {
         Log.d("connecttt", "onRemoteCameraRemoved");
-        /* Existing camera became unavailable */
+      /* Existing camera became unavailable */
         vc.hideView(R.id.videoFrame);
     }
 
     public void onRemoteCameraStateUpdated(RemoteCamera remoteCamera, Participant participant, Device.DeviceState state) {
         Log.d("connecttt", "onRemoteCameraStateUpdated");
+    }
+    /* Microphone event listener */
+    public void onLocalMicrophoneAdded(LocalMicrophone localMicrophone)    {
+        Log.d("connecttt", "onLocalMicrophoneAdded");
+        //vc.selectLocalMicrophone(localMicrophone);
+    }
+    public void onLocalMicrophoneRemoved(LocalMicrophone localMicrophone)  {
+        Log.d("connecttt", "onLocalMicrophoneRemoved");
+    }
+    public void onLocalMicrophoneSelected(LocalMicrophone localMicrophone) {
+        Log.d("connecttt", "onLocalMicrophoneSelected");
+    }
+    public void onLocalMicrophoneStateUpdated(LocalMicrophone localMicrophone, Device.DeviceState state) {
+        Log.d("connecttt", "onLocalMicrophoneStateUpdated");
+        Log.d("connecttt", state.toString());
+    }
+
+    /* Speaker event listener */
+    public void onLocalSpeakerAdded(LocalSpeaker localSpeaker)    {
+        Log.d("connecttt", "onLocalSpeakerAdded");
+        //vc.selectLocalSpeaker(localSpeaker);
+    }
+    public void onLocalSpeakerRemoved(LocalSpeaker localSpeaker)  {
+        Log.d("connecttt", "onLocalSpeakerRemoved");
+    }
+    public void onLocalSpeakerSelected(LocalSpeaker localSpeaker) {
+        Log.d("connecttt", "onLocalSpeakerSelected");
+    }
+    public void onLocalSpeakerStateUpdated(LocalSpeaker localSpeaker, Device.DeviceState state) {
+        Log.d("connecttt", "onLocalSpeakerStateUpdated");
+        Log.d("connecttt", state.toString());
     }
 
     /******************************************************************************/
@@ -1440,9 +1475,9 @@ public class CallActivity extends AppCompatActivity
             // Start button is pushed when SpeechRecognizer's state is inactive.
             // Run SpeechRecongizer by calling recognize().
             mResult = "";
-                /*if (chatFrame.getVisibility() == View.VISIBLE) {
-                    m_Adapter.add("Connecting...", 2);
-                }*/
+              /*if (chatFrame.getVisibility() == View.VISIBLE) {
+                  m_Adapter.add("Connecting...", 2);
+              }*/
             naverRecognizer.recognize();
         } else {
             Log.d(TAG, "stop and wait Final Result");
@@ -1459,9 +1494,9 @@ public class CallActivity extends AppCompatActivity
         });
 
         //키보드 보이게
-        /*sendText.setFocusableInTouchMode(true);
-        sendText.setClickable(true);
-        sendText.setFocusable(true);*/
+      /*sendText.setFocusableInTouchMode(true);
+      sendText.setClickable(true);
+      sendText.setFocusable(true);*/
         //imm.showSoftInput(sendText, 0);
     }
 
@@ -1648,6 +1683,7 @@ public class CallActivity extends AppCompatActivity
             }
         }
     }
+
 
 //    private void stopCall(final String Id) {
 //

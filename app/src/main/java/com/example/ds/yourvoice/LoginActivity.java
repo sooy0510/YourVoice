@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Debug;
 import android.os.StrictMode;
@@ -12,9 +13,12 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -79,6 +83,20 @@ public class LoginActivity extends AppCompatActivity {
 //        this.userId = userId;
 //    }
 
+    // custom toast 만들기
+    public void makeToast(String s, Drawable d) {
+        View view = View.inflate(LoginActivity.this, R.layout.custom_toast, null);
+        ImageView iv = view.findViewById(R.id.toast_image);
+        iv.setImageDrawable(d);
+        TextView tv = view.findViewById(R.id.toast_text);
+        tv.setText(s);
+        Toast toast = new Toast(LoginActivity.this);
+        toast.setView(view);
+        toast.setGravity(Gravity.BOTTOM, 0, 100);
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.show();
+    }
+
     public void login(View v) {
 
         EditText editTextId = (EditText)findViewById(R.id.userID);
@@ -91,18 +109,18 @@ public class LoginActivity extends AppCompatActivity {
 
     private void loginCheck(final String Id, String Pw){
         class InsertData extends AsyncTask<String, Void, String> {
-            ProgressDialog loading;
+            //ProgressDialog loading;
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                loading = ProgressDialog.show(LoginActivity.this, "login...", null, true, true);
+                //loading = ProgressDialog.show(LoginActivity.this, "login...", null, true, true);
                 //Toast.makeText(getApplicationContext(), "외않되", Toast.LENGTH_SHORT). show();
             }
 
             @Override
             protected void  onPostExecute(String s) {
                 super.onPostExecute(s);
-                loading.dismiss();
+                //loading.dismiss();
 
                 String usermsg = "";
                 String userphone = "";
@@ -148,7 +166,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 else
-                    Toast.makeText(getApplicationContext(), "아이디와 비밀번호를 확인해주세요", Toast.LENGTH_SHORT).show();
+                    makeToast("아이디와 비밀번호를 확인해주세요", getResources().getDrawable(R.drawable.baseline_clear_white_24));
             }
 
             @Override

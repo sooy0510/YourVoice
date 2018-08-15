@@ -89,6 +89,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/showimage"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="닫기"
+                android:id="@+id/close"
+                android:layout_gravity="right"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="받아오기"
+                android:id="@+id/take"
+                android:layout_gravity="center"/>
         </LinearLayout>
 
         <LinearLayout

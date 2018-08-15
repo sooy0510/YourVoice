@@ -7,12 +7,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.DataSetObserver;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -44,11 +47,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 import com.naver.speech.clientapi.SpeechRecognitionResult;
 import com.vidyo.VidyoClient.Connector.ConnectorPkg;
 import com.vidyo.VidyoClient.Connector.Connector;
 import com.vidyo.VidyoClient.Device.Device;
 import com.vidyo.VidyoClient.Device.LocalCamera;
+import com.vidyo.VidyoClient.Device.LocalMicrophone;
+import com.vidyo.VidyoClient.Device.LocalSpeaker;
 import com.vidyo.VidyoClient.Device.RemoteCamera;
 import com.vidyo.VidyoClient.Endpoint.ChatMessage;
 import com.vidyo.VidyoClient.Endpoint.Participant;
@@ -78,7 +85,7 @@ import static com.vidyo.VidyoClient.Connector.Connector.ConnectorViewStyle.VIDYO
 
 public class CallActivity extends AppCompatActivity
         implements Connector.IConnect, Connector.IRegisterParticipantEventListener, Connector.IRegisterMessageEventListener, Connector.IRegisterLocalCameraEventListener,
-        Connector.IRegisterRemoteCameraEventListener {
+        Connector.IRegisterRemoteCameraEventListener, Connector.IRegisterLocalMicrophoneEventListener, Connector.IRegisterLocalSpeakerEventListener {
 
     private Intent intent;
     private IntentFilter mIntentFilter;
@@ -155,8 +162,6 @@ public class CallActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.call);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-        Log.d("콜액티비티실행", "실행");
 
         context = this;
 
@@ -788,7 +793,7 @@ public class CallActivity extends AppCompatActivity
     public void Connect() {
 
         Log.d("connecttt", "연결");
-        token = "cHJvdmlzaW9uAHVzZXIxQGFjNjM1OC52aWR5by5pbwA2MzcwMTExMDc5NgAANjk5Yzc1ZDZhMGM1ZDA4NmJkMTJhMWRlMGIxNjViNjM4YWJjZWRmMDAzMzBjMTllZjRiY2FiMGZiMzcxMzE0ODdkYmEyMTgyYTFjZTk0NWVjOTBlZmZhYzhlMzc2ODE0";
+        token = "cHJvdmlzaW9uAFlvdXJWb2ljZUAxNmNlOTMudmlkeW8uaW8ANjM3MDE2MjY0NDcAAGMwNTM1Y2IyOWMxZDdlMGVjNTYwMjM5NmI0OTA2NTUwMjI3NWMwYWYyNmIyMzg3ZmRhNGExN2NkMmVlNWUwZjEzNTc3NDk5M2E1Njk0ZWRkNjgwOGQ1NjM1YmQ1NjE0MQ==";
         //cHJvdmlzaW9uAHVzZXIxQGY4ZGU5Zi52aWR5by5pbwA2MzcwMDk1MzU2NwAANjdjMDQ2NjkzMThjN2VmYTdjYTc0Y2M3OGIxYzUyYjU3ZmQyZmE3YjQwN2YxZDNkMDVhYjg3YjRmNWRmNDU2OGY0NmQ0YThjZDY1OGIwMzBiYTM1NjljOWZkYzdhZTNj
 
         // 전화 받을 떄
@@ -988,6 +993,8 @@ public class CallActivity extends AppCompatActivity
 
         vc.registerLocalCameraEventListener(this);
         vc.registerRemoteCameraEventListener(this);
+        vc.registerLocalMicrophoneEventListener(this);
+        vc.registerLocalSpeakerEventListener(this);
 
        /* Register for local window share and local monitor events */
         //vc.registerLocalMonitorEventListener(this);
@@ -1001,7 +1008,7 @@ public class CallActivity extends AppCompatActivity
         vc.showViewLabel(localFrame, false);
         vc.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
 
-        //vc.selectDefaultMicrophone();
+        vc.selectDefaultMicrophone();
 
         localCamera.setFramerateTradeOffProfile (LocalCamera.LocalCameraTradeOffProfile.VIDYO_LOCALCAMERATRADEOFFPROFILE_High);
         localCamera.setResolutionTradeOffProfile (LocalCamera.LocalCameraTradeOffProfile.VIDYO_LOCALCAMERATRADEOFFPROFILE_High);
@@ -1053,6 +1060,10 @@ public class CallActivity extends AppCompatActivity
         vc.assignViewToRemoteCamera(videoFrame, remoteCamera, true, false);
         vc.showViewLabel(videoFrame, false);
         vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
+        //vc.showAudioMeters(localFrame, false);
+
+//        vc.selectDefaultMicrophone();
+//        vc.selectDefaultSpeaker();
 
         //키보드 보이게
         sendText.setFocusableInTouchMode(true);
@@ -1098,6 +1109,38 @@ public class CallActivity extends AppCompatActivity
     }
 
     /******************************************************************************/
+
+        /* Microphone event listener */
+    public void onLocalMicrophoneAdded(LocalMicrophone localMicrophone)    {
+        Log.d("connecttt", "onLocalMicrophoneAdded");
+            vc.selectLocalMicrophone(localMicrophone);
+    }
+    public void onLocalMicrophoneRemoved(LocalMicrophone localMicrophone)  {
+        Log.d("connecttt", "onLocalMicrophoneRemoved");
+    }
+    public void onLocalMicrophoneSelected(LocalMicrophone localMicrophone) {
+        Log.d("connecttt", "onLocalMicrophoneSelected");
+    }
+    public void onLocalMicrophoneStateUpdated(LocalMicrophone localMicrophone, Device.DeviceState state) {
+        Log.d("connecttt", "onLocalMicrophoneStateUpdated");
+        Log.d("connecttt", state.toString());
+    }
+
+    /* Speaker event listener */
+    public void onLocalSpeakerAdded(LocalSpeaker localSpeaker)    {
+        Log.d("connecttt", "onLocalSpeakerAdded");
+            vc.selectLocalSpeaker(localSpeaker);
+    }
+    public void onLocalSpeakerRemoved(LocalSpeaker localSpeaker)  {
+        Log.d("connecttt", "onLocalSpeakerRemoved");
+    }
+    public void onLocalSpeakerSelected(LocalSpeaker localSpeaker) {
+        Log.d("connecttt", "onLocalSpeakerSelected");
+    }
+    public void onLocalSpeakerStateUpdated(LocalSpeaker localSpeaker, Device.DeviceState state) {
+        Log.d("connecttt", "onLocalSpeakerStateUpdated");
+        Log.d("connecttt", state.toString());
+    }
 
 
     // Participant Joined

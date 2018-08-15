@@ -79,7 +79,7 @@ public class JoinActivity extends AppCompatActivity {
         tv.setText(s);
         Toast toast = new Toast(JoinActivity.this);
         toast.setView(view);
-        toast.setGravity(Gravity.CENTER, 0, 210);
+        toast.setGravity(Gravity.CENTER, 0, 150);
         toast.setDuration(Toast.LENGTH_SHORT);
         toast.show();
     }

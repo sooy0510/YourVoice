@@ -67,6 +67,40 @@
                 android:src="@drawable/baseline_clear_black_24"
                 android:id="@+id/disconnect"
                 android:onClick="Disconnect" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:id="@+id/gallery"
+                android:text="사진"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:id="@+id/sendImage"
+                android:text="사진전송"/>
+            <ImageView
+                android:layout_gravity="right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageview"/>
+            <ImageView
+                android:layout_gravity="right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/showimage"/>
+            <!--<EditText
+                android:layout_gravity="right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Title"
+                android:id="@+id/title"/>
+            <EditText
+                android:layout_gravity="right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Description"
+                android:id="@+id/description"/>-->
         </LinearLayout>
 
         <LinearLayout

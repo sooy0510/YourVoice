@@ -13,8 +13,8 @@
             android:layout_height="wrap_content"
             android:background="#83ffa200"
             android:foreground="@drawable/ripple_effect"
-            android:text=""
-            android:id="@+id/dialog_pos"/>
+            android:text="로그아웃"
+            android:id="@+id/dialog_logout"/>
 
         <Button
             android:layout_width="match_parent"

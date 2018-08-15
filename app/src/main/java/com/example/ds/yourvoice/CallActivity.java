@@ -170,7 +170,7 @@ public class CallActivity extends AppCompatActivity
     private Button takeImage;
     private EditText title;
     private EditText description;
-    private Button gallery;
+    private ImageButton gallery;
     private Button sendImage;
     private String imagePath;
     //private Uri imgUri, photoURI, albumURI;

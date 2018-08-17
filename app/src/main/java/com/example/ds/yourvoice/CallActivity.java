@@ -167,7 +167,6 @@ public class CallActivity extends AppCompatActivity
     private ImageView imageView;
     private ImageView showImage;
     private Button closeImage;
-    private Button takeImage;
     private EditText title;
     private EditText description;
     private Button gallery;
@@ -249,8 +248,6 @@ public class CallActivity extends AppCompatActivity
         sendText = (EditText)findViewById(R.id.sendText);
         sendText.setClickable(false);
         sendText.setFocusable(false);
-        //imm.showSoftInput((View) sendText.getWindowToken(),0);
-        //sendText.setFocusable(false);
 
         gallery = findViewById(R.id.gallery);
         sendImage = findViewById(R.id.sendImage);
@@ -378,18 +375,14 @@ public class CallActivity extends AppCompatActivity
         findViewById(R.id.sendButton).setOnClickListener(new Button.OnClickListener() {
                                                              @Override
                                                              public void onClick(View v) {
-                                                                 //Toast.makeText(getApplicationContext(), "외않되", Toast.LENGTH_SHORT). show();
                                                                  EditText editText = (EditText) findViewById(R.id.sendText);
                                                                  String inputValue = editText.getText().toString();
                                                                  editText.setText("");
-                                                                 //refresh(inputValue, 0);
                                                                  addUserChat(inputValue, 0);
                                                              }
                                                          }
         );
 
-        //if()
-        //takeImage();
     }
 
 //
@@ -548,10 +541,6 @@ public class CallActivity extends AppCompatActivity
                     try{
                         imagePath = getPath(data.getData());
                         File f = new File(imagePath);
-                        //upload(getPath(photoURI));
-                        Log.d("ggggggg", String.valueOf(data.getData()));
-                        Log.d("ggggggg", getPath(data.getData()));
-                        //imageView.setImageURI(Uri.fromFile(f));
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -574,60 +563,24 @@ public class CallActivity extends AppCompatActivity
         }
     }
 
-    public void takeImage(){
+    public void firebaseRefresh(){
         String chatRoom = user+connectUser;
         Log.d("gggg",chatRoom);
-        //DatabaseReference databaseReference = firebaseDatabase.getReference("chats").child(chatRoom).child(chatCntStr);
-        //DatabaseReference databaseReference = firebaseDatabase.getReference("chats").child(chatRoom);
-        /*if(chatCntStr != null){
-            DatabaseReference databaseReference = firebaseDatabase.getReference("chats").child(chatRoom).child(chatCntStr);
-            mChildEventListener = new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    Log.d("hhhh","나와라");
-                    if(!dataSnapshot.getValue(ImageDTO.class).imageUrl.equals("")){  //imageurl 잇으면
-                        Log.d("gggggg","사진추가");
-                        Glide.with(CallActivity.context).load(dataSnapshot.getValue(ImageDTO.class).imageUrl).override(300,300).into(showImage);
-                        showImage.setVisibility(View.VISIBLE);
-                    }
-                }
 
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            };
-            databaseReference.addChildEventListener(mChildEventListener);
-        }else{
-            Log.d("hhhhhh","null임");
-        }*/
-        //Log.d("gggggg",chatCntStr);
         DatabaseReference databaseReference = firebaseDatabase.getReference("chats").child(chatRoom).child(chatCntStr);
         mChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Log.d("gggggg","나와라");
-                if(!dataSnapshot.getValue(ImageDTO.class).imageUrl.equals("")){  //imageurl 잇으면
+                Log.d("gggggg", dataSnapshot.getValue().toString());
+                //if(!dataSnapshot.getValue(ImageDTO.class).imageUrl.equals("")){  //imageurl 잇으면
+                if(dataSnapshot.hasChild("image")){
                     Log.d("gggggg","사진추가");
                     Glide.with(CallActivity.context).load(dataSnapshot.getValue(ImageDTO.class).imageUrl).override(300,300).into(showImage);
                     showImage.setVisibility(View.VISIBLE);
                 }else{
                     // 데이터를 읽어올 때 모든 데이터를 읽어오기때문에 List 를 초기화해주는 작업이 필요하다.
+                    Log.d("gggggg","왜 안나와");
                     m_Adapter.clean();
                     for (DataSnapshot messageData : dataSnapshot.getChildren()) {
                         //String msg = messageData.getValue().toString();
@@ -660,9 +613,11 @@ public class CallActivity extends AppCompatActivity
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Log.d("gggggg","나와라");
-                if(!dataSnapshot.getValue(ImageDTO.class).imageUrl.equals("")){  //imageurl 잇으면
-                    Log.d("gggggg","사진추가");
+                Log.d("ggggggh","나와라");
+                //if(!dataSnapshot.getValue(ImageDTO.class).imageUrl.equals("")){  //imageurl 잇으면
+                if(dataSnapshot.hasChild("image")){
+                    Log.d("ggggggh",database.getReference("image").toString());
+                    Log.d("ggggggh","사진추가");
                     Glide.with(CallActivity.context).load(dataSnapshot.getValue(ImageDTO.class).imageUrl).override(300,300).into(showImage);
                     showImage.setVisibility(View.VISIBLE);
                 }else{
@@ -713,69 +668,6 @@ public class CallActivity extends AppCompatActivity
             }
         };
         databaseReference.addChildEventListener(mChildEventListener);
-        /*databaseReference.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.d("gggggg","리스트 새로고침");
-                if(!dataSnapshot.getValue(ImageDTO.class).imageUrl.equals("")){  //imageurl 잇으면
-                    Log.d("gggggg","사진추가");
-                    Glide.with(CallActivity.context).load(dataSnapshot.getValue(ImageDTO.class).imageUrl).override(300,300).into(showImage);
-                    showImage.setVisibility(View.VISIBLE);
-                }else{
-                    // 데이터를 읽어올 때 모든 데이터를 읽어오기때문에 List 를 초기화해주는 작업이 필요하다.
-                    m_Adapter.clean();
-                    for (DataSnapshot messageData : dataSnapshot.getChildren()) {
-                        //String msg = messageData.getValue().toString();
-                        Chat chat = messageData.getValue(Chat.class);
-
-                    *//*if(!chat.equals("")){
-                        Glide.with(CallActivity.context).load(chat.image.imageUrl).into(showImage);
-                    }*//*
-
-                        if (user.equals(userId)) { //사용자 = 발신자
-                            if (user.equals(chat.user)) { //사용자 = 채팅의 user
-                                m_Adapter.add(chat.text, 1);
-                            } else {
-                                m_Adapter.add(chat.text, 0);
-                            }
-                        } else { //사용자 = 수신자
-                            if (connectUser.equals(chat.user)) { //사용자 = 채팅의 user
-                                m_Adapter.add(chat.text, 1);
-                            } else {
-                                m_Adapter.add(chat.text, 0);
-                            }
-                        }
-                    }
-                    // notifyDataSetChanged를 안해주면 ListView 갱신이 안됨
-                    m_Adapter.notifyDataSetChanged();
-                    // ListView 의 위치를 마지막으로 보내주기 위함
-                    m_ListView.setSelection(m_Adapter.getCount() - 1);
-                }
-                //Glide.with(CallActivity.context).load(photoUrl.toString()).override(300,300).into(showImage);
-
-
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Log.d("gggggg","왜안나와");
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });*/
     }
 
 
@@ -799,9 +691,7 @@ public class CallActivity extends AppCompatActivity
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                // ...
-                //Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                //downloadUrl = taskSnapshot.getDownloadUrl();
+
                 photoUrl = taskSnapshot.getDownloadUrl();
                 Log.d("sssssss", photoUrl.toString());
                 Log.d("sssssss", file.toString());
@@ -809,9 +699,7 @@ public class CallActivity extends AppCompatActivity
                 ImageDTO imageDTO = new ImageDTO();
                 imageDTO.imageUrl = photoUrl.toString();
                 Log.d("ggggg", photoUrl.toString());
-                //imageDTO.description = description.getText().toString();
-                //imageDTO.uid = auth.getCurrentUser().getUid();
-                //imageDTO.userid = auth.getCurrentUser().getEmail();
+
 
                 //database.getReference("chats").child(chatRoom).child(chatCntStr).child(formattedDate);
                 DatabaseReference myRef = database.getReference("chats").child(chatRoom).child(chatCntStr);
@@ -821,15 +709,9 @@ public class CallActivity extends AppCompatActivity
                     chatText.put("imageUrl", downloadUrl.toString());*/
                 myRef.setValue(chatText);
 
-                //database.getReference("chats").child(chatRoom).child(chatCntStr).child(formattedDate).push().setValue(imageDTO);
-
-
-                //database.getReference().child("images").orderByChild(downloadUrl.toString()).equalTo(downloadUrl.toString());
-                /////Glide.with(CallActivity.context).load(downloadUrl.toString()).into(showImage);
-
                 Log.d("ggggggg","성공");
-                Thread refreshChat = new refreshChat();
-                refreshChat.start();
+                //Thread refreshChat = new refreshChat();
+                //refreshChat.start();
             }
         });
     }
@@ -859,7 +741,8 @@ public class CallActivity extends AppCompatActivity
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         Log.d("gggggg","리스트 새로고침");
-                        if(!dataSnapshot.getValue(ImageDTO.class).imageUrl.equals("")){  //imageurl 잇으면
+                        //if(!dataSnapshot.getValue(ImageDTO.class).imageUrl.equals("")){  //imageurl 잇으면
+                        if(database.getReference("image").toString() != null){
                             Glide.with(CallActivity.context).load(dataSnapshot.getValue(ImageDTO.class).imageUrl).override(300,300).into(showImage);
                             showImage.setVisibility(View.VISIBLE);
                         }
@@ -1104,7 +987,7 @@ public class CallActivity extends AppCompatActivity
                 Log.d("getChateCnt Exception: ", e.getMessage().toString());
             }
 
-            takeImage();
+            firebaseRefresh();
         }
     }
 
@@ -1146,7 +1029,7 @@ public class CallActivity extends AppCompatActivity
             } catch (Exception e) {
                 Log.d("getChatCnt1 Exception: ", e.getMessage().toString());
             }
-            takeImage();
+            firebaseRefresh();
         }
     }
 
@@ -1237,8 +1120,8 @@ public class CallActivity extends AppCompatActivity
               }
           });*/
         }
-        Thread refreshChat = new refreshChat();
-        refreshChat.start();
+        //Thread refreshChat = new refreshChat();
+        //refreshChat.start();
         Log.d("gggggg","refresh");
 
 
@@ -1359,7 +1242,7 @@ public class CallActivity extends AppCompatActivity
     public void Connect() {
 
         Log.d("connecttt", "연결");
-        token = "cHJvdmlzaW9uAFlvdXJWb2ljZUAxNmNlOTMudmlkeW8uaW8ANjM3MDE2MjY0NDcAAGMwNTM1Y2IyOWMxZDdlMGVjNTYwMjM5NmI0OTA2NTUwMjI3NWMwYWYyNmIyMzg3ZmRhNGExN2NkMmVlNWUwZjEzNTc3NDk5M2E1Njk0ZWRkNjgwOGQ1NjM1YmQ1NjE0MQ==";
+        token = "cHJvdmlzaW9uAFlvdXJWb2ljZUAxNmNlOTMudmlkeW8uaW8ANjM3MDE3MDgyNzQAAGQzYjRkNGJlZDM2ZThhNzRhNzVmZmNlMWZhMjYzNTA0NzBmZGVhYmMzYmI4M2VlNDI1OGM5MWQ1NjAwNGVlMWJkMjNjNDUyODc4ZjZhN2EwNWFlY2JmOWRlNmQxMTE1OA==";
         // 전화 받을 떄
         if (callStatus.name().equals("Receiver")) {
             displayName = user + "-" + connectUser;

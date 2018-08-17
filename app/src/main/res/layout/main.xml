@@ -52,7 +52,7 @@
                         android:gravity="bottom"
                         android:background="@drawable/underline_list"
                         android:textSize="10sp"
-                        android:text="친구"/>
+                        android:text=""/>
 
                     <ListView
                         android:id="@+id/friend_list_view"
@@ -78,7 +78,7 @@
                         android:gravity="bottom"
                         android:background="@drawable/underline_list"
                         android:textSize="10sp"
-                        android:text="통화기록"/>
+                        android:text=""/>
 
                     <ListView
                         android:id="@+id/recent_call_list_view"

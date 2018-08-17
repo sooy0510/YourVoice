@@ -178,7 +178,8 @@ public class CallActivity extends AppCompatActivity
     private static final int FROM_ALBUM = 1;
     private Uri photoUrl;
     private Uri file;
-    private ChildEventListener mChildEventListener;
+    private ChildEventListener iChildEventListener;
+    private ChildEventListener tChildEventListener;
 
     private FirebaseStorage storage;
 
@@ -567,28 +568,26 @@ public class CallActivity extends AppCompatActivity
         String chatRoom = user+connectUser;
         Log.d("gggg",chatRoom);
 
-        DatabaseReference databaseReference = firebaseDatabase.getReference("chats").child(chatRoom).child(chatCntStr);
-        mChildEventListener = new ChildEventListener() {
+        DatabaseReference databaseReference1 = firebaseDatabase.getReference("chats").child(chatRoom).child(chatCntStr);
+        iChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.d("gggggg","나와라");
-                Log.d("gggggg", dataSnapshot.getValue().toString());
-                //if(!dataSnapshot.getValue(ImageDTO.class).imageUrl.equals("")){  //imageurl 잇으면
                 if(dataSnapshot.hasChild("image")){
+                    Log.d("gggiii","나와라");
+                    Log.d("gggiii", dataSnapshot.getValue().toString());
                     Log.d("gggggg","사진추가");
-                    Glide.with(CallActivity.context).load(dataSnapshot.getValue(ImageDTO.class).imageUrl).override(300,300).into(showImage);
+                    Glide.with(CallActivity.context).load(dataSnapshot.child("image").getValue(ImageDTO.class).imageUrl).override(300,300).into(showImage);
                     showImage.setVisibility(View.VISIBLE);
-                }else{
+                }
+
+                /*if(dataSnapshot.hasChild("text")){
+                    Log.d("gggttt","나와라");
+                    //if(dataSnapshot.hasChild("text")){
                     // 데이터를 읽어올 때 모든 데이터를 읽어오기때문에 List 를 초기화해주는 작업이 필요하다.
-                    Log.d("gggggg","왜 안나와");
                     m_Adapter.clean();
                     for (DataSnapshot messageData : dataSnapshot.getChildren()) {
                         //String msg = messageData.getValue().toString();
-                        Chat chat = messageData.getValue(Chat.class);
-
-                    /*if(!chat.equals("")){
-                        Glide.with(CallActivity.context).load(chat.image.imageUrl).into(showImage);
-                    }*/
+                        Chat chat = messageData.child("text").getValue(Chat.class);
 
                         if (user.equals(userId)) { //사용자 = 발신자
                             if (user.equals(chat.user)) { //사용자 = 채팅의 user
@@ -608,28 +607,28 @@ public class CallActivity extends AppCompatActivity
                     m_Adapter.notifyDataSetChanged();
                     // ListView 의 위치를 마지막으로 보내주기 위함
                     m_ListView.setSelection(m_Adapter.getCount() - 1);
-                }
+                    //}
+                }*/
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Log.d("ggggggh","나와라");
                 //if(!dataSnapshot.getValue(ImageDTO.class).imageUrl.equals("")){  //imageurl 잇으면
                 if(dataSnapshot.hasChild("image")){
-                    Log.d("ggggggh",database.getReference("image").toString());
-                    Log.d("ggggggh","사진추가");
-                    Glide.with(CallActivity.context).load(dataSnapshot.getValue(ImageDTO.class).imageUrl).override(300,300).into(showImage);
+                    Log.d("gggiii",database.getReference("image").toString());
+                    Log.d("gggiii","사진추가");
+                    Glide.with(CallActivity.context).load(dataSnapshot.child("image").getValue(ImageDTO.class).imageUrl).override(300,300).into(showImage);
                     showImage.setVisibility(View.VISIBLE);
-                }else{
+                }
+
+               /* if(dataSnapshot.hasChild("text")){
+                    Log.d("gggttt","나와라");
+                    //if(dataSnapshot.hasChild("text")){
                     // 데이터를 읽어올 때 모든 데이터를 읽어오기때문에 List 를 초기화해주는 작업이 필요하다.
                     m_Adapter.clean();
                     for (DataSnapshot messageData : dataSnapshot.getChildren()) {
                         //String msg = messageData.getValue().toString();
-                        Chat chat = messageData.getValue(Chat.class);
-
-                    /*if(!chat.equals("")){
-                        Glide.with(CallActivity.context).load(chat.image.imageUrl).into(showImage);
-                    }*/
+                        Chat chat = messageData.child("text").getValue(Chat.class);
 
                         if (user.equals(userId)) { //사용자 = 발신자
                             if (user.equals(chat.user)) { //사용자 = 채팅의 user
@@ -649,7 +648,8 @@ public class CallActivity extends AppCompatActivity
                     m_Adapter.notifyDataSetChanged();
                     // ListView 의 위치를 마지막으로 보내주기 위함
                     m_ListView.setSelection(m_Adapter.getCount() - 1);
-                }
+                    //}
+                }*/
             }
 
             @Override
@@ -667,7 +667,90 @@ public class CallActivity extends AppCompatActivity
 
             }
         };
-        databaseReference.addChildEventListener(mChildEventListener);
+        databaseReference1.addChildEventListener(iChildEventListener);
+
+
+/*        DatabaseReference databaseReference2 = firebaseDatabase.getReference("chats").child(chatRoom).child(chatCntStr).child("text");
+
+        tChildEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Log.d("ggggggh","나와라");
+                //if(dataSnapshot.hasChild("text")){
+                    // 데이터를 읽어올 때 모든 데이터를 읽어오기때문에 List 를 초기화해주는 작업이 필요하다.
+                    m_Adapter.clean();
+                    for (DataSnapshot messageData : dataSnapshot.getChildren()) {
+                        //String msg = messageData.getValue().toString();
+                        Chat chat = messageData.getValue(Chat.class);
+
+                    *//*if(!chat.equals("")){
+                        Glide.with(CallActivity.context).load(chat.image.imageUrl).into(showImage);
+                    }*//*
+
+                        if (user.equals(userId)) { //사용자 = 발신자
+                            if (user.equals(chat.user)) { //사용자 = 채팅의 user
+                                m_Adapter.add(chat.text, 1);
+                            } else {
+                                m_Adapter.add(chat.text, 0);
+                            }
+                        } else { //사용자 = 수신자
+                            if (connectUser.equals(chat.user)) { //사용자 = 채팅의 user
+                                m_Adapter.add(chat.text, 1);
+                            } else {
+                                m_Adapter.add(chat.text, 0);
+                            }
+                        }
+                    }
+                    // notifyDataSetChanged를 안해주면 ListView 갱신이 안됨
+                    m_Adapter.notifyDataSetChanged();
+                    // ListView 의 위치를 마지막으로 보내주기 위함
+                    m_ListView.setSelection(m_Adapter.getCount() - 1);
+                //}
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                // 데이터를 읽어올 때 모든 데이터를 읽어오기때문에 List 를 초기화해주는 작업이 필요하다.
+                m_Adapter.clean();
+                for (DataSnapshot messageData : dataSnapshot.getChildren()) {
+                    Chat chat = messageData.getValue(Chat.class);
+
+                    if (user.equals(userId)) { //사용자 = 발신자
+                        if (user.equals(chat.user)) { //사용자 = 채팅의 user
+                            m_Adapter.add(chat.text, 1);
+                        } else {
+                            m_Adapter.add(chat.text, 0);
+                        }
+                    } else { //사용자 = 수신자
+                        if (connectUser.equals(chat.user)) { //사용자 = 채팅의 user
+                            m_Adapter.add(chat.text, 1);
+                        } else {
+                            m_Adapter.add(chat.text, 0);
+                        }
+                    }
+                }
+                // notifyDataSetChanged를 안해주면 ListView 갱신이 안됨
+                m_Adapter.notifyDataSetChanged();
+                // ListView 의 위치를 마지막으로 보내주기 위함
+                m_ListView.setSelection(m_Adapter.getCount() - 1);
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        databaseReference2.addChildEventListener(tChildEventListener);*/
     }
 
 
@@ -702,7 +785,7 @@ public class CallActivity extends AppCompatActivity
 
 
                 //database.getReference("chats").child(chatRoom).child(chatCntStr).child(formattedDate);
-                DatabaseReference myRef = database.getReference("chats").child(chatRoom).child(chatCntStr);
+                DatabaseReference myRef = database.getReference("chats").child(chatRoom).child(chatCntStr).child("image");
                 Hashtable<String, ImageDTO> chatText = new Hashtable<String, ImageDTO>();
                 chatText.put("image", imageDTO);
                     /*Hashtable<String, String> chatText = new Hashtable<String, String>();
@@ -1066,99 +1149,107 @@ public class CallActivity extends AppCompatActivity
             }
             myRef.setValue(chatText);
 
-        }else{  //사진 보내기
-            //upload(imagePath);
-
-/*            Log.d("gggggg",chat);  //getpath까지 한 주소
-          StorageReference storageRef = storage.getReferenceFromUrl("gs://yourvoice-577c9.appspot.com");
-          //Uri file = Uri.fromFile(new File(chat));
-          file = Uri.fromFile(new File(chat));
-          StorageReference riversRef = storageRef.child("images/"+file.getLastPathSegment());
-          UploadTask uploadTask = riversRef.putFile(file);
-
-          // Register observers to listen for when the download is done or if it fails
-          uploadTask.addOnFailureListener(new OnFailureListener() {
-              @Override
-              public void onFailure(@NonNull Exception exception) {
-                  // Handle unsuccessful uploads
-                  Log.d("ggggggg","실패");
-              }
-          }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-              @Override
-              public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                  // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                  // ...
-                  //Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                  //downloadUrl = taskSnapshot.getDownloadUrl();
-                  photoUrl = taskSnapshot.getDownloadUrl();
-                  Log.d("sssssss",chat);
-                  Log.d("sssssss", photoUrl.toString());
-                  Log.d("sssssss", file.toString());
-
-                  ImageDTO imageDTO = new ImageDTO();
-                  imageDTO.imageUrl = photoUrl.toString();
-                  Log.d("ggggg", photoUrl.toString());
-                  //imageDTO.description = description.getText().toString();
-                  //imageDTO.uid = auth.getCurrentUser().getUid();
-                  //imageDTO.userid = auth.getCurrentUser().getEmail();
-
-                  //database.getReference("chats").child(chatRoom).child(chatCntStr).child(formattedDate);
-                  DatabaseReference myRef = database.getReference("chats").child(chatRoom).child(chatCntStr);
-                  Hashtable<String, ImageDTO> chatText = new Hashtable<String, ImageDTO>();
-                  chatText.put("image", imageDTO);
-                  *//*Hashtable<String, String> chatText = new Hashtable<String, String>();
-                  chatText.put("imageUrl", downloadUrl.toString());*//*
-                  myRef.setValue(chatText);
-
-                  //database.getReference("chats").child(chatRoom).child(chatCntStr).child(formattedDate).push().setValue(imageDTO);
-
-
-                  //database.getReference().child("images").orderByChild(downloadUrl.toString()).equalTo(downloadUrl.toString());
-                  /////Glide.with(CallActivity.context).load(downloadUrl.toString()).into(showImage);
-
-                  Log.d("ggggggg","성공");
-              }
-          });*/
         }
         //Thread refreshChat = new refreshChat();
         //refreshChat.start();
-        Log.d("gggggg","refresh");
+        //Log.d("gggggg","refresh");
+
+
+        /*DatabaseReference databaseReference2 = firebaseDatabase.getReference("chats").child(chatRoom).child(chatCntStr).child("text");
+        tChildEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                //if(dataSnapshot.hasChild("text")){
+                    Log.d("gggttt","나와라");
+                    //if(dataSnapshot.hasChild("text")){
+                    // 데이터를 읽어올 때 모든 데이터를 읽어오기때문에 List 를 초기화해주는 작업이 필요하다.
+                    m_Adapter.clean();
+                    for (DataSnapshot messageData : dataSnapshot.getChildren()) {
+                        //String msg = messageData.getValue().toString();
+                        Chat chat = messageData.getValue(Chat.class);
+
+                        if (user.equals(userId)) { //사용자 = 발신자
+                            if (user.equals(chat.user)) { //사용자 = 채팅의 user
+                                m_Adapter.add(chat.text, 1);
+                            } else {
+                                m_Adapter.add(chat.text, 0);
+                            }
+                        } else { //사용자 = 수신자
+                            if (connectUser.equals(chat.user)) { //사용자 = 채팅의 user
+                                m_Adapter.add(chat.text, 1);
+                            } else {
+                                m_Adapter.add(chat.text, 0);
+                            }
+                        }
+                    }
+                    // notifyDataSetChanged를 안해주면 ListView 갱신이 안됨
+                    m_Adapter.notifyDataSetChanged();
+                    // ListView 의 위치를 마지막으로 보내주기 위함
+                    m_ListView.setSelection(m_Adapter.getCount() - 1);
+                    //}
+                //}
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                //if(dataSnapshot.hasChild("text")){
+                    Log.d("gggttt","나와라");
+                    //if(dataSnapshot.hasChild("text")){
+                    // 데이터를 읽어올 때 모든 데이터를 읽어오기때문에 List 를 초기화해주는 작업이 필요하다.
+                    m_Adapter.clean();
+                    for (DataSnapshot messageData : dataSnapshot.getChildren()) {
+                        //String msg = messageData.getValue().toString();
+                        Chat chat = messageData.getValue(Chat.class);
+
+                        if (user.equals(userId)) { //사용자 = 발신자
+                            if (user.equals(chat.user)) { //사용자 = 채팅의 user
+                                m_Adapter.add(chat.text, 1);
+                            } else {
+                                m_Adapter.add(chat.text, 0);
+                            }
+                        } else { //사용자 = 수신자
+                            if (connectUser.equals(chat.user)) { //사용자 = 채팅의 user
+                                m_Adapter.add(chat.text, 1);
+                            } else {
+                                m_Adapter.add(chat.text, 0);
+                            }
+                        }
+                    }
+                    // notifyDataSetChanged를 안해주면 ListView 갱신이 안됨
+                    m_Adapter.notifyDataSetChanged();
+                    // ListView 의 위치를 마지막으로 보내주기 위함
+                    m_ListView.setSelection(m_Adapter.getCount() - 1);
+                    //}
+               // }
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        databaseReference2.addChildEventListener(tChildEventListener);
+*/
+
+
+
+
+
 
 
 
         //채팅내용 가져오기
-/*        DatabaseReference databaseReference = firebaseDatabase.getReference("chats").child(chatRoom).child(chatCntStr);
-      DatabaseReference dbimg = firebaseDatabase.getReference("chats").child(chatRoom).child(chatCntStr);
-      dbimg.addChildEventListener(new ChildEventListener() {
-          @Override
-          public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-              Log.d("gggggg","리스트 새로고침");
-                  //Glide.with(CallActivity.context).load(dataSnapshot.getValue(ImageDTO.class).imageUrl).into(showImage);
-              Glide.with(CallActivity.context).load(photoUrl.toString()).into(showImage);
-
-          }
-
-          @Override
-          public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-          }
-
-          @Override
-          public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-          }
-
-          @Override
-          public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-          }
-
-          @Override
-          public void onCancelled(DatabaseError databaseError) {
-
-          }
-      });
-
+        DatabaseReference databaseReference = firebaseDatabase.getReference("chats").child(chatRoom).child(chatCntStr).child("text");
       //childeventlistener로 바꾸기
       databaseReference.addValueEventListener(new ValueEventListener() {
 
@@ -1170,9 +1261,6 @@ public class CallActivity extends AppCompatActivity
                   //String msg = messageData.getValue().toString();
                   Chat chat = messageData.getValue(Chat.class);
 
-                  *//*if(!chat.equals("")){
-                      Glide.with(CallActivity.context).load(chat.image.imageUrl).into(showImage);
-                  }*//*
 
                   if (user.equals(userId)) { //사용자 = 발신자
                       if (user.equals(chat.user)) { //사용자 = 채팅의 user
@@ -1198,7 +1286,7 @@ public class CallActivity extends AppCompatActivity
           public void onCancelled(DatabaseError databaseError) {
 
           }
-      });*/
+      });
 /*
       // 데이터 받아오기 및 어댑터 데이터 추가 및 삭제 등..리스너 관리
       databaseReference.addChildEventListener(new ChildEventListener() {

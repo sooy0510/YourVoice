@@ -169,7 +169,7 @@ public class CallActivity extends AppCompatActivity
     private Button closeImage;
     private EditText title;
     private EditText description;
-    private Button gallery;
+    private ImageButton gallery;
     private Button sendImage;
     private String imagePath;
     //private Uri imgUri, photoURI, albumURI;
@@ -1583,7 +1583,6 @@ public class CallActivity extends AppCompatActivity
     }
 
     /******************************************************************************/
-
 
     // Participant Joined
     public void onParticipantJoined(Participant participant) {

@@ -54,24 +54,26 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="2"
-            android:layout_marginRight="10dp"
             android:gravity="right">
+
                 <Button
                     android:id="@+id/rphone"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center"
+                    android:layout_marginRight="10dp"
                     android:background="@drawable/ripple_effect"
-                    android:foreground="@drawable/baseline_phone_orange_18"/>
+                    android:foreground="@drawable/baseline_phone_orange_18"
+                    android:stateListAnimator="@null"/>
+
                 <Button
                     android:id="@+id/textbutton"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="10dp"
                     android:background="@drawable/ripple_effect"
-                    android:foreground="@drawable/baseline_notes_orange_18"/>
-
+                    android:foreground="@drawable/baseline_notes_orange_18"
+                    android:stateListAnimator="@null"/>
                 <!--<Button
                     android:id="@+id/button4"
                     android:layout_width="50dp"

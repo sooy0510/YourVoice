@@ -293,6 +293,7 @@ public class CallActivity extends AppCompatActivity
         //sendImage = findViewById(R.id.sendImage);
         showImage = findViewById(R.id.showimage);
         closeImage = findViewById(R.id.close);
+        closeImage.setVisibility(View.INVISIBLE);
         storage = FirebaseStorage.getInstance();
 
         //앨범선택, 사진촬영, 취소 다이얼로그 생성
@@ -560,6 +561,7 @@ public class CallActivity extends AppCompatActivity
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.hasChild("image")){
                     Glide.with(CallActivity.context).load(dataSnapshot.child("image").getValue(ImageDTO.class).imageUrl).override(300,300).into(showImage);
+                    closeImage.setVisibility(View.VISIBLE);
                     showImage.setVisibility(View.VISIBLE);
                 }else{
                     // 데이터를 읽어올 때 모든 데이터를 읽어오기때문에 List 를 초기화해주는 작업이 필요하다.
@@ -597,7 +599,6 @@ public class CallActivity extends AppCompatActivity
                     Log.d("gggiii",database.getReference("image").toString());
                     Log.d("gggiii","사진추가");
                     Glide.with(CallActivity.context).load(dataSnapshot.child("image").getValue(ImageDTO.class).imageUrl).override(300,300).into(showImage);
-                    showImage.setVisibility(View.VISIBLE);
                 }else{
                     // 데이터를 읽어올 때 모든 데이터를 읽어오기때문에 List 를 초기화해주는 작업이 필요하다.
                     m_Adapter.clean();
@@ -628,7 +629,8 @@ public class CallActivity extends AppCompatActivity
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                showImage.setVisibility(View.INVISIBLE);
+                closeImage.setVisibility(View.INVISIBLE);
             }
 
             @Override

@@ -81,7 +81,7 @@ public class TextPopupActivity extends Activity {
         final String fname = intent.getStringExtra("fname");
         //txtText.setText(data);
 
-        DatabaseReference databaseReference = firebaseDatabase.getReference("chats").child(chatroom).child(chatcnt);
+        DatabaseReference databaseReference = firebaseDatabase.getReference("chats").child(chatroom).child(chatcnt).child("text");
 
         databaseReference.addValueEventListener(new ValueEventListener() {
 

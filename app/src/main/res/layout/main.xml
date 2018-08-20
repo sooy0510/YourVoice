@@ -26,8 +26,8 @@
 
             <TabWidget
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/underline"
+                android:layout_height="56dp"
+                android:background="#ffffff"
                 android:id="@android:id/tabs">
             </TabWidget>
 
@@ -50,7 +50,6 @@
                         android:layout_marginTop="56dp"
                         android:paddingLeft="20dp"
                         android:gravity="bottom"
-                        android:background="@drawable/underline_list"
                         android:textSize="10sp"
                         android:text=""/>
 
@@ -60,7 +59,8 @@
                         android:layout_height="wrap_content"
                         android:background="#ffffff"
                         android:dividerHeight="0.5dp"
-                        android:divider="#dcdcdc">
+                        android:divider="#dcdcdc"
+                        android:overScrollMode="never">
                     </ListView>
                 </LinearLayout>
 
@@ -76,7 +76,6 @@
                         android:layout_marginTop="56dp"
                         android:paddingLeft="20dp"
                         android:gravity="bottom"
-                        android:background="@drawable/underline_list"
                         android:textSize="10sp"
                         android:text=""/>
 
@@ -86,7 +85,8 @@
                         android:layout_height="wrap_content"
                         android:background="#ffffff"
                         android:dividerHeight="0.5dp"
-                        android:divider="#dcdcdc">
+                        android:divider="#dcdcdc"
+                        android:overScrollMode="never">
                     </ListView>
                 </LinearLayout>
 

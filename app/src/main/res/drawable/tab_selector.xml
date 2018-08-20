@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--<item-->
+        <!--android:state_pressed="true" android:drawable="@drawable/underline">-->
+    <!--</item>-->
+
+    <!--<item-->
+        <!--android:state_focused="false" android:drawable="@drawable/underline_list">-->
+    <!--</item>-->
+
+    <!--<item-->
+        <!--android:state_selected="false" android:drawable="@drawable/underline_list">-->
+    <!--</item>-->
+
+    <!--<item-->
+        <!--android:state_selected="true" android:drawable="@drawable/underline">-->
+    <!--</item>-->
+    <!---->
+
+    <!-- Non focused states -->
+    <item
+        android:state_focused="false"
+        android:state_selected="false"
+        android:state_pressed="false"
+        android:drawable="@drawable/underline_list" />
+    <item
+        android:state_focused="false"
+        android:state_selected="true"
+        android:state_pressed="false"
+        android:drawable="@drawable/underline" />
+
+    <!-- Focused states -->
+    <item
+        android:state_focused="true"
+        android:state_selected="false"
+        android:state_pressed="false"
+        android:drawable="@drawable/underline" />
+    <item
+        android:state_focused="true"
+        android:state_selected="true"
+        android:state_pressed="false"
+        android:drawable="@drawable/underline" />
+
+    <!-- Pressed -->
+    <item
+        android:state_pressed="true"
+        android:drawable="@drawable/underline" />
+</selector>

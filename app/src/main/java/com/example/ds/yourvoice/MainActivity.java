@@ -153,7 +153,6 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
         // 탭 설정
         //https://www.androidpub.com/650765
         TabHost tabHost = (TabHost) findViewById(android.R.id.tabhost);
-//        tabHost.getTabWidget().setStripEnabled(true);
         tabHost.setup();
         //TabHost tabHost1 = getTabHost();
 
@@ -162,8 +161,7 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
         View view1 = layoutInflater1.inflate(R.layout.custom_tab, null);
         ImageView icon1 = (ImageView)view1.findViewById(R.id.tab_icon);
         icon1.setImageDrawable(getResources().getDrawable(R.drawable.baseline_people_black_18));
-        final TextView tab_tv = (TextView)view1.findViewById(R.id.tab_text);
-        tab_tv.setTypeface(Typeface.DEFAULT_BOLD);
+        TextView tab_tv = (TextView)view1.findViewById(R.id.tab_text);
         tab_tv.setText("친구목록");
 
         TabHost.TabSpec ts1 = tabHost.newTabSpec("Tab1");
@@ -176,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
         View view2 = layoutInflater2.inflate(R.layout.custom_tab, null);
         ImageView icon2 = (ImageView)view2.findViewById(R.id.tab_icon);
         icon2.setImageDrawable(getResources().getDrawable(R.drawable.baseline_list_black_18));
-        final TextView tab_tv2 = (TextView)view2.findViewById(R.id.tab_text);
+        TextView tab_tv2 = (TextView)view2.findViewById(R.id.tab_text);
         tab_tv2.setText("통화기록");
 
         TabHost.TabSpec ts2 = tabHost.newTabSpec("Tab2");
@@ -189,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
         View view3 = layoutInflater3.inflate(R.layout.custom_tab, null);
         ImageView icon3 = (ImageView)view3.findViewById(R.id.tab_icon);
         icon3.setImageDrawable(getResources().getDrawable(R.drawable.baseline_person_add_black_18));
-        final TextView tab_tv3 = (TextView)view3.findViewById(R.id.tab_text);
+        TextView tab_tv3 = (TextView)view3.findViewById(R.id.tab_text);
         tab_tv3.setText("친구추가");
 
         TabHost.TabSpec ts3 = tabHost.newTabSpec("Tab3");
@@ -229,9 +227,6 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
                     fArrayList = new ArrayList<>();
 
                     //tab_tv.setTextColor(getResources().getColor(R.color.colorPrimary));
-                    tab_tv.setTypeface(Typeface.DEFAULT_BOLD);
-                    tab_tv2.setTypeface(Typeface.DEFAULT);
-                    tab_tv3.setTypeface(Typeface.DEFAULT);
 
                     friendData task = new friendData();
                     task.execute("http://13.124.94.107/getFriendList.php");
@@ -244,18 +239,9 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
                     rArrayList = new ArrayList<>();
 
                     //tab_tv2.setTextColor(getResources().getColor(R.color.colorPrimary));
-                    tab_tv2.setTypeface(Typeface.DEFAULT_BOLD);
-                    tab_tv.setTypeface(Typeface.DEFAULT);
-                    tab_tv3.setTypeface(Typeface.DEFAULT);
 
                     recentCallData task = new recentCallData();
                     task.execute("http://13.124.94.107/getRecentCallList.php");
-                }
-
-                if(strMsg.equals("Tab3")) {
-                    tab_tv3.setTypeface(Typeface.DEFAULT_BOLD);
-                    tab_tv.setTypeface(Typeface.DEFAULT);
-                    tab_tv2.setTypeface(Typeface.DEFAULT);
                 }
             }
         });

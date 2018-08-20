@@ -560,7 +560,7 @@ public class CallActivity extends AppCompatActivity
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.hasChild("image")){
-                    Glide.with(CallActivity.context).load(dataSnapshot.child("image").getValue(ImageDTO.class).imageUrl).override(300,300).into(showImage);
+                    Glide.with(CallActivity.context).load(dataSnapshot.child("image").getValue(ImageDTO.class).imageUrl).into(showImage);
                     closeImage.setVisibility(View.VISIBLE);
                     showImage.setVisibility(View.VISIBLE);
                 }else{
@@ -598,7 +598,7 @@ public class CallActivity extends AppCompatActivity
                 if(dataSnapshot.hasChild("image")){
                     Log.d("gggiii",database.getReference("image").toString());
                     Log.d("gggiii","사진추가");
-                    Glide.with(CallActivity.context).load(dataSnapshot.child("image").getValue(ImageDTO.class).imageUrl).override(300,300).into(showImage);
+                    Glide.with(CallActivity.context).load(dataSnapshot.child("image").getValue(ImageDTO.class).imageUrl).into(showImage);
                 }else{
                     // 데이터를 읽어올 때 모든 데이터를 읽어오기때문에 List 를 초기화해주는 작업이 필요하다.
                     m_Adapter.clean();
@@ -698,8 +698,6 @@ public class CallActivity extends AppCompatActivity
         cursor.moveToFirst();
         return cursor.getString(index);
     }
-
-
 
     /* ---------------------------------------------- CLOVA ----------------------------------------------------------- */
     // Handle speech recognition Messages.
@@ -1033,6 +1031,7 @@ public class CallActivity extends AppCompatActivity
             byte num = (byte) 00;
             vc = new Connector(null, VIDYO_CONNECTORVIEWSTYLE_Default, 1, "warning info@VidyoClient info@VidyoConnector", "", 0);
             vc. setCpuTradeOffProfile (Connector.ConnectorTradeOffProfile.VIDYO_CONNECTORTRADEOFFPROFILE_High);
+
 //            vc.showPreview(false);
 //            vc.showViewLabel(videoFrame, false);
 //            vc.setViewBackgroundColor(videoFrame, num, num, num);
@@ -1064,6 +1063,9 @@ public class CallActivity extends AppCompatActivity
             //vc_preview.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
             //vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
             vc.connect("prod.vidyo.io", token, "call", displayName, this);
+//            vc.cycleCamera();
+//            vc.cycleMicrophone();
+//            vc.cycleSpeaker();
 //            ImageButton ibtn = findViewById(R.id.disconnect);
 //            ibtn.bringToFront();
             Log.d("connecttt", "connect  시작");
@@ -1157,7 +1159,7 @@ public class CallActivity extends AppCompatActivity
     }
 
     /* custom local preview */
-    public void onLocalCameraAdded(LocalCamera localCamera)    {
+    public void onLocalCameraAdded(LocalCamera localCamera) {
         Log.d("connecttt", "onLocalCameraAdded");
         vc.assignViewToLocalCamera(localFrame, localCamera, true, false);
         localCamera.setAspectRatioConstraint(1, 1);
@@ -1174,7 +1176,7 @@ public class CallActivity extends AppCompatActivity
 //        }
     }
 
-    public void onLocalCameraRemoved(LocalCamera localCamera)  {
+    public void onLocalCameraRemoved(LocalCamera localCamera) {
         Log.d("connecttt", "onLocalCameraRemoved");
     }
 

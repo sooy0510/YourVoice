@@ -42,6 +42,19 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1">
                 <!--android:layout_height="300dp"-->
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+                    <!--android:layout_height="300dp"-->
+                </View>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/showimage"
+                    android:layout_weight="1"/>
             </LinearLayout>
 
             <LinearLayout
@@ -79,11 +92,6 @@
                 android:background="#00ffffff"
                 android:src="@drawable/baseline_add_a_photo_black_24"
                 android:id="@+id/gallery"/>
-            <ImageView
-                android:layout_gravity="right"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/showimage"/>
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -110,7 +118,8 @@
                     android:divider="#000000"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:transcriptMode="alwaysScroll"/>
+                    android:transcriptMode="alwaysScroll"
+                    android:overScrollMode="never"/>
             </LinearLayout>
         </LinearLayout>
 

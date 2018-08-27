@@ -163,7 +163,7 @@ public class CallActivity extends AppCompatActivity
     int flag;
     private ImageView imageView;
     private ImageView showImage;
-    private Button closeImage;
+    private ImageButton closeImage;
     private EditText title;
     private EditText description;
     private ImageButton gallery;
@@ -310,6 +310,8 @@ public class CallActivity extends AppCompatActivity
             public void onClick(View view) {
                 showImage.setVisibility(View.INVISIBLE);
                 database.getReference("chats").child(chatRoom).child(chatCntStr).child("image").setValue(null);
+                videoFrame.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 0.0f));;
             }
         });
 
@@ -563,6 +565,8 @@ public class CallActivity extends AppCompatActivity
                     Glide.with(CallActivity.context).load(dataSnapshot.child("image").getValue(ImageDTO.class).imageUrl).into(showImage);
                     closeImage.setVisibility(View.VISIBLE);
                     showImage.setVisibility(View.VISIBLE);
+                    videoFrame.setLayoutParams(new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1.0f));;
                 }else{
                     // 데이터를 읽어올 때 모든 데이터를 읽어오기때문에 List 를 초기화해주는 작업이 필요하다.
                     m_Adapter.clean();
@@ -948,7 +952,7 @@ public class CallActivity extends AppCompatActivity
     public void Connect() {
 
         Log.d("connecttt", "연결");
-        token = "cHJvdmlzaW9uAFlvdXJWb2ljZUAxNmNlOTMudmlkeW8uaW8ANjM3MDE3MDgyNzQAAGQzYjRkNGJlZDM2ZThhNzRhNzVmZmNlMWZhMjYzNTA0NzBmZGVhYmMzYmI4M2VlNDI1OGM5MWQ1NjAwNGVlMWJkMjNjNDUyODc4ZjZhN2EwNWFlY2JmOWRlNmQxMTE1OA==";
+        token = "cHJvdmlzaW9uAFlvdXJWb2ljZUAxNmNlOTMudmlkeW8uaW8AMTAwMDAwMDA2MzcwMjU2MzEyMAAANDAwNzIzZjQzZDI0YWE3MjI4NDUzNmYzNjc2MzE3YmU4MjY1ZGJmNGQwMzA5ZjZhMDFjZjBkNTY2NTdmZGVjMGIxYmFlZGYyMmI4MWRlNWFkNjEzOTVmODkxYzJjNDQw";
         // 전화 받을 떄
         if (callStatus.name().equals("Receiver")) {
             displayName = user + "-" + connectUser;

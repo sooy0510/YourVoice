@@ -36,19 +36,20 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/videoFrame"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1">
                 <!--android:layout_height="300dp"-->
 
-                <View
+                <LinearLayout
+                    android:id="@+id/videoFrame"
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1">
+                    android:layout_weight="0">
                     <!--android:layout_height="300dp"-->
-                </View>
+                </LinearLayout>
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -70,6 +71,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_gravity="right"
             android:orientation="vertical">
             <ImageButton
                 android:layout_width="wrap_content"
@@ -92,12 +94,16 @@
                 android:background="#00ffffff"
                 android:src="@drawable/baseline_add_a_photo_black_24"
                 android:id="@+id/gallery"/>
-            <Button
+            <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="닫기"
-                android:id="@+id/close"
-                android:layout_gravity="right"/>
+                android:layout_gravity="right"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:padding="5dp"
+                android:background="#00ffffff"
+                android:src="@drawable/baseline_clear_black_24"
+                android:id="@+id/close"/>
         </LinearLayout>
 
         <LinearLayout

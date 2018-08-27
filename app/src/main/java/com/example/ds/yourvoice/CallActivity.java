@@ -286,8 +286,8 @@ public class CallActivity extends AppCompatActivity
 
         //영상통화 연결되기 전까지는 sendtext 막기
         sendText = (EditText)findViewById(R.id.sendText);
-        /*sendText.setClickable(false);
-        sendText.setFocusable(false);*/
+        sendText.setClickable(false);
+        sendText.setFocusable(false);
 
         gallery = findViewById(R.id.gallery);
         //sendImage = findViewById(R.id.sendImage);
@@ -374,12 +374,6 @@ public class CallActivity extends AppCompatActivity
         );
 
     }
-
-//
-//    private void refresh(String inputValue, int _str) {
-//        m_Adapter.add(inputValue, _str);
-//        m_Adapter.notifyDataSetChanged();
-//    }
 
     @Override public void onBackPressed() {
         //super.onBackPressed();
@@ -562,8 +556,11 @@ public class CallActivity extends AppCompatActivity
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.hasChild("image")){
+                    Log.d("gggiii",database.getReference("image").toString());
+                    Log.d("gggiii","사진추가");
                     Glide.with(CallActivity.context).load(dataSnapshot.child("image").getValue(ImageDTO.class).imageUrl).into(showImage);
                     closeImage.setVisibility(View.VISIBLE);
+                    Log.d("gggiii","맨앞으로");
                     showImage.setVisibility(View.VISIBLE);
                     videoFrame.setLayoutParams(new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1.0f));;
@@ -603,6 +600,9 @@ public class CallActivity extends AppCompatActivity
                     Log.d("gggiii",database.getReference("image").toString());
                     Log.d("gggiii","사진추가");
                     Glide.with(CallActivity.context).load(dataSnapshot.child("image").getValue(ImageDTO.class).imageUrl).into(showImage);
+                    closeImage.setVisibility(View.VISIBLE);
+                    Log.d("gggiii","맨앞으로");
+                    showImage.setVisibility(View.VISIBLE);
                 }else{
                     // 데이터를 읽어올 때 모든 데이터를 읽어오기때문에 List 를 초기화해주는 작업이 필요하다.
                     m_Adapter.clean();
@@ -972,20 +972,20 @@ public class CallActivity extends AppCompatActivity
 //            vc_preview.setViewBackgroundColor(localFrame, num, num, num);
             RegisterForVidyoEvents();
 
-//            //clova 음성인식 시작
-//            if (!naverRecognizer.getSpeechRecognizer().isRunning()) {
-//                // Start button is pushed when SpeechRecognizer's state is inactive.
-//                // Run SpeechRecongizer by calling recognize().
-//                mResult = "";
-//                /*if (chatFrame.getVisibility() == View.VISIBLE) {
-//                    m_Adapter.add("Connecting...", 2);
-//                }*/
-//                naverRecognizer.recognize();
-//            } else {
-//                Log.d(TAG, "stop and wait Final Result");
-//                //btnStart.setEnabled(false);
-//                naverRecognizer.getSpeechRecognizer().stop();
-//            }
+            //clova 음성인식 시작
+            if (!naverRecognizer.getSpeechRecognizer().isRunning()) {
+                // Start button is pushed when SpeechRecognizer's state is inactive.
+                // Run SpeechRecongizer by calling recognize().
+                mResult = "";
+                /*if (chatFrame.getVisibility() == View.VISIBLE) {
+                    m_Adapter.add("Connecting...", 2);
+                }*/
+                naverRecognizer.recognize();
+            } else {
+                Log.d(TAG, "stop and wait Final Result");
+                //btnStart.setEnabled(false);
+                naverRecognizer.getSpeechRecognizer().stop();
+            }
 
             //vc_preview.selectDefaultCamera();
             //vc_preview.showViewAt(localFrame, 0, 0, localFrame.getWidth(), localFrame.getHeight());
@@ -1046,20 +1046,20 @@ public class CallActivity extends AppCompatActivity
 
             Log.d("connecttt", "vidyo 연결");
 
-//            //clova 음성인식 시작
-//            if (!naverRecognizer.getSpeechRecognizer().isRunning()) {
-//                // Start button is pushed when SpeechRecognizer's state is inactive.
-//                // Run SpeechRecongizer by calling recognize().
-//                mResult = "";
-//                /*if (chatFrame.getVisibility() == View.VISIBLE) {
-//                    m_Adapter.add("Connecting...", 2);
-//                }*/
-//                naverRecognizer.recognize();
-//            } else {
-//                Log.d(TAG, "stop and wait Final Result");
-//                //btnStart.setEnabled(false);
-//                naverRecognizer.getSpeechRecognizer().stop();
-//            }
+            //clova 음성인식 시작
+            if (!naverRecognizer.getSpeechRecognizer().isRunning()) {
+                // Start button is pushed when SpeechRecognizer's state is inactive.
+                // Run SpeechRecongizer by calling recognize().
+                mResult = "";
+                /*if (chatFrame.getVisibility() == View.VISIBLE) {
+                    m_Adapter.add("Connecting...", 2);
+                }*/
+                naverRecognizer.recognize();
+            } else {
+                Log.d(TAG, "stop and wait Final Result");
+                //btnStart.setEnabled(false);
+                naverRecognizer.getSpeechRecognizer().stop();
+            }
 
             Log.d("connecttt", "clova 시작");
 
@@ -1174,6 +1174,7 @@ public class CallActivity extends AppCompatActivity
         localCamera.setFramerateTradeOffProfile (LocalCamera.LocalCameraTradeOffProfile.VIDYO_LOCALCAMERATRADEOFFPROFILE_High);
         localCamera.setResolutionTradeOffProfile (LocalCamera.LocalCameraTradeOffProfile.VIDYO_LOCALCAMERATRADEOFFPROFILE_High);
 
+        //showImage.bringToFront() ;
 //        if(callStatus == CallStatus.Caller) {
 //            ImageButton ibtn = findViewById(R.id.disconnect);
 //            ibtn.bringToFront();
@@ -1304,19 +1305,19 @@ public class CallActivity extends AppCompatActivity
         cflag = "Y";
 
         //clova 음성인식 시작
-        if (!naverRecognizer.getSpeechRecognizer().isRunning()) {
+        /*if (!naverRecognizer.getSpeechRecognizer().isRunning()) {
             // Start button is pushed when SpeechRecognizer's state is inactive.
             // Run SpeechRecongizer by calling recognize().
             mResult = "";
-              /*if (chatFrame.getVisibility() == View.VISIBLE) {
+              *//*if (chatFrame.getVisibility() == View.VISIBLE) {
                   m_Adapter.add("Connecting...", 2);
-              }*/
+              }*//*
             naverRecognizer.recognize();
         } else {
             Log.d(TAG, "stop and wait Final Result");
             //btnStart.setEnabled(false);
             naverRecognizer.getSpeechRecognizer().stop();
-        }
+        }*/
 
         runOnUiThread(new Runnable() {
             @Override
@@ -1327,9 +1328,9 @@ public class CallActivity extends AppCompatActivity
         });
 
         //키보드 보이게
-      /*sendText.setFocusableInTouchMode(true);
+      sendText.setFocusableInTouchMode(true);
       sendText.setClickable(true);
-      sendText.setFocusable(true);*/
+      sendText.setFocusable(true);
         //imm.showSoftInput(sendText, 0);
     }
 

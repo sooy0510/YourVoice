@@ -403,7 +403,6 @@ public class CallActivity extends AppCompatActivity
 
     //앨범 선택 클릭
     public void selectAlbum(){
-
         //앨범에서 이미지 가져옴
         //앨범 열기
         Intent intent = new Intent(Intent.ACTION_PICK);
@@ -415,9 +414,11 @@ public class CallActivity extends AppCompatActivity
 
 
     @Override
-
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        flag = 0;
+
         if(resultCode != RESULT_OK){
             return;
         }
@@ -436,7 +437,6 @@ public class CallActivity extends AppCompatActivity
                 }
                 break;
             }
-
 
             case FROM_CAMERA : {
                 //카메라 촬영
@@ -693,22 +693,24 @@ public class CallActivity extends AppCompatActivity
         if(naverRecognizer!=null)
             naverRecognizer.getSpeechRecognizer().release();
 
-        if(callStatus != CallStatus.Default) {
-            Disconnect(findViewById(R.id.disconnect));
-        }
+        if(flag != 1) {
+            if (callStatus != CallStatus.Default) {
+                Disconnect(findViewById(R.id.disconnect));
+            }
 
-        if(vc!=null) {
-            vc.disable();
-            vc = null;
-        }
+            if (vc != null) {
+                vc.disable();
+                vc = null;
+            }
 
-        if(mVidyoClientInitialized)
-            ConnectorPkg.uninitialize();
+            if (mVidyoClientInitialized)
+                ConnectorPkg.uninitialize();
 
-        try {
-            unregisterReceiver(mReceiver);
-        } catch (Exception e) {
-            Log.d("callActivity", e.toString());
+            try {
+                unregisterReceiver(mReceiver);
+            } catch (Exception e) {
+                Log.d("callActivity", e.toString());
+            }
         }
     }
 

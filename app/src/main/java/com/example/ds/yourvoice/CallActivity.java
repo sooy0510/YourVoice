@@ -1122,9 +1122,9 @@ public class CallActivity extends AppCompatActivity
         });
 
         //키보드 보이게
-      sendText.setFocusableInTouchMode(true);
-      sendText.setClickable(true);
-      sendText.setFocusable(true);
+        sendText.setFocusableInTouchMode(true);
+        sendText.setClickable(true);
+        sendText.setFocusable(true);
     }
 
     // Participant Left

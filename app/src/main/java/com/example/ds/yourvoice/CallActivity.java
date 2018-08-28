@@ -98,6 +98,7 @@ public class CallActivity extends AppCompatActivity
     private String chatRoom;
     private String chatCntStr; //채팅방 디렉토리 이름
     private String cflag = "N";
+    private String result;
 
     //Layout, UI
     private EditText sendText;
@@ -172,6 +173,7 @@ public class CallActivity extends AppCompatActivity
         //수신자가 전화거부하면 브로드캐스트 받음
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction("CALL_DENIAL");
+        mIntentFilter.addAction("CALL_STOP_CHECK");
         registerReceiver(mReceiver, mIntentFilter);
 
         ConnectorPkg.setApplicationUIContext(this);
@@ -682,6 +684,7 @@ public class CallActivity extends AppCompatActivity
         }
     }
 
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -689,6 +692,24 @@ public class CallActivity extends AppCompatActivity
 
         if(naverRecognizer!=null)
             naverRecognizer.getSpeechRecognizer().release();
+
+        if(callStatus != CallStatus.Default) {
+            Disconnect(findViewById(R.id.disconnect));
+        }
+
+        if(vc!=null) {
+            vc.disable();
+            vc = null;
+        }
+
+        if(mVidyoClientInitialized)
+            ConnectorPkg.uninitialize();
+
+        try {
+            unregisterReceiver(mReceiver);
+        } catch (Exception e) {
+            Log.d("callActivity", e.toString());
+        }
     }
 
     // Declare handler for handling SpeechRecognizer thread's Messages.
@@ -1131,26 +1152,6 @@ public class CallActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Release device resources
-
-        Log.d("Destroy", "true");
-
-        if(vc!=null) {
-            vc.disable();
-            vc = null;
-        }
-
-        if(mVidyoClientInitialized)
-            ConnectorPkg.uninitialize();
-
-        try {
-            unregisterReceiver(mReceiver);
-        } catch (Exception e) {
-            Log.d("callActivity", e.toString());
-        }
-
-        if(callStatus != CallStatus.Default)
-            Disconnect(findViewById(R.id.disconnect));
     }
 
     private class startCall extends Thread {
@@ -1224,6 +1225,54 @@ public class CallActivity extends AppCompatActivity
         }
     }
 
+    //상대방이 강제 종료 될 경우
+    private class stopCheck extends Thread {
+
+        @Override
+        public void run() {
+            //super.run();
+
+            //통화 연결 될때까지 DB 체크
+            while (cflag.equals("N")) {
+                try {
+                    String num = "3";
+
+                    String link = "http://13.124.94.107/callingUpdate.php";
+                    String data = URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(friendId, "UTF-8");
+                    data += "&" + URLEncoder.encode("num", "UTF-8") + "=" + URLEncoder.encode(num, "UTF-8");
+
+                    URL url = new URL(link);
+                    URLConnection conn = url.openConnection();
+
+                    conn.setDoOutput(true);
+                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+                    wr.write(data);
+                    wr.flush();
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+
+                    // Read Server Response
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line);
+                        result = sb.toString();
+                        break;
+                    }
+
+                    if (result.equals("denial")) {
+                        Disconnect(findViewById(R.id.disconnect));
+                        Log.d("connecttt", "stopcheck");
+                        break;
+                    }
+                } catch (Exception e) {
+                    Log.d("발신자전화서비스스레드 Exception", e.toString());
+                }
+            }
+        }
+    }
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -1231,6 +1280,11 @@ public class CallActivity extends AppCompatActivity
             if (mintent.getAction().equals("CALL_DENIAL")) {
                 Log.d("connecttt", "call_denial");
                 Disconnect(findViewById(R.id.disconnect));
+            }
+            if (mintent.getAction().equals("CALL_STOP_CHECK")) {
+                Log.d("connecttt", "call_stop_check");
+                Thread stopCheckThread = new stopCheck();
+                stopCheckThread.start();
             }
         }
     };

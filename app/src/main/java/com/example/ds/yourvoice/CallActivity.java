@@ -294,6 +294,7 @@ public class CallActivity extends AppCompatActivity
         showImage = findViewById(R.id.showimage);
         closeImage = findViewById(R.id.close);
         closeImage.setVisibility(View.INVISIBLE);
+        gallery.setVisibility(View.INVISIBLE);
         storage = FirebaseStorage.getInstance();
 
         //앨범선택, 사진촬영, 취소 다이얼로그 생성
@@ -635,6 +636,8 @@ public class CallActivity extends AppCompatActivity
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 showImage.setVisibility(View.INVISIBLE);
                 closeImage.setVisibility(View.INVISIBLE);
+                videoFrame.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 0.0f));;
             }
 
             @Override
@@ -734,15 +737,12 @@ public class CallActivity extends AppCompatActivity
                 StringBuilder strBuf = new StringBuilder();
                 strBuf.append(results.get(0));
 
-
-                //strBuf.append("\n");
-                mResult = strBuf.toString();
-                if (!mResult.equals("")) {
-                    addUserChat(mResult,0);
-                    //m_Adapter.add(mResult,1);
-                    //m_Adapter.notifyDataSetChanged();
+                if(cflag.equals("Y")){
+                    mResult = strBuf.toString();
+                    if (!mResult.equals("")) {
+                        addUserChat(mResult,0);
+                    }
                 }
-                //addUserChat(mResult);
                 break;
 
             case R.id.recognitionError:
@@ -786,13 +786,7 @@ public class CallActivity extends AppCompatActivity
 
         if(m_Adapter!=null) {
             mResult = "";
-            //txtResult.setText("");
             m_Adapter.add(mResult, 2);
-            //btnStart.setText(R.string.str_start);
-            //btnStart.setEnabled(true);
-            //Log.d("callActivity", "전화시작");
-            //Connect(findViewById(R.id.button2));
-            //findViewById(R.id.button2).performClick();
         }
     }
 
@@ -1223,10 +1217,6 @@ public class CallActivity extends AppCompatActivity
         vc.showViewLabel(videoFrame, false);
         vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
 
-        //키보드 보이게
-        /*sendText.setFocusableInTouchMode(true);
-        sendText.setClickable(true);
-        sendText.setFocusable(true);*/
 
 //        if(callStatus == CallStatus.Caller) {
 //            ImageButton ibtn = findViewById(R.id.disconnect);
@@ -1302,28 +1292,14 @@ public class CallActivity extends AppCompatActivity
     // Participant Joined
     public void onParticipantJoined(Participant participant) {
         Log.d("connecttt", "ParticipainJoined");
-        cflag = "Y";
-
-        //clova 음성인식 시작
-        /*if (!naverRecognizer.getSpeechRecognizer().isRunning()) {
-            // Start button is pushed when SpeechRecognizer's state is inactive.
-            // Run SpeechRecongizer by calling recognize().
-            mResult = "";
-              *//*if (chatFrame.getVisibility() == View.VISIBLE) {
-                  m_Adapter.add("Connecting...", 2);
-              }*//*
-            naverRecognizer.recognize();
-        } else {
-            Log.d(TAG, "stop and wait Final Result");
-            //btnStart.setEnabled(false);
-            naverRecognizer.getSpeechRecognizer().stop();
-        }*/
+        cflag = "Y"; //음성인식 시작 flag
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 ImageButton b = findViewById(R.id.sendButton);
                 b.setEnabled(true);
+                gallery.setVisibility(View.VISIBLE);
             }
         });
 
@@ -1331,7 +1307,6 @@ public class CallActivity extends AppCompatActivity
       sendText.setFocusableInTouchMode(true);
       sendText.setClickable(true);
       sendText.setFocusable(true);
-        //imm.showSoftInput(sendText, 0);
     }
 
     // Participant Left
@@ -1416,72 +1391,6 @@ public class CallActivity extends AppCompatActivity
             }
         }
     }
-//
-//    private void startCall(final String connectId, String Id) {
-//
-//        class InsertData extends AsyncTask<String, Void, String> {
-//
-//            protected void onCancelled() {
-//                //stopCall(user);
-//            }
-//
-//            @Override
-//            protected void onPreExecute() {
-//                super.onPreExecute();
-//            }
-//
-//            @Override
-//            protected void onPostExecute(String s) {
-//                super.onPostExecute(s);
-//                Connect();
-//            }
-//
-//            @Override
-//            protected String doInBackground(String... params) {
-//
-//                if (this.isCancelled()) {
-//                    // 비동기작업을 cancel해도 자동으로 취소해주지 않으므로,
-//                    // 작업중에 이런식으로 취소 체크를 해야 한다.
-//                    return null;
-//                }
-//
-//                try {
-//                    String connectId = (String) params[0];
-//                    String Id = (String) params[1];
-//                    Log.d("connecttt", connectId + Id);
-//
-//                    String link = "http://13.124.94.107/startCall.php";
-//                    String data = URLEncoder.encode("connectId", "UTF-8") + "=" + URLEncoder.encode(connectId, "UTF-8");
-//                    data += "&" + URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(Id, "UTF-8");
-//
-//                    URL url = new URL(link);
-//                    URLConnection conn = url.openConnection();
-//
-//                    conn.setDoOutput(true);
-//                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-//
-//                    wr.write(data);
-//                    wr.flush();
-//
-//                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//
-//                    StringBuilder sb = new StringBuilder();
-//                    String line = null;
-//
-//                    // Read Server Response
-//                    while ((line = reader.readLine()) != null) {
-//                        sb.append(line);
-//                        break;
-//                    }
-//                    return sb.toString();
-//                } catch (Exception e) {
-//                    return new String("Exception: " + e.getMessage());
-//                }
-//            }
-//        }
-//        InsertData task = new InsertData();
-//        task.execute(connectId, Id);
-//    }
 
     private class stopCall extends Thread {
 
@@ -1518,76 +1427,6 @@ public class CallActivity extends AppCompatActivity
         }
     }
 
-
-//    private void stopCall(final String Id) {
-//
-//        class InsertData extends AsyncTask<String, Void, String> {
-//            //ProgressDialog loading;
-//
-//            protected void onCancelled() {
-//                super.onCancelled();
-//            }
-//
-//            @Override
-//            protected void onPreExecute() {
-//                super.onPreExecute();
-//                //loading = ProgressDialog.show(CallActivity.this, "caling...", null, true, true);
-//                //Toast.makeText(getApplicationContext(), "외않되", Toast.LENGTH_SHORT). show();
-//            }
-//
-//            @Override
-//            protected void onPostExecute(String s) {
-//                super.onPostExecute(s);
-//                //loading.dismiss();
-//
-//                if (s.toString().equals("Disconnect")) {
-//                    Log.d("Disconnect", "DB초기화");
-//                }
-//            }
-//
-//            @Override
-//            protected String doInBackground(String... params) {
-//
-//                if (this.isCancelled()) {
-//                    // 비동기작업을 cancel해도 자동으로 취소해주지 않으므로,
-//                    // 작업중에 이런식으로 취소 체크를 해야 한다.
-//                    return null;
-//                }
-//
-//                try {
-//                    String Id = (String) params[0];
-//
-//                    String link = "http://13.124.94.107/stopCall.php";
-//                    String data = URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(Id, "UTF-8");
-//
-//                    URL url = new URL(link);
-//                    URLConnection conn = url.openConnection();
-//
-//                    conn.setDoOutput(true);
-//                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-//
-//                    wr.write(data);
-//                    wr.flush();
-//
-//                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//
-//                    StringBuilder sb = new StringBuilder();
-//                    String line = null;
-//
-//                    // Read Server Response
-//                    while ((line = reader.readLine()) != null) {
-//                        sb.append(line);
-//                        break;
-//                    }
-//                    return sb.toString();
-//                } catch (Exception e) {
-//                    return new String("Exception: " + e.getMessage());
-//                }
-//            }
-//        }
-//        InsertData task = new InsertData();
-//        task.execute(Id);
-//    }
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override

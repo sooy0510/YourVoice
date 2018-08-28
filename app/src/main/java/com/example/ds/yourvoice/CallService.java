@@ -279,6 +279,12 @@ public class CallService extends Service {
                         end = true;
                         //this.interrupt();
                         break;
+                    } else if(result.equals("receive")) {
+                        Intent broadcastIntent = new Intent();
+                        broadcastIntent.setAction("CALL_STOP_CHECK");
+                        sendBroadcast(broadcastIntent);
+                        end = true;
+                        break;
                     }
                 } catch (Exception e) {
                     Log.d("발신자전화서비스스레드 Exception", e.toString());

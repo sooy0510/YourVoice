@@ -476,6 +476,7 @@ public class CallActivity extends AppCompatActivity
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.hasChild("image")){
+                    urlLastPath = dataSnapshot.child("image").getValue(ImageDTO.class).urlLastPath;
                     Log.d("gggiii",database.getReference("image").toString());
                     Log.d("gggiii","사진추가");
                     Glide.with(CallActivity.context).load(dataSnapshot.child("image").getValue(ImageDTO.class).imageUrl).into(showImage);
@@ -519,6 +520,7 @@ public class CallActivity extends AppCompatActivity
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 //if(!dataSnapshot.getValue(ImageDTO.class).imageUrl.equals("")){  //imageurl 잇으면
                 if(dataSnapshot.hasChild("image")){
+                    urlLastPath = dataSnapshot.child("image").getValue(ImageDTO.class).urlLastPath;
                     Log.d("gggiii",database.getReference("image").toString());
                     Log.d("gggiii","사진추가");
                     Glide.with(CallActivity.context).load(dataSnapshot.child("image").getValue(ImageDTO.class).imageUrl).into(showImage);
@@ -712,10 +714,16 @@ public class CallActivity extends AppCompatActivity
         super.onStop();
         // NOTE : release() must be called on stop time.
 
+        Log.d("connecttt", "onStop");
+
         if(naverRecognizer!=null)
             naverRecognizer.getSpeechRecognizer().release();
 
+        //강제종료시
         if(flag != 1) {
+
+            Log.d("connecttt", "onStopFlag");
+
             if (callStatus != CallStatus.Default) {
                 Disconnect(findViewById(R.id.disconnect));
             }
@@ -1091,14 +1099,15 @@ public class CallActivity extends AppCompatActivity
     public void onRemoteCameraRemoved(RemoteCamera remoteCamera, Participant participant) {
         Log.d("connecttt", "onRemoteCameraRemoved");
       /* Existing camera became unavailable */
-        vc.hideView(R.id.videoFrame);
+        //vc.hideView(R.id.videoFrame);
+        Disconnect(findViewById(R.id.disconnect));
     }
 
     public void onRemoteCameraStateUpdated(RemoteCamera remoteCamera, Participant participant, Device.DeviceState state) {
         Log.d("connecttt", "onRemoteCameraStateUpdated");
     }
     /* Microphone event listener */
-    public void onLocalMicrophoneAdded(LocalMicrophone localMicrophone)    {
+    public void onLocalMicrophoneAdded(LocalMicrophone localMicrophone)  {
         Log.d("connecttt", "onLocalMicrophoneAdded");
         //vc.selectLocalMicrophone(localMicrophone);
     }
@@ -1171,13 +1180,18 @@ public class CallActivity extends AppCompatActivity
 
     // Message received from other participants
     public void onChatMessageReceived(Participant participant, ChatMessage chatMessage) {
-        Log.d("connecttt", "sendMessage");
-        if (chatMessage.equals("sendImage")) {
-            videoFrame.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1.0f));;
-            showImage.setVisibility(View.INVISIBLE);
-            showLoading.setVisibility(View.VISIBLE);
-            loading_animation.start();
+        if (chatMessage.body.equals("sendImage")) {
+            Log.d("connecttt", "sendMessage");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    videoFrame.setLayoutParams(new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1.0f));;
+                    showImage.setVisibility(View.INVISIBLE);
+                    showLoading.setVisibility(View.VISIBLE);
+                    loading_animation.start();
+                }
+            });
         }
     }
 

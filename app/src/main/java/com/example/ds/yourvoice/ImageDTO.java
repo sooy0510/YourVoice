@@ -6,7 +6,7 @@ package com.example.ds.yourvoice;
 
 public class ImageDTO {
     public String imageUrl;
-    public String title;
+    public String urlLastPath;
     public String description;
     public String uid;
     public String userid;

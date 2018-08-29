@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -105,6 +106,7 @@ public class CallActivity extends AppCompatActivity
     private LinearLayout videoFrame;
     private LinearLayout localFrame;
     private LinearLayout chatFrame;
+    private AnimationDrawable loading_animation;
 
 
     //clova
@@ -220,7 +222,10 @@ public class CallActivity extends AppCompatActivity
 
         handler = new RecognitionHandler(this);
 
-
+        ImageView loading = (ImageView) findViewById(R.id.showimage);
+        loading.setBackgroundResource(R.drawable.loading_animation);
+        loading_animation = (AnimationDrawable) loading.getBackground();
+        //출처: http://mainia.tistory.com/1119 [녹두장군 - 상상을 현실로]
 
         if (intent.getStringExtra("Caller") != null && intent.getStringExtra("Receiver") != null) {
             CLIENT_ID = "Us8JNMyTCu8dGWq1HCqh";
@@ -422,6 +427,11 @@ public class CallActivity extends AppCompatActivity
 
         flag = 0;
 
+        videoFrame.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1.0f));;
+        showImage.setVisibility(View.VISIBLE);
+        loading_animation.start();
+
         if(resultCode != RESULT_OK){
             return;
         }
@@ -467,9 +477,10 @@ public class CallActivity extends AppCompatActivity
                     Glide.with(CallActivity.context).load(dataSnapshot.child("image").getValue(ImageDTO.class).imageUrl).into(showImage);
                     closeImage.setVisibility(View.VISIBLE);
                     Log.d("gggiii","맨앞으로");
-                    showImage.setVisibility(View.VISIBLE);
-                    videoFrame.setLayoutParams(new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1.0f));;
+                    loading_animation.stop();
+//                    showImage.setVisibility(View.VISIBLE);
+//                    videoFrame.setLayoutParams(new LinearLayout.LayoutParams(
+//                            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1.0f));;
                 }else{
                     // 데이터를 읽어올 때 모든 데이터를 읽어오기때문에 List 를 초기화해주는 작업이 필요하다.
                     m_Adapter.clean();
@@ -508,7 +519,8 @@ public class CallActivity extends AppCompatActivity
                     Glide.with(CallActivity.context).load(dataSnapshot.child("image").getValue(ImageDTO.class).imageUrl).into(showImage);
                     closeImage.setVisibility(View.VISIBLE);
                     Log.d("gggiii","맨앞으로");
-                    showImage.setVisibility(View.VISIBLE);
+                    //showImage.setVisibility(View.VISIBLE);
+                    loading_animation.stop();
                 }else{
                     // 데이터를 읽어올 때 모든 데이터를 읽어오기때문에 List 를 초기화해주는 작업이 필요하다.
                     m_Adapter.clean();

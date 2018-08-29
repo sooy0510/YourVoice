@@ -51,11 +51,23 @@
                     <!--android:layout_height="300dp"-->
                 </LinearLayout>
 
-                <ImageView
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/showimage"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/showimage"/>
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/showloading"
+                        android:visibility="invisible"/>
+
+                </FrameLayout>
             </LinearLayout>
 
             <LinearLayout

@@ -136,13 +136,13 @@ public class CallService extends Service {
                     if (connectUser != null)
                         connectUser = null;
 
-                    while (connectUser == null && user != null) {
+                    try {
+                        thread.sleep(1000 * 2);
+                    } catch (Exception e) {
+                        Log.d("서비스스레드 Exception", e.toString());
+                    }
 
-                        try {
-                            thread.sleep(1000 * 1);
-                        } catch (Exception e) {
-                            Log.d("서비스스레드 Exception", e.toString());
-                        }
+                    while (connectUser == null && user != null) {
 
                         try {
                             Log.d("전화", "서비스스레드 While");

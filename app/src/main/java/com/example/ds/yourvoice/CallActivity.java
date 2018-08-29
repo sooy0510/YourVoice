@@ -264,7 +264,8 @@ public class CallActivity extends AppCompatActivity
         gallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                makeDialog();
+                //makeDialog();
+                selectAlbum();
             }
         });
 
@@ -278,12 +279,12 @@ public class CallActivity extends AppCompatActivity
                 storageRef.child("images").child(urlLastPath).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(CallActivity.this, "삭제 완료",Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(CallActivity.this, "삭제 완료",Toast.LENGTH_SHORT).show();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(CallActivity.this, "삭제 실패",Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(CallActivity.this, "삭제 실패",Toast.LENGTH_SHORT).show();
                     }
                 });
                 videoFrame.setLayoutParams(new LinearLayout.LayoutParams(
@@ -354,30 +355,30 @@ public class CallActivity extends AppCompatActivity
 
     private void makeDialog(){
 
-        AlertDialog.Builder alt_bld = new AlertDialog.Builder(CallActivity.this,R.style.Theme_AppCompat_Dialog);
-
-        alt_bld.setTitle("사진 업로드").setIcon(R.drawable.caller).setCancelable(
-
-                false).setNeutralButton("앨범선택",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialogInterface, int id) {
-                        Log.v("알림", "다이얼로그 > 앨범선택 선택");
-                        flag = 1;
-                        //앨범에서 선택
-                        selectAlbum();
-                    }
-                }).setNegativeButton("취소   ",
-
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Log.v("알림", "다이얼로그 > 취소 선택");
-                        // 취소 클릭. dialog 닫기.
-                        dialog.cancel();
-                    }
-                });
-
-        AlertDialog alert = alt_bld.create();
-        alert.show();
+//        AlertDialog.Builder alt_bld = new AlertDialog.Builder(CallActivity.this,R.style.Theme_AppCompat_Dialog);
+//
+//        alt_bld.setTitle("사진 업로드").setIcon(R.drawable.caller).setCancelable(
+//
+//                false).setNeutralButton("앨범선택",
+//                new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialogInterface, int id) {
+//                        Log.v("알림", "다이얼로그 > 앨범선택 선택");
+//                        flag = 1;
+//                        //앨범에서 선택
+//                        selectAlbum();
+//                    }
+//                }).setNegativeButton("취소   ",
+//
+//                new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        Log.v("알림", "다이얼로그 > 취소 선택");
+//                        // 취소 클릭. dialog 닫기.
+//                        dialog.cancel();
+//                    }
+//                });
+//
+//        AlertDialog alert = alt_bld.create();
+//        alert.show();
     }
 
 
@@ -405,6 +406,8 @@ public class CallActivity extends AppCompatActivity
     public void selectAlbum(){
         //앨범에서 이미지 가져옴
         //앨범 열기
+        flag = 1;
+
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
         intent.setType("image/*");

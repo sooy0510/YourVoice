@@ -434,6 +434,7 @@ public class CallActivity extends AppCompatActivity
         showImage.setVisibility(View.INVISIBLE);
         showLoading.setVisibility(View.VISIBLE);
         loading_animation.start();
+        vc.sendChatMessage("sendImage");
 
         if(resultCode != RESULT_OK){
             return;
@@ -1170,6 +1171,14 @@ public class CallActivity extends AppCompatActivity
 
     // Message received from other participants
     public void onChatMessageReceived(Participant participant, ChatMessage chatMessage) {
+        Log.d("connecttt", "sendMessage");
+        if (chatMessage.equals("sendImage")) {
+            videoFrame.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1.0f));;
+            showImage.setVisibility(View.INVISIBLE);
+            showLoading.setVisibility(View.VISIBLE);
+            loading_animation.start();
+        }
     }
 
     @Override

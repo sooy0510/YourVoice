@@ -4,7 +4,6 @@
     android:id="@+id/activity_keyboard"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
     tools:context="com.example.ds.yourvoice.CallActivity">
 
     <!-- <Button
@@ -59,11 +58,13 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_gravity="center"
                         android:id="@+id/showimage"/>
 
                     <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
                         android:id="@+id/showloading"
                         android:visibility="invisible"/>
 

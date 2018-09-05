@@ -35,6 +35,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.example.ds.yourvoice.utils.AudioWriterPCM;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -107,8 +108,6 @@ public class CallActivity extends AppCompatActivity
     private LinearLayout videoFrame;
     private LinearLayout localFrame;
     private LinearLayout chatFrame;
-    private AnimationDrawable loading_animation;
-
 
     //clova
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -225,11 +224,6 @@ public class CallActivity extends AppCompatActivity
         friendId = intent.getStringExtra("friendId");
 
         handler = new RecognitionHandler(this);
-
-        ImageView loading = (ImageView) findViewById(R.id.showloading);
-        loading.setBackgroundResource(R.drawable.loading_animation);
-        loading_animation = (AnimationDrawable) loading.getBackground();
-        //출처: http://mainia.tistory.com/1119 [녹두장군 - 상상을 현실로]
 
         if (intent.getStringExtra("Caller") != null && intent.getStringExtra("Receiver") != null) {
             CLIENT_ID = "Us8JNMyTCu8dGWq1HCqh";
@@ -444,7 +438,8 @@ public class CallActivity extends AppCompatActivity
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1.0f));;
         showImage.setVisibility(View.INVISIBLE);
         showLoading.setVisibility(View.VISIBLE);
-        loading_animation.start();
+        GlideDrawableImageViewTarget gifImage = new GlideDrawableImageViewTarget(showLoading);
+        Glide.with(this).load(R.drawable.loading).into(gifImage);
         vc.sendChatMessage("sendImage");
 
         if(resultCode != RESULT_OK){
@@ -494,7 +489,6 @@ public class CallActivity extends AppCompatActivity
                     closeImage.setVisibility(View.VISIBLE);
                     Log.d("gggiii","맨앞으로");
                     showImage.setVisibility(View.VISIBLE);
-                    loading_animation.stop();
                     showLoading.setVisibility(View.INVISIBLE);
 //                    videoFrame.setLayoutParams(new LinearLayout.LayoutParams(
 //                            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1.0f));;
@@ -539,7 +533,6 @@ public class CallActivity extends AppCompatActivity
                     closeImage.setVisibility(View.VISIBLE);
                     Log.d("gggiii","맨앞으로");
                     showImage.setVisibility(View.VISIBLE);
-                    loading_animation.stop();
                     showLoading.setVisibility(View.INVISIBLE);
                 }else{
                     // 데이터를 읽어올 때 모든 데이터를 읽어오기때문에 List 를 초기화해주는 작업이 필요하다.
@@ -1119,7 +1112,6 @@ public class CallActivity extends AppCompatActivity
         Log.d("connecttt", "onRemoteCameraRemoved");
       /* Existing camera became unavailable */
         //vc.hideView(R.id.videoFrame);
-        Disconnect(findViewById(R.id.disconnect));
     }
 
     public void onRemoteCameraStateUpdated(RemoteCamera remoteCamera, Participant participant, Device.DeviceState state) {
@@ -1208,7 +1200,8 @@ public class CallActivity extends AppCompatActivity
                             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1.0f));;
                     showImage.setVisibility(View.INVISIBLE);
                     showLoading.setVisibility(View.VISIBLE);
-                    loading_animation.start();
+                    GlideDrawableImageViewTarget gifImage = new GlideDrawableImageViewTarget(showLoading);
+                    Glide.with(CallActivity.this).load(R.drawable.loading).into(gifImage);
                 }
             });
         }

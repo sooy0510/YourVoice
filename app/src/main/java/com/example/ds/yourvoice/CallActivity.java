@@ -56,6 +56,7 @@ import com.vidyo.VidyoClient.Device.LocalCamera;
 import com.vidyo.VidyoClient.Device.LocalMicrophone;
 import com.vidyo.VidyoClient.Device.LocalSpeaker;
 import com.vidyo.VidyoClient.Device.RemoteCamera;
+import com.vidyo.VidyoClient.Device.RemoteMicrophone;
 import com.vidyo.VidyoClient.Endpoint.ChatMessage;
 import com.vidyo.VidyoClient.Endpoint.Participant;
 
@@ -78,7 +79,7 @@ import static com.vidyo.VidyoClient.Connector.Connector.ConnectorViewStyle.VIDYO
 
 public class CallActivity extends AppCompatActivity
         implements Connector.IConnect, Connector.IRegisterParticipantEventListener, Connector.IRegisterMessageEventListener, Connector.IRegisterLocalCameraEventListener,
-        Connector.IRegisterRemoteCameraEventListener, Connector.IRegisterLocalMicrophoneEventListener, Connector.IRegisterLocalSpeakerEventListener {
+        Connector.IRegisterRemoteCameraEventListener, Connector.IRegisterLocalMicrophoneEventListener, Connector.IRegisterLocalSpeakerEventListener, Connector.IRegisterRemoteMicrophoneEventListener {
 
     private Intent intent;
     private IntentFilter mIntentFilter;
@@ -144,7 +145,6 @@ public class CallActivity extends AppCompatActivity
     private Uri file;
     private String urlLastPath;
     private ChildEventListener iChildEventListener;
-
 
     enum CallStatus {
         Default,
@@ -326,8 +326,8 @@ public class CallActivity extends AppCompatActivity
                                 LinearLayout.LayoutParams plControl = (LinearLayout.LayoutParams)chatFrame.getLayoutParams();
                                 Log.d("tttttttt", plControl.topMargin+"");
                                 Log.d("tttttttt", plControl.bottomMargin+"");
-                                plControl.topMargin = 500;
-                                plControl.height = 505;
+                                plControl.topMargin = 530;
+                                plControl.height = 475;
                                 //plControl.setMargins(0,400,0,200);
                                 chatFrame.setLayoutParams(plControl);
                                /* final int bottomMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics());
@@ -1030,6 +1030,7 @@ public class CallActivity extends AppCompatActivity
         vc.registerRemoteCameraEventListener(this);
         vc.registerLocalMicrophoneEventListener(this);
         vc.registerLocalSpeakerEventListener(this);
+        vc.registerRemoteMicrophoneEventListener(this);
 
      /* Register for local window share and local monitor events */
         //vc.registerLocalMonitorEventListener(this);
@@ -1147,6 +1148,20 @@ public class CallActivity extends AppCompatActivity
     public void onLocalSpeakerStateUpdated(LocalSpeaker localSpeaker, Device.DeviceState state) {
         Log.d("connecttt", "onLocalSpeakerStateUpdated");
         Log.d("connecttt", state.toString());
+    }
+
+    @Override
+    public void onRemoteMicrophoneAdded(RemoteMicrophone remoteMicrophone, Participant participant) {
+        Log.d("connecttt", "onRemoteMicrophoneAdded");
+    }
+    @Override
+    public void onRemoteMicrophoneRemoved(RemoteMicrophone remoteMicrophone, Participant participant) {
+        Log.d("connecttt", "onRemoteMicrophoneRemoved");
+    }
+    @Override
+    public void onRemoteMicrophoneStateUpdated(RemoteMicrophone remoteMicrophone, Participant participant, Device.DeviceState deviceState) {
+        Log.d("connecttt", "onRemoteMicrophoneStateUpdated");
+        Log.d("connecttt", deviceState.toString());
     }
 
     /******************************************************************************/

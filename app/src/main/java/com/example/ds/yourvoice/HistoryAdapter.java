@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -157,14 +158,14 @@ public class HistoryAdapter extends BaseAdapter{
 
 
             // 리스트 아이템을 터치 했을 때 이벤트 발생
-            /*convertView.setOnClickListener(new View.OnClickListener() {
+            convertView.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
                     // 터치 시 해당 아이템 이름 출력
-                    Toast.makeText(context, "리스트 클릭 : "+h_List.get(pos), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "리스트 클릭 : "+h_List.get(pos), Toast.LENGTH_SHORT).show();
                 }
-            });*/
+            });
 
 
 

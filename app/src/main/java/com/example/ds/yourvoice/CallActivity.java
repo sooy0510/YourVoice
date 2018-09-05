@@ -21,6 +21,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -215,6 +216,7 @@ public class CallActivity extends AppCompatActivity
         //firebase
         database = FirebaseDatabase.getInstance();
         storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReferenceFromUrl("gs://yourvoice-577c9.appspot.com");
 
         intent = getIntent();
 
@@ -283,6 +285,7 @@ public class CallActivity extends AppCompatActivity
             public void onClick(View view) {
                 showImage.setVisibility(View.INVISIBLE);
                 database.getReference("chats").child(chatRoom).child(chatCntStr).child("image").setValue(null);
+                Log.d("gggiii",urlLastPath);
                 storageRef.child("images").child(urlLastPath).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -327,9 +330,17 @@ public class CallActivity extends AppCompatActivity
                                 // 키보드 올라왔을때
                                 Log.d("connecttt","키보드 올라옴");
                                 LinearLayout.LayoutParams plControl = (LinearLayout.LayoutParams)chatFrame.getLayoutParams();
-                                plControl.topMargin = 470;
-                                plControl.height = 535;
+                                Log.d("tttttttt", plControl.topMargin+"");
+                                Log.d("tttttttt", plControl.bottomMargin+"");
+                                plControl.topMargin = 500;
+                                plControl.height = 505;
+                                //plControl.setMargins(0,400,0,200);
                                 chatFrame.setLayoutParams(plControl);
+                               /* final int bottomMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics());
+                                final int height = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 110, getResources().getDisplayMetrics());
+                                plControl.bottomMargin = bottomMargin;
+                                plControl.height = height;
+                                chatFrame.setLayoutParams(plControl);*/
 
                             }
                         });
@@ -477,9 +488,9 @@ public class CallActivity extends AppCompatActivity
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.hasChild("image")){
                     urlLastPath = dataSnapshot.child("image").getValue(ImageDTO.class).urlLastPath;
-                    Log.d("gggiii",database.getReference("image").toString());
-                    Log.d("gggiii","사진추가");
-                    Glide.with(CallActivity.context).load(dataSnapshot.child("image").getValue(ImageDTO.class).imageUrl).into(showImage);
+                    Log.d("gggiii",dataSnapshot.child("image").getValue(ImageDTO.class).urlLastPath);
+                    //Log.d("gggiii","사진추가");
+                    Glide.with(getApplicationContext()).load(dataSnapshot.child("image").getValue(ImageDTO.class).imageUrl).into(showImage);
                     closeImage.setVisibility(View.VISIBLE);
                     Log.d("gggiii","맨앞으로");
                     showImage.setVisibility(View.VISIBLE);
@@ -521,9 +532,10 @@ public class CallActivity extends AppCompatActivity
                 //if(!dataSnapshot.getValue(ImageDTO.class).imageUrl.equals("")){  //imageurl 잇으면
                 if(dataSnapshot.hasChild("image")){
                     urlLastPath = dataSnapshot.child("image").getValue(ImageDTO.class).urlLastPath;
-                    Log.d("gggiii",database.getReference("image").toString());
-                    Log.d("gggiii","사진추가");
-                    Glide.with(CallActivity.context).load(dataSnapshot.child("image").getValue(ImageDTO.class).imageUrl).into(showImage);
+                    Log.d("gggiii",dataSnapshot.child("image").getValue(ImageDTO.class).urlLastPath);
+                    //Log.d("gggiii",database.getReference("image").toString());
+                    //Log.d("gggiii","사진추가");
+                    Glide.with(getApplicationContext()).load(dataSnapshot.child("image").getValue(ImageDTO.class).imageUrl).into(showImage);
                     closeImage.setVisibility(View.VISIBLE);
                     Log.d("gggiii","맨앞으로");
                     showImage.setVisibility(View.VISIBLE);
@@ -583,7 +595,7 @@ public class CallActivity extends AppCompatActivity
     /* ---------------------------------------------- 사진 storage에 업로드 ----------------------------------------------------------- */
     public void upload(String uri){
         //Log.d("gggggg",uri);  //getpath까지 한 주소
-        storageRef = storage.getReferenceFromUrl("gs://yourvoice-577c9.appspot.com");
+        //storageRef = storage.getReferenceFromUrl("gs://yourvoice-577c9.appspot.com");
         final String chatRoom = user + connectUser;
         file = Uri.fromFile(new File(uri));
 
@@ -607,6 +619,7 @@ public class CallActivity extends AppCompatActivity
 
                 ImageDTO imageDTO = new ImageDTO();
                 imageDTO.imageUrl = photoUrl.toString();
+                imageDTO.urlLastPath = urlLastPath;
 
 
                 //database.getReference("chats").child(chatRoom).child(chatCntStr).child(formattedDate);
@@ -1068,6 +1081,12 @@ public class CallActivity extends AppCompatActivity
         vc.showViewAt(videoFrame, 0, 0, videoFrame.getWidth(), videoFrame.getHeight());
 
 
+        //키보드 보이게
+        sendText.setFocusableInTouchMode(true);
+        sendText.setClickable(true);
+        sendText.setFocusable(true);
+
+
 //        if(callStatus == CallStatus.Caller) {
 //            ImageButton ibtn = findViewById(R.id.disconnect);
 //            ibtn.bringToFront();
@@ -1153,11 +1172,11 @@ public class CallActivity extends AppCompatActivity
                 gallery.setVisibility(View.VISIBLE);
             }
         });
-
+/*
         //키보드 보이게
         sendText.setFocusableInTouchMode(true);
         sendText.setClickable(true);
-        sendText.setFocusable(true);
+        sendText.setFocusable(true);*/
     }
 
     // Participant Left

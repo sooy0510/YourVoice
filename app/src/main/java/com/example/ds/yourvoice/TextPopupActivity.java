@@ -49,28 +49,29 @@ public class TextPopupActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //타이틀바 없애기
+
+        /* 타이틀바 없애기 */
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         setContentView(R.layout.text_popup);
 
         iv = findViewById(R.id.call_icon);
 
-        //UI 객체생성
+        /* UI 객체생성 */
         final TextView hfriend = (TextView)findViewById(R.id.hfriend);
         final TextView hdate = (TextView)findViewById(R.id.hdate);
 
         h_Adapter = new HistoryAdapter();
 
-        // Xml에서 추가한 ListView 연결
+        /* Xml에서 추가한 ListView 연결 */
         h_ListView = (ListView) findViewById(R.id.txtText);
 
-        // ListView에 어댑터 연결
+        /* ListView에 어댑터 연결 */
         h_ListView.setAdapter(h_Adapter);
 
 
 
-        //데이터 가져오기
+        /* 데이터 가져오기 */
         Intent intent = getIntent();
         final String chatroom = intent.getStringExtra("chatRoom");
         final String chatcnt = intent.getStringExtra("chatcnt");
@@ -79,7 +80,6 @@ public class TextPopupActivity extends Activity {
         final String userId = intent.getStringExtra("userId");
         final String date = intent.getStringExtra("date");
         final String fname = intent.getStringExtra("fname");
-        //txtText.setText(data);
 
         DatabaseReference databaseReference = firebaseDatabase.getReference("chats").child(chatroom).child(chatcnt).child("text");
 
@@ -91,10 +91,9 @@ public class TextPopupActivity extends Activity {
                 h_Adapter.clean();
                 String nstring = date;
                 String tranf="";
-                //DateFormat date1 = new SimpleDateFormat("yyyyMMddhhmmss");
+
+                /* 날짜 포맷형식 */
                 try {
-                    //Date date1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date);
-                    //nstring = new SimpleDateFormat("yyyy년 MM월 dd일").format(date1);
                     DateFormat date1 = new SimpleDateFormat("yyyyMMddHHmmss");
                     Date date2 = date1.parse(nstring);
                     SimpleDateFormat transFormat = new SimpleDateFormat("yyyy년 MM월 dd일 HH:mm:ss");
@@ -111,24 +110,22 @@ public class TextPopupActivity extends Activity {
                     hfriend.setText(fname);
                     iv.setImageDrawable(getResources().getDrawable(R.drawable.baseline_arrow_back_red_18));
                 }
-
                 hdate.setText(tranf);
 
+
+                /* 자막 */
                 if(dataSnapshot.getChildrenCount() == 0){
                     h_Adapter.add("자막내역이 없음", 2);
                 }
                 for (DataSnapshot messageData : dataSnapshot.getChildren()) {
-                    //String msg = messageData.getValue().toString();
                     Chat chat = messageData.getValue(Chat.class);
                     if (userId.equals(caller)) { //사용자 = 발신자
-                        //hfriend.setText("수신자  "+receiver);
                         if (userId.equals(chat.user)) { //사용자 = 채팅의 user
                             h_Adapter.add(chat.text, 1);
                         } else {
                             h_Adapter.add(chat.text, 0);
                         }
                     } else { //사용자 = 수신자
-                        //hfriend.setText("발신자  "+caller);
                         if (receiver.equals(chat.user)) { //사용자 = 채팅의 user
                             h_Adapter.add(chat.text, 1);
                         } else {
@@ -136,10 +133,7 @@ public class TextPopupActivity extends Activity {
                         }
                     }
                 }
-                // notifyDataSetChanged를 안해주면 ListView 갱신이 안됨
                 h_Adapter.notifyDataSetChanged();
-                // ListView 의 위치를 마지막으로 보내주기 위함
-                //h_ListView.setSelection(h_Adapter.getCount() - 1);
             }
 
             @Override
@@ -149,7 +143,7 @@ public class TextPopupActivity extends Activity {
         });
     }
 
-    //확인 버튼 클릭
+    /* 확인 버튼 클릭 */
     public void mOnClose(View v){
         //데이터 전달하기
         Intent intent = new Intent();

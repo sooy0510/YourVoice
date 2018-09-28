@@ -22,9 +22,5 @@ public class CallBroadcastReceiver extends BroadcastReceiver{
             cIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(cIntent);
         }
-
-//        if(intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
-//
-//        }
     }
 }

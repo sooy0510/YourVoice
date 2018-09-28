@@ -45,8 +45,6 @@ public class LoginActivity extends AppCompatActivity {
         System.loadLibrary("native-lib");
     }
 
-    //private String userId;
-
     //자동로그인
     private SharedPreferences loginData;
     private String autoId, autoPw, autoPhone, autoName;
@@ -74,14 +72,6 @@ public class LoginActivity extends AppCompatActivity {
             finish();
         }
     }
-//
-//    public String getUserId(){
-//        return userId;
-//    }
-//
-//    public void setUserId(String userId) {
-//        this.userId = userId;
-//    }
 
     // custom toast 만들기
     public void makeToast(String s, Drawable d) {
@@ -109,18 +99,14 @@ public class LoginActivity extends AppCompatActivity {
 
     private void loginCheck(final String Id, String Pw){
         class InsertData extends AsyncTask<String, Void, String> {
-            //ProgressDialog loading;
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                //loading = ProgressDialog.show(LoginActivity.this, "login...", null, true, true);
-                //Toast.makeText(getApplicationContext(), "외않되", Toast.LENGTH_SHORT). show();
             }
 
             @Override
             protected void  onPostExecute(String s) {
                 super.onPostExecute(s);
-                //loading.dismiss();
 
                 String usermsg = "";
                 String userphone = "";
@@ -140,8 +126,6 @@ public class LoginActivity extends AppCompatActivity {
                         username = temp.get("username").toString();
 
                     }
-                    //Log.e("ssssssssssssssss",flagId.toString());
-                    //Toast.makeText(getApplicationContext(), usermsg, Toast.LENGTH_SHORT). show();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

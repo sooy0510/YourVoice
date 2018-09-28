@@ -31,19 +31,18 @@ public class MessageAdapter extends BaseAdapter {
     }
 
     private List<ListContents> m_List = new ArrayList<ListContents>();
-    //private ArrayList m_List;
+
     public MessageAdapter() {
         m_List = new ArrayList();
     }
+
     // 외부에서 아이템 추가 요청 시 사용
     public void add(String _msg,int _type) {
-
         m_List.add(new ListContents(_msg,_type));
     }
 
     // 외부에서 리스트 삭제 요청 시 사용
     public void clean() {
-
         m_List.clear();
     }
 
@@ -130,9 +129,7 @@ public class MessageAdapter extends BaseAdapter {
         }
 
 
-
         // Text 등록
-        //text.setText(h_List.get(position).msg);
         text.setText(save);
 
 
@@ -154,31 +151,6 @@ public class MessageAdapter extends BaseAdapter {
             viewRight.setVisibility(View.GONE);
             viewLeft.setVisibility(View.GONE);
         }
-
-
-
-        // 리스트 아이템을 터치 했을 때 이벤트 발생
-        /*convertView.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // 터치 시 해당 아이템 이름 출력
-                Toast.makeText(context, "리스트 클릭 : "+m_List.get(pos), Toast.LENGTH_SHORT).show();
-            }
-        });*/
-
-
-
-        // 리스트 아이템을 길게 터치 했을때 이벤트 발생
-        /*convertView.setOnLongClickListener(new View.OnLongClickListener() {
-
-            @Override
-            public boolean onLongClick(View v) {
-                // 터치 시 해당 아이템 이름 출력
-                Toast.makeText(context, "리스트 롱 클릭 : "+m_List.get(pos), Toast.LENGTH_SHORT).show();
-                return true;
-            }
-        });*/
 
         return convertView;
     }

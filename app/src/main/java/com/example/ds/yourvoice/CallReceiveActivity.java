@@ -50,7 +50,6 @@ public class CallReceiveActivity extends AppCompatActivity {
         registerReceiver(mReceiver, mIntentFilter);
 
         cIntent = new Intent(this, CallService.class);
-        //stopService(cIntent);
 
         Intent intent = getIntent();
         callerId = intent.getStringExtra("callerID");
@@ -113,11 +112,6 @@ public class CallReceiveActivity extends AppCompatActivity {
                 }
 
                 if(num.equals("0")) { Log.d("callReceiverActivity", "전화 종료");
-//                    Intent broadcastIntent = new Intent();
-//                    broadcastIntent.setAction("ACTION.RESTART.CallService");
-//                    broadcastIntent.setFlags(Intent.FLAG_RECEIVER_REPLACE_PENDING);
-//                    broadcastIntent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-//                    sendBroadcast(broadcastIntent);
                     startService(cIntent);
                     finish();
                 }
@@ -179,10 +173,7 @@ public class CallReceiveActivity extends AppCompatActivity {
         Intent intent = new Intent(CallReceiveActivity.this, CallActivity.class);
         intent.putExtra("Caller", caller);
         intent.putExtra("Receiver", receiver);
-        //startActivity(intent);
-        //finish();
         startActivityForResult(intent, 0);
-        //stopService(cIntent);
     }
 
     @Override

@@ -15,8 +15,6 @@ public class RListViewItem {
     private String chatCnt ;
     private String callerStr ;
     private String receiverStr ;
-    private String checkVisibility ;
-    private String fName ;
 
 
     public void setIcon(Drawable icon) {

@@ -216,17 +216,13 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
                 // TODO Auto-generated method stub
                 String strMsg;
                 strMsg = tabId;
-                //Toast.makeText(getApplicationContext(), strMsg, Toast.LENGTH_SHORT). show();
 
                 if (strMsg.equals("Tab1")) {
-                    //tabHost.getTabWidget().getChildAt(0).setBackgroundColor(Color.parseColor("#7392B5")); //배경
-                    //tabHost.getTabWidget().getChildAt(0).setin
                     /* 기존에 있던 어댑터 삭제*/
                     f_adapter.clear();
+
                     /* 아이템 추가 및 어댑터 등록 */
                     fArrayList = new ArrayList<>();
-
-                    //tab_tv.setTextColor(getResources().getColor(R.color.colorPrimary));
 
                     friendData task = new friendData();
                     task.execute("http://13.124.94.107/getFriendList.php");
@@ -235,10 +231,9 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
                 if (strMsg.equals("Tab2")) {
                     /* 기존에 있던 어댑터 삭제*/
                     r_adapter.clear();
+
                     /* 아이템 추가 및 어댑터 등록 */
                     rArrayList = new ArrayList<>();
-
-                    //tab_tv2.setTextColor(getResources().getColor(R.color.colorPrimary));
 
                     recentCallData task = new recentCallData();
                     task.execute("http://13.124.94.107/getRecentCallList.php");
@@ -249,12 +244,10 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
         PermissionListener permissionlistener = new PermissionListener() {
             @Override
             public void onPermissionGranted() {
-                //Toast.makeText(MainActivity.this, "권한 허가", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onPermissionDenied(ArrayList<String> deniedPermissions) {
-                //Toast.makeText(MainActivity.this, "권한 거부\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
             }
         };
         //출처: http://gun0912.tistory.com/61?category=560271 [박상권의    삽질블로그]
@@ -302,34 +295,8 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
     public boolean onOptionsItemSelected(MenuItem item) {
         //return super.onOptionsItemSelected(item);
         switch (item.getItemId()) {
-//            case R.id.action_settings1:
-//                // User chose the "Settings" item, show the app settings UI...
-//                Toast.makeText(getApplicationContext(), "환경설정 버튼 클릭됨", Toast.LENGTH_LONG).show();
-//                return true;
+            /* 로그아웃 */
             case R.id.logout:
-//                new AlertDialog.Builder(this)
-//                        .setTitle("로그아웃").setMessage("로그아웃 하시겠습니까?")
-//                        .setPositiveButton("로그아웃", new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int whichButton) {
-//                                logout(userId);
-//                                Intent i = new Intent(MainActivity.this, LoginActivity.class);
-//                                //i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//                                startActivity(i);
-//                                SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
-//                                SharedPreferences.Editor editor = auto.edit();
-//                                editor.clear();
-//                                editor.commit();
-//                                Toast.makeText(MainActivity.this, "로그아웃", Toast.LENGTH_SHORT).show();
-//                                finish();
-//                            }
-//                        })
-//                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int whichButton) {
-//
-//                            }
-//                        })
-//                        .show();
-
                 dialog_state="logout";
 
                 CustomDialog dialog = new CustomDialog(this);
@@ -354,7 +321,6 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
     public void dialogLogout() {
         logout(userId);
         Intent i = new Intent(MainActivity.this, LoginActivity.class);
-        //i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(i);
         SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = auto.edit();
@@ -365,9 +331,10 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
     /* ---------------------------------------------- 설정 버튼 끝 ----------------------------------------------------------- */
 
     /* ---------------------------------------------- TAB1의 버튼 클릭 ----------------------------------------------------------- */
+
+    /* 통화버튼 */
     @Override
     public void onListBtnClick1(View v, final int position) {
-        //전화버튼 눌렀을때
         if (v.getId() == R.id.fphone) {
             FListViewItem friend = new FListViewItem();
             friend = (FListViewItem) f_adapter.getItem(position);
@@ -376,63 +343,10 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
             //Toast.makeText(getApplicationContext(), id, Toast.LENGTH_LONG).show();
             //calxxxxxx ml(id, v);
             startCall(id, userId, fname);
-        }/* else {
-            new AlertDialog.Builder(this)
-                    .setTitle("친구 삭제")
-                    .setMessage("삭제하시겠습니까?")
-                    .setIcon(R.drawable.deletefriend)
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            // 확인시 처리 로직
-                            FListViewItem s = new FListViewItem();
-                            s = (FListViewItem) f_adapter.getItem(position);
-                            String id = s.getId();
-
-                            deleteFriend(position, id);
-                        }
-                    })
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            // 취소시 처리 로직
-                        }
-                    })
-                    .show();
-        }*/
+        }
     }
 
-
-    //@Override
-//    public boolean onListBtnLongClick1(View v, final int position) {
-//        new AlertDialog.Builder(this)
-//                .setTitle("친구 삭제")
-//                .setMessage("삭제하시겠습니까?")
-//                .setIcon(R.drawable.deletefriend)
-//                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int whichButton) {
-//                        // 확인시 처리 로직
-//                        FListViewItem s = new FListViewItem();
-//                        s = (FListViewItem) f_adapter.getItem(position);
-//                        String id = s.getId();
-//
-//                        deleteFriend(position, id);
-//                    }
-//                })
-//                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int whichButton) {
-//                        // 취소시 처리 로직
-//                    }
-//                })
-//                .show();
-//        return true;
-//    }
-
-    public void dialogDeleteFriend(){
-        FListViewItem s = new FListViewItem();
-        s = (FListViewItem) f_adapter.getItem(pos);
-        String id = s.getId();
-        deleteFriend(pos, id);
-    }
-
+    /* 친구삭제 다이얼로그 */
     public boolean onListBtnLongClick1(View v, final int position) {
 
         dialog_state = "deletef";
@@ -454,13 +368,21 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
         return true;
     }
 
+    /* 친구삭제 */
+    public void dialogDeleteFriend(){
+        FListViewItem s = new FListViewItem();
+        s = (FListViewItem) f_adapter.getItem(pos);
+        String id = s.getId();
+        deleteFriend(pos, id);
+    }
+
     /* ---------------------------------------------- TAB1의 버튼 클릭 끝----------------------------------------------------------- */
 
 
     /* ---------------------------------------------- TAB2의 버튼 클릭 ----------------------------------------------------------- */
     @Override
     public void onListBtnClick2(View v, final int position) {
-        //전화버튼 눌렀을때
+        //전화버튼
         if (v.getId() == R.id.rphone) {
             RListViewItem friend = new RListViewItem();
             friend = (RListViewItem) r_adapter.getItem(position);
@@ -468,6 +390,7 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
             String fname =  friend.getName();
             startCall(id, userId, fname);
         } else {
+            //자막기록버튼
             Intent intent = new Intent(this, TextPopupActivity.class);
 
             RListViewItem friend = new RListViewItem();
@@ -528,22 +451,17 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
 
     /* ---------------------------------------------- DB에서 친구데이터 가져오기 ----------------------------------------------------------- */
     private class friendData extends AsyncTask<String, Void, String> {
-        //ProgressDialog progressDialog;
         String errorString = null;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
-//            progressDialog = ProgressDialog.show(MainActivity.this,
-//                    "Please Wait", null, true, true);
         }
 
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
-            //progressDialog.dismiss();
             Log.d(FTAG, "response  - " + result);
 
             if (result == null) {
@@ -558,7 +476,6 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
             String serverURL = params[0];
 
             try {
-                //String link = "http://13.124.94.107/addFriend.php";
                 String data = URLEncoder.encode("userId", "UTF-8") + "=" + URLEncoder.encode(userId, "UTF-8");
 
                 URL url = new URL(serverURL);
@@ -653,9 +570,6 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
-//            progressDialog = ProgressDialog.show(MainActivity.this,
-//                    "Please Wait", null, true, true);
         }
 
         @Override
@@ -677,9 +591,7 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
             String serverURL = params[0];
 
             try {
-                //String link = "http://13.124.94.107/addFriend.php";
                 String data = URLEncoder.encode("userId", "UTF-8") + "=" + URLEncoder.encode(userId, "UTF-8");
-                //data += "&" + URLEncoder.encode("wFlag", "UTF-8") + "=" + URLEncoder.encode(friendId, "UTF-8");
 
                 URL url = new URL(serverURL);
                 URLConnection conn = url.openConnection();
@@ -775,7 +687,7 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
                 }else{  //사용자가 발신자
                     ritem.setIcon(ContextCompat.getDrawable(this, R.drawable.baseline_arrow_forward_green_18));
                 }
-                //ritem.setIcon(ContextCompat.getDrawable(this, R.drawable.icon));
+
                 ritem.setName(rritem.get(RTAG_NAME));
                 ritem.setId(rritem.get(RTAG_ID));
                 ritem.setDate(rritem.get(RTAG_DATE));
@@ -813,7 +725,6 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
 
     /* ---------------------------------------------- 친구 삭제 ----------------------------------------------------------- */
     public void deleteFriend(int pos, String id) {
-        //String userPhone = intent.getStringExtra("userId");
         deleteFriendFromDatabase(pos, userId, id);
     }
 
@@ -822,24 +733,20 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
     /* ---------------------------------------------- DB에 친구 번호 추가 ----------------------------------------------------------- */
     private void insertToDatabase(final String userId, final String friendId) {
         class InsertData extends AsyncTask<String, Void, String> {
-            //ProgressDialog loading;
 
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                //loading = ProgressDialog.show(MainActivity.this, "Please Wait", null, true, true);
             }
 
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                //loading.dismiss();
                 if(s.equals("추가되었습니다"))
                     makeToast(s, getResources().getDrawable(R.drawable.baseline_check_white_24));
                 else
                     makeToast(s, getResources().getDrawable(R.drawable.baseline_clear_white_24));
                 addId.setText("");
-                //addPhone.requestFocus();
             }
 
             @Override
@@ -849,30 +756,23 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
                     String userId = (String) params[0];
                     String friendId = (String) params[1];
 
-
                     String link = "http://13.124.94.107/addFriend.php";
                     String data = URLEncoder.encode("UserId", "UTF-8") + "=" + URLEncoder.encode(userId, "UTF-8");
                     data += "&" + URLEncoder.encode("FriendId", "UTF-8") + "=" + URLEncoder.encode(friendId, "UTF-8");
 
-
                     URL url = new URL(link);
                     URLConnection conn = url.openConnection();
-
 
                     conn.setDoOutput(true);
                     OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
 
-
                     wr.write(data);
                     wr.flush();
 
-
                     BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
 
                     StringBuilder sb = new StringBuilder();
                     String line = null;
-
 
                     // Read Server Response
                     while ((line = reader.readLine()) != null) {
@@ -895,18 +795,14 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
     /* ---------------------------------------------- DB에 친구 번호 삭제 ----------------------------------------------------------- */
     private void deleteFriendFromDatabase(final int pos, String userId, String friendId) {
         class DeleteFriendData extends AsyncTask<String, Void, String> {
-            //ProgressDialog loading;
-
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                //loading = ProgressDialog.show(MainActivity.this, "Please Wait", null, true, true);
             }
 
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                //loading.dismiss();
                 if(s.equals("삭제되었습니다"))
                     makeToast(s, getResources().getDrawable(R.drawable.baseline_check_white_24));
                 else
@@ -975,21 +871,6 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
         t1.start();
         Log.d("dddddddd", caller+receiver+chatcnt);
         String wFlag = "";
-//        if(cdrcFlag.equals("Y")){  //mysql과 firebase에서 완전 삭제
-//            Log.d("ddddddd","cdrcFlag가 Y임 완전 삭제");
-//            deleteRecentCallFromDatabase(pos, userId, id, chatcnt, caller, receiver);
-//        }else{
-//            if(userId.equals(caller)){
-//                wFlag = "U";
-//                ChangeDeleteFlag task2 = new ChangeDeleteFlag();  //recentcall테이블에서 udflag 바꾸기
-//                task2.execute(caller, receiver, chatcnt, wFlag, Integer.toString(pos));
-//            }else{
-//                wFlag = "F";
-//                ChangeDeleteFlag task2 = new ChangeDeleteFlag();  //recentcall테이블에서 fdflag값 바꾸기
-//                task2.execute(caller, receiver, chatcnt, wFlag, Integer.toString(pos));
-//            }
-//        }
-
     }
 
     /* ---------------------------------------------- 최근대화기록 삭제 끝 ----------------------------------------------------------- */
@@ -1002,6 +883,7 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
         private String receiver = "";
         private String chatcnt = "";
         private int intpos;
+
         public CheckDeleteRecentCallFlag(String pos, String caller, String receiver, String chatcnt){
             this.pos = pos;
             this.caller = caller;
@@ -1048,7 +930,6 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
                 }
 
                 if(cdrcFlag.equals("Y")){  //mysql과 firebase에서 완전 삭제
-                    Log.d("ddddddd","cdrcFlag가 Y임 완전 삭제");
                     deleteRecentCallFromDatabase(intpos, chatcnt, caller, receiver);
                 }else{
                     if(userId.equals(caller)){
@@ -1062,7 +943,7 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
                     }
                 }
             } catch (Exception e) {
-                Log.d("getChatCnt1 Exception: ", e.getMessage().toString());
+                Log.d("checkDelete Exception: ", e.getMessage().toString());
             }
         }
     }
@@ -1072,7 +953,6 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
 
     /* ---------------------------------------------- RECENTCALL TABLE에서 UDFLAG, FDFLAG값 바꾸기 ----------------------------------------------------------- */
     public class ChangeDeleteFlag extends AsyncTask<String, Void, String> {
-        //ProgressDialog loading;
         int pos;
 
         @Override
@@ -1109,25 +989,19 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
                 data += "&" + URLEncoder.encode("chatcnt", "UTF-8") + "=" + URLEncoder.encode(chatcnt, "UTF-8");
                 data += "&" + URLEncoder.encode("wflag", "UTF-8") + "=" + URLEncoder.encode(wflag, "UTF-8");
 
-
                 URL url = new URL(link);
                 URLConnection conn = url.openConnection();
-
 
                 conn.setDoOutput(true);
                 OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
 
-
                 wr.write(data);
                 wr.flush();
 
-
                 BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
 
                 StringBuilder sb = new StringBuilder();
                 String line = null;
-
 
                 // Read Server Response
                 while ((line = reader.readLine()) != null) {
@@ -1144,25 +1018,22 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
     /* ---------------------------------------------- RECENTCALL TABLE에서 UDFLAG, FDFLAG값 바꾸기 끝 ----------------------------------------------------------- */
 
     /* ---------------------------------------------- DB에 최근통화기록 삭제 ----------------------------------------------------------- */
-    //private void deleteRecentCallFromDatabase(final int pos, String userId, String friendId, final String chatCnt, String caller, String receiver) {
     private void deleteRecentCallFromDatabase(final int pos, final String chatCnt, String caller, String receiver) {
         class DeleteRecentCallData extends AsyncTask<String, Void, String> {
-            //ProgressDialog loading;
 
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                //loading = ProgressDialog.show(MainActivity.this, "Please Wait", null, true, true);
             }
 
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                //loading.dismiss();
                 if(s.equals("삭제되었습니다"))
                     makeToast(s, getResources().getDrawable(R.drawable.baseline_check_white_24));
                 else
                     makeToast(s, getResources().getDrawable(R.drawable.baseline_clear_white_24));
+
                 //리스트에서 삭제후 새로고침
                 r_list.remove(pos);
                 r_adapter.notifyDataSetChanged();
@@ -1181,25 +1052,19 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
                     data += "&" + URLEncoder.encode("FriendId", "UTF-8") + "=" + URLEncoder.encode(receiver, "UTF-8");
                     data += "&" + URLEncoder.encode("ChatCnt", "UTF-8") + "=" + URLEncoder.encode(chatCnt, "UTF-8");
 
-
                     URL url = new URL(link);
                     URLConnection conn = url.openConnection();
-
 
                     conn.setDoOutput(true);
                     OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
 
-
                     wr.write(data);
                     wr.flush();
 
-
                     BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
 
                     StringBuilder sb = new StringBuilder();
                     String line = null;
-
 
                     // Read Server Response
                     while ((line = reader.readLine()) != null) {
@@ -1214,7 +1079,6 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
         }
         DeleteRecentCallData task1 = new DeleteRecentCallData();
         task1.execute(caller, receiver, chatCnt);
-        //task.execute(userId, friendId, chatCnt);
         String chatRoom = caller+receiver;
         database.getReference("chats").child(chatRoom).child(chatCnt).setValue(null);
     }
@@ -1225,35 +1089,78 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
 
     /* ---------------------------------------------- 전화걸기 ----------------------------------------------------------- */
     public void call(String friendId, String friendName) {
-        //String friendPhone = friendphone;
         Intent intent = new Intent(MainActivity.this, CallActivity.class);
-        //intent.putExtra("Tag", v.getTag().toString());
         intent.putExtra("userId", userId);
         intent.putExtra("friendId", friendId);
         intent.putExtra("friendName", friendName);
 
-        //startActivity(intent);
-        //stopService(cIntent);
-        //unregisterReceiver(restartService);
         startActivityForResult(intent, 0);
     }
 
     /* ---------------------------------------------- 전화걸기 끝 ----------------------------------------------------------- */
 
+
+    /* ---------------------------------------------- 로그아웃 ----------------------------------------------------------- */
+    private void logout(final String Id) {
+
+        class InsertData extends AsyncTask<String, Void, String> {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+
+                try {
+                    String Id = (String) params[0];
+
+                    String link = "http://13.124.94.107/logout.php";
+                    String data = URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(Id, "UTF-8");
+
+                    URL url = new URL(link);
+                    URLConnection conn = url.openConnection();
+
+                    conn.setDoOutput(true);
+                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+                    wr.write(data);
+                    wr.flush();
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+                    StringBuilder sb = new StringBuilder();
+                    String line = null;
+
+                    // Read Server Response
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line);
+                        break;
+                    }
+                    return sb.toString();
+                } catch (Exception e) {
+                    return new String("Exception: " + e.getMessage());
+                }
+            }
+        }
+        InsertData task = new InsertData();
+        task.execute(Id);
+    }
+    /* ---------------------------------------------- 로그아웃 ----------------------------------------------------------- */
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == 0) {
-
             Log.d("CallActivitt Finish", "finish call");
-            //recreate();
 
             startService(cIntent);
-
-            //RelativeLayout r = (RelativeLayout)findViewById(R.id.callReceiveLayout);
-            //r.setVisibility(View.INVISIBLE);
-
-            //Intent cIntent = new Intent(this, CallService.class);
-            //startService(cIntent);
         }
     }
 
@@ -1325,58 +1232,4 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
         InsertData task = new InsertData();
         task.execute(connectId, Id);
     }
-
-
-    private void logout(final String Id) {
-
-        class InsertData extends AsyncTask<String, Void, String> {
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
-            protected void onPostExecute(String s) {
-                super.onPostExecute(s);
-            }
-
-            @Override
-            protected String doInBackground(String... params) {
-
-                try {
-                    String Id = (String) params[0];
-
-                    String link = "http://13.124.94.107/logout.php";
-                    String data = URLEncoder.encode("Id", "UTF-8") + "=" + URLEncoder.encode(Id, "UTF-8");
-
-                    URL url = new URL(link);
-                    URLConnection conn = url.openConnection();
-
-                    conn.setDoOutput(true);
-                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-
-                    wr.write(data);
-                    wr.flush();
-
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-                    StringBuilder sb = new StringBuilder();
-                    String line = null;
-
-                    // Read Server Response
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line);
-                        break;
-                    }
-                    return sb.toString();
-                } catch (Exception e) {
-                    return new String("Exception: " + e.getMessage());
-                }
-            }
-        }
-        InsertData task = new InsertData();
-        task.execute(Id);
-    }
-
 }

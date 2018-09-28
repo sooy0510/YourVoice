@@ -88,21 +88,6 @@ class NaverRecognizer implements SpeechRecognitionListener {
         Log.d(TAG, "sssssssssPartial Result!! (" + result + ")");
         Message msg = Message.obtain(mHandler, R.id.partialResult, result);
         msg.sendToTarget();
-        //Log.d(TAG, "sssssssssPartial Result!! (" + result + ")");
-        /*if(result.length() > 10){
-            Message msg = Message.obtain(mHandler, R.id.finalResult, result);
-            Object[] results = new Object[5];
-            results[0] = result;
-            results[1] = "";
-            results[2] = "";
-            results[3] = "";
-            results[4] = "";
-            onResult(SpeechRecognitionResult results);
-            //msg.sendToTarget();
-        }else{
-            Message msg = Message.obtain(mHandler, R.id.partialResult, result);
-            msg.sendToTarget();
-        }*/
     }
 
     @Override

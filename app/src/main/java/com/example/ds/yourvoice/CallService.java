@@ -128,7 +128,6 @@ public class CallService extends Service {
                 public void run() {
 
                     if (user == null) {
-                        //stopSelf();
                         user = intent.getStringExtra("user");
                         Log.d("서비스 유저아이디", user);
                     }
@@ -196,8 +195,6 @@ public class CallService extends Service {
 
                                 Log.d("서비스" + connectUser, user);
 
-                                //((CallActivity)CallActivity.context).setConnectUser(connectUser);
-                                //((CallActivity)CallActivity.context).Connect();
                                 Log.d("전화왔다", result);
                                 callerThread = new callerCheck();
                                 callerThread.start();
@@ -263,7 +260,6 @@ public class CallService extends Service {
                     while ((line = reader.readLine()) != null) {
                         sb.append(line);
                         result = sb.toString();
-                        //Log.d("서비스스레드결과", result);
                         break;
                     }
 
@@ -277,7 +273,6 @@ public class CallService extends Service {
                         sendBroadcast(broadcastIntent);
                         connectUser = null;
                         end = true;
-                        //this.interrupt();
                         break;
                     } else if(result.equals("receive")) {
                         Intent broadcastIntent = new Intent();

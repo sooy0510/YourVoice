@@ -58,13 +58,12 @@ public class FListViewAdapter extends ArrayAdapter implements View.OnClickListen
         // 생성자로부터 저장된 resourceId(listview_btn_item)에 해당하는 Layout을 inflate하여 convertView 참조 획득.
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(this.resourceId/*R.layout.listview_btn_item*/, parent, false);
+            convertView = inflater.inflate(this.resourceId, parent, false);
         }
 
         // 화면에 표시될 View(Layout이 inflate된)로부터 위젯에 대한 참조 획득
         final ImageView iconImageView = (ImageView) convertView.findViewById(R.id.imageView1);
         final TextView textTextView1 = (TextView) convertView.findViewById(R.id.textView1);
-        //final TextView textTextView2 = (TextView) convertView.findViewById(R.id.textView2);
 
         // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
         final FListViewItem listViewItem = (FListViewItem) getItem(position);
@@ -73,18 +72,11 @@ public class FListViewAdapter extends ArrayAdapter implements View.OnClickListen
         // 아이템 내 각 위젯에 데이터 반영
         iconImageView.setImageDrawable(listViewItem.getIcon());
         textTextView1.setText(listViewItem.getName());
-        //textTextView2.setText(listViewItem.getId());
 
         // button1의 TAG에 position값 지정. Adapter를 click listener로 지정.
         Button fphone = (Button) convertView.findViewById(R.id.fphone);
         fphone.setTag(position);
         fphone.setOnClickListener(this);
-
-        // button2의 TAG에 position값 지정. Adapter를 click listener로 지정.
-        /*Button button2 = (Button) convertView.findViewById(R.id.button2);
-        button2.setTag(position);
-        button2.setOnClickListener(this);*/
-
 
         //길게 누르면 삭제
         LinearLayout fitem = (LinearLayout) convertView.findViewById(R.id.fitem);

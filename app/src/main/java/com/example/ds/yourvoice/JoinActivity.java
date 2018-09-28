@@ -204,44 +204,28 @@ public class JoinActivity extends AppCompatActivity {
         String Pw = editTextPw.getText().toString();
         String Name = editTextName.getText().toString();
 
-        /*if(Id != null || !Id.equals(""))
-            Toast.makeText(getApplicationContext(), "아이디를 입력해주세요", Toast.LENGTH_SHORT). show();
-        if(Pw != null || !Pw.equals(""))
-            Toast.makeText(getApplicationContext(), "비밀번호를 입력해주세요", Toast.LENGTH_SHORT). show();
-        if(Name != null || !Name.equals(""))
-            Toast.makeText(getApplicationContext(), "이름을 입력해주세요", Toast.LENGTH_SHORT). show();
-        if(Phone != null || !Phone.equals(""))
-            Toast.makeText(getApplicationContext(), "휴대폰번호를 입력해주세요", Toast.LENGTH_SHORT). show();*/
-
         if(Id != null && !Id.equals("") && Pw != null && !Pw.equals("") && Name != null && !Name.equals("")){
             if(flagId.equals("idokay")){
                 insertToDatabase(Id, Pw, Name);
                 startActivity(new Intent(JoinActivity.this, LoginActivity.class));
             }else{
                 makeToast("중복체크버튼을 눌러주세요", getResources().getDrawable(R.drawable.baseline_clear_white_24));
-                //Toast.makeText(getApplicationContext(), "아이디와 번호를 확인 후 중복체크버튼을 눌러주세요", Toast.LENGTH_SHORT). show();
             }
         }else makeToast("모든 항목을 입력해주세요", getResources().getDrawable(R.drawable.baseline_clear_white_24));
-            //Toast.makeText(getApplicationContext(), "모든 항목을 입력해주세요", Toast.LENGTH_SHORT). show();
-
-
     }
 
 
 
     private void insertToDatabase(String Id, String Pw, String Name) {
         class InsertData extends AsyncTask<String, Void, String> {
-        //ProgressDialog loading;
         @Override
             protected void onPreExecute() {
             super.onPreExecute();
-            //loading = ProgressDialog.show(JoinActivity.this, "Please Wait", null, true, true);
         }
 
         @Override
             protected void  onPostExecute(String s) {
             super.onPostExecute(s);
-            //loading.dismiss();
             if(s.equals("success"))
                 makeToast("회원가입 되었습니다", getResources().getDrawable(R.drawable.baseline_check_white_24));
             else

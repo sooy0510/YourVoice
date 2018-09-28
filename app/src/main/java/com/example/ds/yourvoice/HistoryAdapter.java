@@ -31,7 +31,6 @@ public class HistoryAdapter extends BaseAdapter{
         }
 
         private List<com.example.ds.yourvoice.HistoryAdapter.ListContents> h_List = new ArrayList<com.example.ds.yourvoice.HistoryAdapter.ListContents>();
-        //private ArrayList m_List;
         public HistoryAdapter() {
             h_List = new ArrayList();
         }
@@ -132,7 +131,6 @@ public class HistoryAdapter extends BaseAdapter{
 
 
             // Text 등록
-            //text.setText(h_List.get(position).msg);
             text.setText(save);
 
             if(h_List.get(position).type == 0 ) {
@@ -146,15 +144,10 @@ public class HistoryAdapter extends BaseAdapter{
                 viewRight.setVisibility(View.GONE);
                 viewLeft.setVisibility(View.GONE);
             }else if(h_List.get(position).type == 2){
-                //text.setBackgroundResource(R.drawable.datebg);
                 layout.setGravity(Gravity.CENTER);
-                //viewRight.setVisibility(View.VISIBLE);
-                //viewLeft.setVisibility(View.VISIBLE);
                 viewRight.setVisibility(View.GONE);
                 viewLeft.setVisibility(View.GONE);
             }
-
-
 
 
             // 리스트 아이템을 터치 했을 때 이벤트 발생
@@ -166,19 +159,6 @@ public class HistoryAdapter extends BaseAdapter{
                     //Toast.makeText(context, "리스트 클릭 : "+h_List.get(pos), Toast.LENGTH_SHORT).show();
                 }
             });
-
-
-
-            // 리스트 아이템을 길게 터치 했을때 이벤트 발생
-            /*convertView.setOnLongClickListener(new View.OnLongClickListener() {
-
-                @Override
-                public boolean onLongClick(View v) {
-                    // 터치 시 해당 아이템 이름 출력
-                    Toast.makeText(context, "리스트 롱 클릭 : "+h_List.get(pos), Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-            });*/
 
             return convertView;
         }

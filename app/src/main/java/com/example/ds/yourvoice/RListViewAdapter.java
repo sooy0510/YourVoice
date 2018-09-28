@@ -60,20 +60,13 @@ public class RListViewAdapter extends ArrayAdapter implements View.OnClickListen
         // 생성자로부터 저장된 resourceId(listview_btn_item)에 해당하는 Layout을 inflate하여 convertView 참조 획득.
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(this.resourceId/*R.layout.listview_btn_item*/, parent, false);
+            convertView = inflater.inflate(this.resourceId, parent, false);
         }
 
         // 화면에 표시될 View(Layout이 inflate된)로부터 위젯에 대한 참조 획득
         final ImageView iconImageView = (ImageView) convertView.findViewById(R.id.imageView1);
         final TextView textTextView1 = (TextView) convertView.findViewById(R.id.textView1);
-        //final TextView textTextView2 = (TextView) convertView.findViewById(R.id.textView2);
         final TextView callDate = (TextView) convertView.findViewById(R.id.callDate);
-        final String chatCnt;
-        final String caller;
-        final String receiver;
-        final String checkVis;
-        final String fname;
-        final Button textButton = (Button) convertView.findViewById(R.id.textbutton);
 
 
         // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
@@ -82,7 +75,6 @@ public class RListViewAdapter extends ArrayAdapter implements View.OnClickListen
         // 아이템 내 각 위젯에 데이터 반영
         iconImageView.setImageDrawable(listViewItem.getIcon());
         textTextView1.setText(listViewItem.getName());
-        //textTextView2.setText(listViewItem.getId());
         String nstring = listViewItem.getDate();
         String tranf="";
         try {
@@ -95,9 +87,6 @@ public class RListViewAdapter extends ArrayAdapter implements View.OnClickListen
         }
 
         callDate.setText(tranf);
-        chatCnt = listViewItem.getChatCnt();
-        caller = listViewItem.getCaller();
-        receiver = listViewItem.getReceiver();
 
         // button3의 TAG에 position값 지정. Adapter를 click listener로 지정.
         Button rphone = (Button) convertView.findViewById(R.id.rphone);

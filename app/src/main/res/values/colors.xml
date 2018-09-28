@@ -8,6 +8,7 @@
     <color name="white">#ffffff</color>
     <color name="nonpressed">#DCDCDC</color>
     <color name="pressed">#83FFA200</color>
+    <color name="toast">#fdc461</color>
     <!--
     투명도
     100% — FF

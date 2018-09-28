@@ -261,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
 
         TedPermission.with(this)
                 .setPermissionListener(permissionlistener)
-                .setDeniedMessage("왜 거부하셨어요...\n하지만 [설정] > [권한] 에서 권한을 허용할 수 있어요.")
+                .setDeniedMessage("필요한 권한을 모두 허용해주세요.")
                 .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA, android.Manifest.permission.RECORD_AUDIO)
                 .check();
     }
@@ -374,7 +374,7 @@ public class MainActivity extends AppCompatActivity implements FListViewAdapter.
             String id = friend.getId();
             String fname =  friend.getName();
             //Toast.makeText(getApplicationContext(), id, Toast.LENGTH_LONG).show();
-            //call(id, v);
+            //calxxxxxx ml(id, v);
             startCall(id, userId, fname);
         }/* else {
             new AlertDialog.Builder(this)

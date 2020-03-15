@@ -2,7 +2,7 @@
 
 ## 영상통화 자막제공 앱
 
-<img src="images/어플로고-1584289037765.png" float ="center">
+![어플로고](images/어플로고-1584289037765.png){:.aligncenter}
 
 <br>
 
@@ -60,3 +60,8 @@
 ### 최종 구현 영상
 
 - <https://drive.google.com/drive/folders/1RV4HOfTxwmoomSA7jSUwFE2yCheqNwUb>
+
+```css
+img.aligncenter{display:block; margin:0 auto}
+```
+

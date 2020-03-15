@@ -2,10 +2,7 @@
 
 ## 영상통화 자막제공 앱
 
-
-```html
-<center><img src="images/어플로고-1584288849648.png" width="300" height="300"></center>
-```
+<img src="images/어플로고-1584289037765.png" float ="center">
 
 <br>
 

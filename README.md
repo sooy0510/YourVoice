@@ -2,7 +2,10 @@
 
 ## 영상통화 자막제공 앱
 
-​														![어플로고](images/어플로고-1584285549105.png)
+
+```html
+<center><img src="images/어플로고-1584288849648.png" width="300" height="300"></center>
+```
 
 <br>
 

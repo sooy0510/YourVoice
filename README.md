@@ -61,7 +61,7 @@
 
 ---------------------------------------------------------------------------------------------------------------------------------------
 
-### 최종 구현 영상
+### 최종 구현 결과물
 
-- <https://drive.google.com/drive/folders/1RV4HOfTxwmoomSA7jSUwFE2yCheqNwUb>
+- https://drive.google.com/drive/folders/1axIOKxPLFcdFIJE36_Rb4tcQnPCBVxTv
 
